@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Datos privados, artefactos de ingesta e índices
+data/uploads/
+data/originals/
+data/extracted/
+data/indexes/
+data/indices/
+data/cache/
+data/*.db
+data/*.sqlite*
+
+# Artefactos generados
+*.log
