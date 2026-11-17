@@ -148,3 +148,19 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Limitaciones:** consultas redactadas por el asistente, pendientes de
   revisión humana; corpus pequeño y temas muy separados.
 - **Pruebas:** `python -m pytest -q` → `234 passed, 1 warning`.
+
+## DOC-10 — API de búsqueda léxica
+
+- **Issue:** #10 · **Rama:** `feature/DOC-10-search-api` (apilada sobre DOC-09)
+- **Cambios:** `backend/app/api/search.py` (`GET /search`, `GET /search/index`,
+  motor único por aplicación); router registrado en `main.py`; CLI `reindex`;
+  `tests/test_search_api.py` (24 pruebas).
+- **Prueba manual (uvicorn):** con los 3 fixtures cargados, cada formato se
+  recupera con su consulta, y el PDF con página 1–2. La primera consulta tardó
+  ~1,4 s (carga de modelos) y las siguientes ~5 ms. Se detectó que `curl` en
+  Git Bash envía las tildes en otra codificación (la consulta llegaba como
+  `ndice`); ahora la API devuelve 422 `invalid_encoding` y la documentación
+  recomienda `Invoke-RestMethod`.
+- **Fallo encontrado en pruebas:** una consulta "sin resultados" contenía
+  "palabra", que sí aparece en los fixtures; se corrigió la prueba.
+- **Pruebas:** `python -m pytest -q` → `258 passed, 1 warning`.
