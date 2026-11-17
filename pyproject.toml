@@ -36,6 +36,7 @@ model = [
 # CUDA, instalar antes torch desde https://download.pytorch.org/whl/cpu (ver docs/embeddings.md).
 semantic = [
   "sentence-transformers>=6.3,<7",
+  "faiss-cpu>=1.8,<2",
 ]
 
 [tool.setuptools.packages.find]
