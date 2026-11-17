@@ -95,11 +95,9 @@ def test_lexical_keeps_numbers_and_content_words(lexical: LexicalPipeline) -> No
 @needs_model
 def test_lexical_lemmatizes_with_spacy(lexical: LexicalPipeline) -> None:
     assert lexical.lemmatizer_available
-    assert lexical.process("Los niños estaban corriendo por las calles") == [
-        "niño",
-        "correr",
-        "calle",
-    ]
+    tokens = lexical.process("Los niños estaban corriendo por las calles")
+    assert lexical.lemmas(tokens) == ["niño", "correr", "calle"]
+    assert tokens == ["niño", "=niños", "correr", "=corriendo", "calle", "=calles"]
     assert lexical.config["lemmatizer"].startswith("es_core_news_sm-")
 
 
@@ -107,9 +105,32 @@ def test_lexical_lemmatizes_with_spacy(lexical: LexicalPipeline) -> None:
 def test_documents_and_queries_share_normalization(lexical: LexicalPipeline) -> None:
     document = lexical.process("Las bibliotecas digitales almacenan documentos antiguos.")
     query = lexical.process("biblioteca digital documento")
-    assert set(query) <= set(document)
+    assert set(lexical.lemmas(query)) <= set(document)
     # una consulta sin tildes coincide con un texto con tildes
     assert set(lexical.process("informacion")) <= set(lexical.process("Información"))
+
+
+@needs_model
+@pytest.mark.parametrize(
+    ("query", "sentence"),
+    [
+        ("dengue", "El dengue es una infección transmitida por mosquitos."),
+        ("lava", "Los volcanes expulsan lava durante la erupción."),
+        ("embeddings", "Los embeddings representan el significado de las oraciones."),
+        ("capo", "El capo se coloca en el mástil de la guitarra."),
+    ],
+)
+def test_short_queries_match_despite_wrong_pos_tagging(
+    lexical: LexicalPipeline, query: str, sentence: str
+) -> None:
+    """Regresión (DOC-11): sin contexto, spaCy etiqueta 'dengue' o 'lava' como verbos."""
+    assert set(lexical.process(query)) & set(lexical.process(sentence))
+
+
+def test_surface_forms_can_be_disabled() -> None:
+    plain = LexicalPipeline(index_surface_forms=False)
+    assert not any(t.startswith("=") for t in plain.process("Los volcanes expulsan lava"))
+    assert plain.config["surface_forms"] is False
 
 
 @needs_model
