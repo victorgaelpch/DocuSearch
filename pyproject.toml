@@ -17,6 +17,8 @@ dependencies = [
   "python-multipart>=0.0.9,<1",
   "spacy>=3.8,<3.9",
   "mwparserfromhell>=0.6,<1",
+  "numpy>=1.24,<3",
+  "scikit-learn>=1.3,<2",
 ]
 
 [project.optional-dependencies]
