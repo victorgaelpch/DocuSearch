@@ -36,8 +36,7 @@ python -m uvicorn backend.app.main:app --reload
 
 ```powershell
 # Cargar un documento
-curl.exe -F "file=@C:
-uta\informe.pdf" http://127.0.0.1:8000/documents
+curl.exe -F "file=@C:\ruta\informe.pdf" http://127.0.0.1:8000/documents
 # Buscar (BM25 por defecto; method=tfidf y k=1..100 opcionales)
 Invoke-RestMethod "http://127.0.0.1:8000/search?q=índice invertido&k=5"
 # Corpus experimental de Wikipedia (ver docs/corpus.md para importarlo)
