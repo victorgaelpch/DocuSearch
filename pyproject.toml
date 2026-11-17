@@ -12,6 +12,8 @@ dependencies = [
   "fastapi>=0.115,<1",
   "pydantic>=2.7,<3",
   "uvicorn>=0.30,<1",
+  "PyMuPDF>=1.24,<2",
+  "python-docx>=1.1,<2",
 ]
 
 [project.optional-dependencies]
@@ -20,8 +22,6 @@ dev = [
   "httpx>=0.27,<1",
 ]
 documents = [
-  "PyMuPDF>=1.24,<2",
-  "python-docx>=1.1,<2",
   "python-multipart>=0.0.9,<1",
 ]
 
