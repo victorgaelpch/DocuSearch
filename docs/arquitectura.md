@@ -26,10 +26,10 @@ Usuario -> Frontend -> FastAPI -> Documentos / Búsqueda
 
 - `Document`, `Chunk` y `SearchHit`, con persistencia SQLite y almacén de originales. Detalle en `docs/modelo-datos.md`.
 - Lectores PDF (PyMuPDF), DOCX (python-docx) y TXT con `extract_document` (DOC-03). Detalle en `docs/lectores.md`.
+- `/documents`: carga, listado, consulta y descarga con validación de nombre, tamaño y tipo real (DOC-04). Detalle en `docs/api.md`. Capas: `api/documents.py` (HTTP) → `documents/service.py` (casos de uso) → `validation.py`, `readers.py`, `storage.py`, `repository.py`.
 
 ### Contratos planeados (no implementados)
 
-- `/documents`: cargar y consultar archivos con validaciones (DOC-04).
 - `/search`: recuperar top-k con fragmento, puntuación y procedencia (DOC-10).
 
 ### Prioridades

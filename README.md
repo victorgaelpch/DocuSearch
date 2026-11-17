@@ -2,7 +2,7 @@
 
 Buscador de documentos en español, diseñado para evolucionar hacia una plataforma de gestión y consulta documental con inteligencia artificial.
 
-> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`). La carga por API corresponde a [DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4): **todavía no está implementada**.
+> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). La búsqueda (DOC-06 a DOC-10) **todavía no está implementada**.
 
 ## Requisitos
 
@@ -28,6 +28,7 @@ python -m uvicorn backend.app.main:app --reload
 ```
 
 - Estado del servicio: http://127.0.0.1:8000/health
+- Documentos: `POST /documents`, `GET /documents`, `GET /documents/{doc_id}`, `GET /documents/{doc_id}/download` (ver `docs/api.md`)
 - Documentación automática: http://127.0.0.1:8000/docs
 
 ## Datos locales
@@ -36,7 +37,10 @@ Por defecto se usa `data/` (no versionado): `originals/`, `metadata.db` e `index
 
 ```powershell
 $env:DOCUSEARCH_DATA_DIR = "D:\docusearch-data"
+$env:DOCUSEARCH_MAX_UPLOAD_MB = "20"   # tamaño máximo de carga
 ```
+
+La API no tiene autenticación todavía: úsala solo en local.
 
 ## Pruebas
 
@@ -51,7 +55,7 @@ python -m pytest -q
 | `backend/app/documents/` | Modelos, repositorio SQLite, almacén de originales (DOC-02) y lectores PDF/DOCX/TXT (DOC-03) |
 | `backend/app/nlp/` | Limpieza y segmentación del corpus (DOC-06/07) |
 | `backend/app/search/` | Índices y ranking de búsqueda (DOC-08/09) |
-| `backend/app/api/` | Rutas API (DOC-04/10) |
+| `backend/app/api/` | Endpoints de documentos (DOC-04); búsqueda (DOC-10) |
 | `frontend/` | Interfaz web en una etapa posterior |
 | `tests/` | Pruebas automatizadas |
 | `docs/` | Diseño y puesta en marcha |
