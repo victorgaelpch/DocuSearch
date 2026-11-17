@@ -1,0 +1,2880 @@
+{
+  "name": "wikipedia_es",
+  "source": "https://es.wikipedia.org",
+  "api": "https://es.wikipedia.org/w/api.php",
+  "license": "CC BY-SA 4.0",
+  "frozen_at": "2026-11-17T02:33:02+00:00",
+  "converter": {
+    "version": 1,
+    "mwparserfromhell": "0.7.2"
+  },
+  "filters": {
+    "min_words": 50,
+    "dedupe": [
+      "pageid",
+      "normalized_text"
+    ],
+    "empty": true
+  },
+  "topics_config": {
+    "description": "Temas y categorías de es.wikipedia.org usados para el corpus experimental de DocuSearch AI.",
+    "articles_per_topic": 40,
+    "topics": [
+      {
+        "topic": "química",
+        "categories": [
+          "Elementos químicos"
+        ]
+      },
+      {
+        "topic": "astronomía",
+        "categories": [
+          "Constelaciones"
+        ]
+      },
+      {
+        "topic": "informática",
+        "categories": [
+          "Lenguajes de programación"
+        ]
+      },
+      {
+        "topic": "medicina",
+        "categories": [
+          "Enfermedades infecciosas"
+        ]
+      },
+      {
+        "topic": "música",
+        "categories": [
+          "Instrumentos de cuerda"
+        ]
+      },
+      {
+        "topic": "biología",
+        "categories": [
+          "Orgánulos celulares"
+        ]
+      },
+      {
+        "topic": "economía",
+        "categories": [
+          "Indicadores económicos"
+        ]
+      }
+    ]
+  },
+  "articles": [
+    {
+      "title": "Elemento químico",
+      "pageid": 2832463,
+      "revid": 176246436,
+      "timestamp": "2026-11-11T03:21:11Z",
+      "topic": "química",
+      "words": 3176,
+      "sha256": "06ae929f66feb64d70a58204e571a5ce62d5e8d612d040197d112e51fb06e5ca",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176246436"
+    },
+    {
+      "title": "Denominación sistemática de elementos",
+      "pageid": 7733,
+      "revid": 175687390,
+      "timestamp": "2026-10-06T09:22:44Z",
+      "topic": "química",
+      "words": 242,
+      "sha256": "8224d315a3da0dac44b6fbdf443adee3be1ff494c2a473f5dc6012b74c200875",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175687390"
+    },
+    {
+      "title": "Actinio",
+      "pageid": 26486,
+      "revid": 174074089,
+      "timestamp": "2026-06-23T07:27:02Z",
+      "topic": "química",
+      "words": 1026,
+      "sha256": "ff9da29b9739ab2a913871c7d14576a57bbaf2eba7c13059fbb42add5cd8acd4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174074089"
+    },
+    {
+      "title": "Aluminio",
+      "pageid": 11568,
+      "revid": 175251866,
+      "timestamp": "2026-09-08T10:34:45Z",
+      "topic": "química",
+      "words": 8056,
+      "sha256": "bbdfe747757a56875a87987f5e0772402d034467f00d17231d9e6245c04100ab",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175251866"
+    },
+    {
+      "title": "Americio",
+      "pageid": 42149,
+      "revid": 174963033,
+      "timestamp": "2026-08-21T19:48:42Z",
+      "topic": "química",
+      "words": 1384,
+      "sha256": "9daca108d353a34c49d7a22578b883d40dee6ff98f54c02c8887e333c117ac3b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174963033"
+    },
+    {
+      "title": "Antimonio",
+      "pageid": 34020,
+      "revid": 174646561,
+      "timestamp": "2026-08-01T13:15:24Z",
+      "topic": "química",
+      "words": 2670,
+      "sha256": "a88c9592727beb263adb2a1260f9b7a11550f7572c40dfdabe36c9e5762e93ef",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174646561"
+    },
+    {
+      "title": "Argón",
+      "pageid": 29341,
+      "revid": 174693446,
+      "timestamp": "2026-08-04T15:56:00Z",
+      "topic": "química",
+      "words": 1280,
+      "sha256": "fa49f5b160876f9fa34d1db940a377f4a4f52b4873e80ecdf0d09609e3a2917d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174693446"
+    },
+    {
+      "title": "Arsénico",
+      "pageid": 33966,
+      "revid": 174715497,
+      "timestamp": "2026-08-05T22:31:18Z",
+      "topic": "química",
+      "words": 6555,
+      "sha256": "433949c00a65186539be420548ea6cd62290e7ce4421571b6b13028666158ae4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174715497"
+    },
+    {
+      "title": "Astato",
+      "pageid": 34114,
+      "revid": 175915744,
+      "timestamp": "2026-10-20T10:33:13Z",
+      "topic": "química",
+      "words": 1646,
+      "sha256": "652a60d61923462eb5a9ef443dae98926f3746d6784fbbd6a23ec0e620854839",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175915744"
+    },
+    {
+      "title": "Azufre",
+      "pageid": 29833,
+      "revid": 175013500,
+      "timestamp": "2026-08-24T22:31:17Z",
+      "topic": "química",
+      "words": 1837,
+      "sha256": "5147eb451744950929879aac995cacb30265b17ffb704be4a909e51226756358",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175013500"
+    },
+    {
+      "title": "Bario",
+      "pageid": 33985,
+      "revid": 175683458,
+      "timestamp": "2026-10-06T01:53:33Z",
+      "topic": "química",
+      "words": 1738,
+      "sha256": "033420adf730338276c09af60e628a2366af449a418c5cdba5f165a2daedaef2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175683458"
+    },
+    {
+      "title": "Berilio",
+      "pageid": 25494,
+      "revid": 175921200,
+      "timestamp": "2026-10-20T17:38:11Z",
+      "topic": "química",
+      "words": 2326,
+      "sha256": "a7f3a687f487f9529388ca7f50015ad90f1fc1585fa2c8ee8b13b03941d45bbb",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175921200"
+    },
+    {
+      "title": "Berkelio",
+      "pageid": 42487,
+      "revid": 176043682,
+      "timestamp": "2026-10-28T19:31:10Z",
+      "topic": "química",
+      "words": 1365,
+      "sha256": "bec2cb5594fa388489d731fec46fc2ec3af86f615b2ef4c2e490d821c628e48d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176043682"
+    },
+    {
+      "title": "Bismuto",
+      "pageid": 5085571,
+      "revid": 174919139,
+      "timestamp": "2026-08-19T00:32:49Z",
+      "topic": "química",
+      "words": 1779,
+      "sha256": "ef5df95e23676cacf9954a72722ed6640ee05da32329ce0cdcd2023391f493d4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174919139"
+    },
+    {
+      "title": "Bohrio",
+      "pageid": 42510,
+      "revid": 174937297,
+      "timestamp": "2026-08-20T03:30:07Z",
+      "topic": "química",
+      "words": 1580,
+      "sha256": "a4d480f9364becf2e065e82447b87480d4844ce6e866164b1bdf215c81387728",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174937297"
+    },
+    {
+      "title": "Boro",
+      "pageid": 13833,
+      "revid": 175709404,
+      "timestamp": "2026-10-07T16:16:07Z",
+      "topic": "química",
+      "words": 3540,
+      "sha256": "8ba99f4d0c862cb510c0f19958ab341e1ae6b0a8a0545908346df8fe7ede4134",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175709404"
+    },
+    {
+      "title": "Bromo",
+      "pageid": 30666,
+      "revid": 174972188,
+      "timestamp": "2026-08-22T12:13:19Z",
+      "topic": "química",
+      "words": 2340,
+      "sha256": "d208b999c4a6da311c166a8e02b5f428f3816eba2195e5b5b6f17dddecc2641b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174972188"
+    },
+    {
+      "title": "Cadmio",
+      "pageid": 632,
+      "revid": 174120969,
+      "timestamp": "2026-06-26T15:24:44Z",
+      "topic": "química",
+      "words": 2159,
+      "sha256": "2f811d1c1463caab85d2271d666a04b0c2f194f16a20eecf0cfb1f65d31aa4b4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174120969"
+    },
+    {
+      "title": "Calcio",
+      "pageid": 10828,
+      "revid": 176277158,
+      "timestamp": "2026-11-13T06:45:55Z",
+      "topic": "química",
+      "words": 2807,
+      "sha256": "f3bad1c1573d976d757aa4f664ce962d163f91f7710e59d796f22cc488e90adb",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176277158"
+    },
+    {
+      "title": "Californio",
+      "pageid": 42485,
+      "revid": 175020521,
+      "timestamp": "2026-08-25T08:37:23Z",
+      "topic": "química",
+      "words": 2572,
+      "sha256": "a64ed938d18c0ed2b72e47c2c9c7c83bcee7cb64c044804926ad55a09158a97d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175020521"
+    },
+    {
+      "title": "Carbono",
+      "pageid": 633,
+      "revid": 176111975,
+      "timestamp": "2026-11-02T14:00:41Z",
+      "topic": "química",
+      "words": 3017,
+      "sha256": "3979072cbfb5a51407471c7069afb87e14b307d2716ab95cc1dbb0aaa7969d82",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176111975"
+    },
+    {
+      "title": "Cerio",
+      "pageid": 6733,
+      "revid": 175338560,
+      "timestamp": "2026-09-13T19:31:35Z",
+      "topic": "química",
+      "words": 1798,
+      "sha256": "b5653d6335c21f16b6a5ae6429672e2f3fc78d5d1f5d3e20726b72c7363c1632",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175338560"
+    },
+    {
+      "title": "Cesio",
+      "pageid": 482,
+      "revid": 175512599,
+      "timestamp": "2026-09-24T19:14:58Z",
+      "topic": "química",
+      "words": 2431,
+      "sha256": "8528604ea883ea230b8680131f1ca64739f8a859e89cfed80f3ff76b8dba1725",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175512599"
+    },
+    {
+      "title": "Charles Janet",
+      "pageid": 5940580,
+      "revid": 165693004,
+      "timestamp": "2025-02-26T00:32:07Z",
+      "topic": "química",
+      "words": 228,
+      "sha256": "8a23303faf6f8d845d56d63a64b4d04c96498aa8d30ef689d22733fa7f87f9df",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=165693004"
+    },
+    {
+      "title": "Circonio",
+      "pageid": 566313,
+      "revid": 175850655,
+      "timestamp": "2026-10-16T06:30:11Z",
+      "topic": "química",
+      "words": 2563,
+      "sha256": "78e614428f29131367b9b9cf6a85bf04f9fab09acbd93d5164d56f648f7b9764",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175850655"
+    },
+    {
+      "title": "Cloro",
+      "pageid": 27964,
+      "revid": 176099342,
+      "timestamp": "2026-11-01T17:26:23Z",
+      "topic": "química",
+      "words": 2987,
+      "sha256": "99569a936a792e51a45ffe799ae1d2a2f5395cdfdee2616e70111fc815ff7aa0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176099342"
+    },
+    {
+      "title": "Cobalto",
+      "pageid": 21874,
+      "revid": 176205979,
+      "timestamp": "2026-11-08T16:17:24Z",
+      "topic": "química",
+      "words": 3602,
+      "sha256": "cea86c498c2c76df12176139a7da5c59e5810b278fb95636d2acf65aa3b21fa6",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176205979"
+    },
+    {
+      "title": "Cobre",
+      "pageid": 11485,
+      "revid": 175671320,
+      "timestamp": "2026-10-05T11:06:51Z",
+      "topic": "química",
+      "words": 9286,
+      "sha256": "d5926f2aff7864f530ed798a9e00ab88f39c5210708b9f39b9512db67a803e57",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175671320"
+    },
+    {
+      "title": "Colección de elementos de la tabla periódica",
+      "pageid": 8823325,
+      "revid": 122278619,
+      "timestamp": "2019-12-25T19:14:02Z",
+      "topic": "química",
+      "words": 607,
+      "sha256": "562598e37ec0d3c908fdc63938b15f1c7089084a386f65f5b7149b82060510d3",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=122278619"
+    },
+    {
+      "title": "Copernicio",
+      "pageid": 571879,
+      "revid": 175531611,
+      "timestamp": "2026-09-26T02:25:07Z",
+      "topic": "química",
+      "words": 1445,
+      "sha256": "cbcc5dc4f1de583fc36b7bab7047a3651d7953ab2ab54e329c22ed72703253a6",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175531611"
+    },
+    {
+      "title": "Cromo",
+      "pageid": 17881,
+      "revid": 175578157,
+      "timestamp": "2026-09-29T07:22:04Z",
+      "topic": "química",
+      "words": 2429,
+      "sha256": "03a62e39a6ffa3ec87a9f7b1e1acc4bc6f57ad0cbc0394e5dd1511737459de8c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175578157"
+    },
+    {
+      "title": "Curio",
+      "pageid": 17425,
+      "revid": 167898888,
+      "timestamp": "2025-06-11T01:16:00Z",
+      "topic": "química",
+      "words": 1903,
+      "sha256": "aac2a7d17499eafdc96bf8821b9b3cef998be831b7b03dc8f9182232aa07becf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=167898888"
+    },
+    {
+      "title": "Darmstatio",
+      "pageid": 42513,
+      "revid": 175650956,
+      "timestamp": "2026-10-04T03:12:22Z",
+      "topic": "química",
+      "words": 1051,
+      "sha256": "8e5990cd128b89653a14344efb0420b3f0d874838bc7dcf34d1bda5ffc366e2e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175650956"
+    },
+    {
+      "title": "Disprosio",
+      "pageid": 34251,
+      "revid": 175751162,
+      "timestamp": "2026-10-10T04:52:21Z",
+      "topic": "química",
+      "words": 1478,
+      "sha256": "e18aa3662a856efbe02b52ca7b5fe3a7c5754db28c177cdb68a673047957ee19",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175751162"
+    },
+    {
+      "title": "Dubnio",
+      "pageid": 42508,
+      "revid": 172973637,
+      "timestamp": "2026-04-14T07:20:16Z",
+      "topic": "química",
+      "words": 1340,
+      "sha256": "588797fd8724f13b2b4fe13129d274c89256ffafaea5f16ac5fd834fcc27a39d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172973637"
+    },
+    {
+      "title": "Elemento sintético",
+      "pageid": 55398,
+      "revid": 173042319,
+      "timestamp": "2026-04-18T16:26:46Z",
+      "topic": "química",
+      "words": 835,
+      "sha256": "2cf6f7e7aa8a0b137b0ff34b7d413da793cc48781260e74ecbbaf15869603a55",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173042319"
+    },
+    {
+      "title": "Einstenio",
+      "pageid": 42490,
+      "revid": 176242238,
+      "timestamp": "2026-11-10T21:01:47Z",
+      "topic": "química",
+      "words": 1076,
+      "sha256": "cac055a9667e24bf5a144b4a6fb9a060d4d8637569dea71343cc6767477313de",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176242238"
+    },
+    {
+      "title": "Erbio",
+      "pageid": 34257,
+      "revid": 176172574,
+      "timestamp": "2026-11-06T03:19:54Z",
+      "topic": "química",
+      "words": 1865,
+      "sha256": "949ed8d7a29a0c908819ae18f151e598d4a065ec116a3a618a67acdbc3f9da45",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176172574"
+    },
+    {
+      "title": "Escandio",
+      "pageid": 34072,
+      "revid": 176199278,
+      "timestamp": "2026-11-08T02:30:04Z",
+      "topic": "química",
+      "words": 1691,
+      "sha256": "a7a4f18f880586c6a80f2fb41f31883a704d95f2296f8a5534dfe4f1f27366d4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176199278"
+    },
+    {
+      "title": "Estaño",
+      "pageid": 23727,
+      "revid": 172242080,
+      "timestamp": "2026-02-26T00:53:51Z",
+      "topic": "química",
+      "words": 2727,
+      "sha256": "4b8ce4d438e18e0929c4e04c7b634b8d4880a148241d444738489df2d8be8034",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172242080"
+    },
+    {
+      "title": "Cartografía celeste",
+      "pageid": 8419457,
+      "revid": 175160633,
+      "timestamp": "2026-09-02T17:27:22Z",
+      "topic": "astronomía",
+      "words": 1125,
+      "sha256": "a7ce15578ba390ea690ccf9eae1620003ad1a0e7e279bd2624b5cf7f6cc0b5bc",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175160633"
+    },
+    {
+      "title": "Asterismos históricos",
+      "pageid": 5778509,
+      "revid": 171334527,
+      "timestamp": "2026-01-04T21:27:45Z",
+      "topic": "astronomía",
+      "words": 901,
+      "sha256": "0f80ff235c001e026499e1678e144fd97eece51bf93bd79809aabe7dc633a169",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171334527"
+    },
+    {
+      "title": "Nakshatra",
+      "pageid": 8424214,
+      "revid": 162248832,
+      "timestamp": "2024-09-03T19:38:50Z",
+      "topic": "astronomía",
+      "words": 1044,
+      "sha256": "dd5ffdb8dc9672abd4d9e7250233078805834fcec2cf2ccdd41f7c3ffccaf404",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=162248832"
+    },
+    {
+      "title": "Asterismo",
+      "pageid": 762652,
+      "revid": 175369817,
+      "timestamp": "2026-09-15T14:20:14Z",
+      "topic": "astronomía",
+      "words": 940,
+      "sha256": "7150a3f4fc733887bbe8a3036fac10ab1adbb8f402b359c37259142154bd2e45",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175369817"
+    },
+    {
+      "title": "Caelum",
+      "pageid": 35530,
+      "revid": 165743536,
+      "timestamp": "2025-02-28T01:49:38Z",
+      "topic": "astronomía",
+      "words": 573,
+      "sha256": "cbc0e849f8d2e38c1288e77eadd9c435dd93e752ef353a06f7e8c7e19a477719",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=165743536"
+    },
+    {
+      "title": "Camelopardalis",
+      "pageid": 35000,
+      "revid": 172841256,
+      "timestamp": "2026-04-05T15:45:19Z",
+      "topic": "astronomía",
+      "words": 1618,
+      "sha256": "50b0096b36714e8b91fe6633fe1ed4114131707dc7c936c34972dac8ab680ef9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172841256"
+    },
+    {
+      "title": "Canes Venatici",
+      "pageid": 35269,
+      "revid": 175533518,
+      "timestamp": "2026-09-26T06:12:21Z",
+      "topic": "astronomía",
+      "words": 2108,
+      "sha256": "d7cf41ae59b0946279ae88fdfec2cc76f83f21a6e95c3c3fc630d6ce23b9087b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175533518"
+    },
+    {
+      "title": "Carina",
+      "pageid": 35267,
+      "revid": 175504972,
+      "timestamp": "2026-09-24T07:15:30Z",
+      "topic": "astronomía",
+      "words": 3120,
+      "sha256": "17aaf3e906889b4243e7a98157b0b74ef11d664ca22ef4760b8330eabca42f71",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175504972"
+    },
+    {
+      "title": "Carta estelar",
+      "pageid": 7391411,
+      "revid": 175159238,
+      "timestamp": "2026-09-02T15:45:16Z",
+      "topic": "astronomía",
+      "words": 1749,
+      "sha256": "956309254dcf8569f8b39e7296748ddbd83bf646cc789b89d99f1a12ba9b4bfe",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175159238"
+    },
+    {
+      "title": "Chamaeleon",
+      "pageid": 286715,
+      "revid": 175101930,
+      "timestamp": "2026-08-30T01:10:05Z",
+      "topic": "astronomía",
+      "words": 709,
+      "sha256": "cb87a49ebe24aba151838fa591e84c4c0f0b0a16f7481f581c580fa1f77fc934",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175101930"
+    },
+    {
+      "title": "Cheonsang Yeolcha Bunyajido",
+      "pageid": 7356618,
+      "revid": 160318716,
+      "timestamp": "2024-05-24T15:43:37Z",
+      "topic": "astronomía",
+      "words": 526,
+      "sha256": "3f5e7601dbc10f0af157fae3d77f9c281b5e6a9bb15e0a5493ff3e2d529460ab",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=160318716"
+    },
+    {
+      "title": "Circinus",
+      "pageid": 287329,
+      "revid": 176315002,
+      "timestamp": "2026-11-15T22:18:18Z",
+      "topic": "astronomía",
+      "words": 1065,
+      "sha256": "555b889d040c374e051eda827f5918e765b777f0d7f117d5335368dc76457ff8",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176315002"
+    },
+    {
+      "title": "Columba (constelación)",
+      "pageid": 288493,
+      "revid": 174426493,
+      "timestamp": "2026-07-18T06:00:56Z",
+      "topic": "astronomía",
+      "words": 1275,
+      "sha256": "0ab25d3731d1985e036026dad152ba7a853869302212ff6b5f92970d53d512f6",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174426493"
+    },
+    {
+      "title": "Coma Berenices",
+      "pageid": 14678,
+      "revid": 175996609,
+      "timestamp": "2026-10-25T18:13:42Z",
+      "topic": "astronomía",
+      "words": 2846,
+      "sha256": "793500d585f2d7fa8bdef47f2a123fea66407617365ec9a88865385943346c10",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175996609"
+    },
+    {
+      "title": "Constelación",
+      "pageid": 441,
+      "revid": 176030618,
+      "timestamp": "2026-10-27T21:04:13Z",
+      "topic": "astronomía",
+      "words": 5044,
+      "sha256": "4feb8b64687f09d92befb4a37c1c06ed47ac5b1d91a582f40886ded9a79fa3f0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176030618"
+    },
+    {
+      "title": "Constelaciones chinas",
+      "pageid": 1174056,
+      "revid": 176159452,
+      "timestamp": "2026-11-05T13:32:48Z",
+      "topic": "astronomía",
+      "words": 2948,
+      "sha256": "297ef294186a0b388525596eb5f77e46d953d039e89041a3b3c25c92a1124148",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176159452"
+    },
+    {
+      "title": "Vulpecula",
+      "pageid": 35313,
+      "revid": 176182112,
+      "timestamp": "2026-11-06T22:40:29Z",
+      "topic": "astronomía",
+      "words": 1745,
+      "sha256": "c3be3be562d9bf9a9918dd89f959cb7bff995e96f41b6b496dca7d7e55145069",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176182112"
+    },
+    {
+      "title": "Crux",
+      "pageid": 35513,
+      "revid": 175580292,
+      "timestamp": "2026-09-29T11:34:51Z",
+      "topic": "astronomía",
+      "words": 2202,
+      "sha256": "b2f8db6ae3bd558db51bfcabbcd55b6b0a5a15c8d7f395acd4c1ca13e55b2ccd",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175580292"
+    },
+    {
+      "title": "Decano (astrología)",
+      "pageid": 6278516,
+      "revid": 157491349,
+      "timestamp": "2024-01-22T15:09:43Z",
+      "topic": "astronomía",
+      "words": 680,
+      "sha256": "4cc44d84267cce85aee6c46bae08365b66c9b100f65c6d825a92f1fb62e51c5e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157491349"
+    },
+    {
+      "title": "Decano (astronomía)",
+      "pageid": 8426446,
+      "revid": 175670323,
+      "timestamp": "2026-10-05T09:22:09Z",
+      "topic": "astronomía",
+      "words": 1272,
+      "sha256": "eccedd530a493189f4c23efbb76da45df7f1f30900b6c75e15a81f2402133d61",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175670323"
+    },
+    {
+      "title": "Dorado (constelación)",
+      "pageid": 256819,
+      "revid": 175462068,
+      "timestamp": "2026-09-21T09:27:24Z",
+      "topic": "astronomía",
+      "words": 1721,
+      "sha256": "54bb24f2b4447521e709ac13b77d17adb35118c3f057757a66e54a38c98b5e0b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175462068"
+    },
+    {
+      "title": "Fénix (constelación)",
+      "pageid": 286666,
+      "revid": 171971750,
+      "timestamp": "2026-02-09T10:19:56Z",
+      "topic": "astronomía",
+      "words": 1301,
+      "sha256": "19956ca1e9e681081fa6ae40d9c48bc8fc0238f73458398c9060a9983da99981",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171971750"
+    },
+    {
+      "title": "Fornax (constelación)",
+      "pageid": 10639856,
+      "revid": 173371947,
+      "timestamp": "2026-05-09T09:19:02Z",
+      "topic": "astronomía",
+      "words": 1663,
+      "sha256": "db3333cbfcce0bbd61a57f640362e5dd7d8025823b28826179b2b74d4399db92",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173371947"
+    },
+    {
+      "title": "Grus (constelación)",
+      "pageid": 288447,
+      "revid": 175577740,
+      "timestamp": "2026-09-29T06:06:25Z",
+      "topic": "astronomía",
+      "words": 1382,
+      "sha256": "0ebb7504b1df36337ac74c69090bf7cf21b86726a3f730790d743b4cf215bbe8",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175577740"
+    },
+    {
+      "title": "Horologium",
+      "pageid": 287374,
+      "revid": 171402932,
+      "timestamp": "2026-01-08T22:03:59Z",
+      "topic": "astronomía",
+      "words": 744,
+      "sha256": "ce0145d110cc9d1c06917b2fa8c213c2169f76786df9846fb0f3dad8341c5306",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171402932"
+    },
+    {
+      "title": "Hydrus",
+      "pageid": 288471,
+      "revid": 174998917,
+      "timestamp": "2026-08-24T01:32:21Z",
+      "topic": "astronomía",
+      "words": 1134,
+      "sha256": "10412415075182d8f34497e7bbd7e2ebd4c1f7f3fa6dfd4e1d5ed0648456d0e3",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174998917"
+    },
+    {
+      "title": "Lacerta",
+      "pageid": 35516,
+      "revid": 174896753,
+      "timestamp": "2026-08-17T17:27:08Z",
+      "topic": "astronomía",
+      "words": 1394,
+      "sha256": "28042b70b4b4f499d772549f292641e0826f12b95f961cbadc13178ae47602d0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174896753"
+    },
+    {
+      "title": "Leo Minor",
+      "pageid": 286707,
+      "revid": 165743109,
+      "timestamp": "2025-02-28T01:17:27Z",
+      "topic": "astronomía",
+      "words": 1738,
+      "sha256": "4e3282a6d108e84a6840aeca44cca4ce9f7527d57b83a1bb7145d987cf587558",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=165743109"
+    },
+    {
+      "title": "Lynx (constelación)",
+      "pageid": 286717,
+      "revid": 175220426,
+      "timestamp": "2026-09-06T10:51:13Z",
+      "topic": "astronomía",
+      "words": 1588,
+      "sha256": "86564d0fbf2f51c841ae94513a0c21b4ad8392e758bc5b7b69e014876e3fee92",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175220426"
+    },
+    {
+      "title": "Mensa (constelación)",
+      "pageid": 287429,
+      "revid": 172902846,
+      "timestamp": "2026-04-09T13:58:27Z",
+      "topic": "astronomía",
+      "words": 865,
+      "sha256": "2fc552995b27c805e9b369658377ec5e6367cae8a29b271200bd54e4e9a77a31",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172902846"
+    },
+    {
+      "title": "Microscopium",
+      "pageid": 287645,
+      "revid": 139363761,
+      "timestamp": "2021-10-29T08:02:54Z",
+      "topic": "astronomía",
+      "words": 696,
+      "sha256": "f8f04cbe95dc6ed0f19711a72b7ed7cfcdc936bd43d0f08afc39a026cdf7614a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=139363761"
+    },
+    {
+      "title": "Monoceros",
+      "pageid": 35268,
+      "revid": 172223462,
+      "timestamp": "2026-02-24T20:42:40Z",
+      "topic": "astronomía",
+      "words": 1707,
+      "sha256": "2b3094d1df834c44e5fccb6340b2893173f99a17c5945d2fbc5cfd6b3c6237d7",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172223462"
+    },
+    {
+      "title": "Musca",
+      "pageid": 287003,
+      "revid": 171638631,
+      "timestamp": "2026-01-21T17:21:26Z",
+      "topic": "astronomía",
+      "words": 1478,
+      "sha256": "78f377bf2071be4535cbf8bfa14017c27287e5b18d40232f9cec463b04c33a19",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171638631"
+    },
+    {
+      "title": "NGC 4993",
+      "pageid": 11362827,
+      "revid": 176327216,
+      "timestamp": "2026-11-16T17:38:58Z",
+      "topic": "astronomía",
+      "words": 685,
+      "sha256": "d579c67c4b1752863ee645486db5145af547c91010fe08696de8f39e567ade50",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176327216"
+    },
+    {
+      "title": "Norma (constelación)",
+      "pageid": 35529,
+      "revid": 175548467,
+      "timestamp": "2026-09-27T09:43:08Z",
+      "topic": "astronomía",
+      "words": 1299,
+      "sha256": "a9e184251053da92c6771de02f851b8193c2b7c1632e693a3c85b7277671efbe",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175548467"
+    },
+    {
+      "title": "Octans",
+      "pageid": 287653,
+      "revid": 172941871,
+      "timestamp": "2026-04-12T07:43:36Z",
+      "topic": "astronomía",
+      "words": 735,
+      "sha256": "9c331a04c554f3bf1637ad41922956e239f83ba1bd7a35f5894d190762212f42",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172941871"
+    },
+    {
+      "title": "Pavo (constelación)",
+      "pageid": 35297,
+      "revid": 168411216,
+      "timestamp": "2025-07-11T18:26:46Z",
+      "topic": "astronomía",
+      "words": 2315,
+      "sha256": "799939cd45151896c1e0e5b6a709136c4a0e9f1ec26eeb678c752885c9986562",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168411216"
+    },
+    {
+      "title": "Pictor",
+      "pageid": 287683,
+      "revid": 157768908,
+      "timestamp": "2024-01-27T18:45:27Z",
+      "topic": "astronomía",
+      "words": 951,
+      "sha256": "0fec5c94abeab31cf180ef8edb38ec12853460025a1e7c4919aca3c438916385",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157768908"
+    },
+    {
+      "title": "Puppis",
+      "pageid": 288478,
+      "revid": 176296018,
+      "timestamp": "2026-11-14T16:03:03Z",
+      "topic": "astronomía",
+      "words": 2939,
+      "sha256": "8b769a463f8b028f48c515f2e0a016b506dc59025200024fb3526f2833ccd683",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176296018"
+    },
+    {
+      "title": "Brújula (constelación)",
+      "pageid": 29731,
+      "revid": 174981132,
+      "timestamp": "2026-08-23T00:28:14Z",
+      "topic": "astronomía",
+      "words": 1358,
+      "sha256": "6fed753bcb3ce8eba185aa620457669b8f47010ff0dc725c044194413b38b292",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174981132"
+    },
+    {
+      "title": "Lenguaje de programación",
+      "pageid": 506132,
+      "revid": 176281049,
+      "timestamp": "2026-11-13T14:19:36Z",
+      "topic": "informática",
+      "words": 6659,
+      "sha256": "10ccbbd3b8e485217f94054f3f3e1d3a3eb8d2b0ab35edba688e1be782836e42",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176281049"
+    },
+    {
+      "title": "1C: Enterprise script",
+      "pageid": 8894926,
+      "revid": 120834556,
+      "timestamp": "2019-10-28T20:57:38Z",
+      "topic": "informática",
+      "words": 456,
+      "sha256": "4783baf5b079229f28c9bf94e3dc539fee7fb0679bdcb90da6fb36d51ea0fcce",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120834556"
+    },
+    {
+      "title": "A Sharp (Axiom)",
+      "pageid": 5483456,
+      "revid": 118061243,
+      "timestamp": "2019-08-07T07:25:08Z",
+      "topic": "informática",
+      "words": 235,
+      "sha256": "a25b42a9136928212005da0b22a443af328ef99cff244cf7a4e28f0d44a31278",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=118061243"
+    },
+    {
+      "title": "A+ (lenguaje de programación)",
+      "pageid": 5502162,
+      "revid": 150943279,
+      "timestamp": "2023-05-04T02:32:50Z",
+      "topic": "informática",
+      "words": 355,
+      "sha256": "1e0793db5bec014d5570cd4c8475ccff9fa94b1f49aae9e60e8831d02fa0230a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=150943279"
+    },
+    {
+      "title": "ACC (lenguaje de programación)",
+      "pageid": 5534939,
+      "revid": 118062684,
+      "timestamp": "2019-08-07T09:50:55Z",
+      "topic": "informática",
+      "words": 131,
+      "sha256": "43567949e2e2ef4d8e56a5dd9f2f34ab3f4f11616aba0223d1d860b962b37e36",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=118062684"
+    },
+    {
+      "title": "Address (lenguaje de programación)",
+      "pageid": 10465226,
+      "revid": 163174941,
+      "timestamp": "2024-10-23T05:32:55Z",
+      "topic": "informática",
+      "words": 267,
+      "sha256": "32684aa5f6f5ba217c6ade81617cce646a852cdd55791c5840a3e9db3975b535",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=163174941"
+    },
+    {
+      "title": "AIML",
+      "pageid": 259918,
+      "revid": 160878035,
+      "timestamp": "2024-06-21T12:58:27Z",
+      "topic": "informática",
+      "words": 500,
+      "sha256": "3a561673a3079c007f9330ebc4413686ecf3a877b98b91376415ea190ea6ef9c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=160878035"
+    },
+    {
+      "title": "ALGOL",
+      "pageid": 156,
+      "revid": 175298122,
+      "timestamp": "2026-09-11T07:26:30Z",
+      "topic": "informática",
+      "words": 523,
+      "sha256": "7cd7d96ef9c2a9e938c975c86c604384d5a47911e0939f48a0461378cd26b90c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175298122"
+    },
+    {
+      "title": "Apex (lenguaje de programación)",
+      "pageid": 11287231,
+      "revid": 173342602,
+      "timestamp": "2026-05-07T06:46:58Z",
+      "topic": "informática",
+      "words": 511,
+      "sha256": "9880cedc19a08a2e0e3d92167ee44a22f9673cd460f55e68bfa2a4656dedb512",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173342602"
+    },
+    {
+      "title": "Archivo batch",
+      "pageid": 1703358,
+      "revid": 176267705,
+      "timestamp": "2026-11-12T15:54:18Z",
+      "topic": "informática",
+      "words": 1341,
+      "sha256": "f2fd984fd0a7e1314456c3c75d54914458421722410c17fbdc76641577dc6b9a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176267705"
+    },
+    {
+      "title": "Augus",
+      "pageid": 9443772,
+      "revid": 138823272,
+      "timestamp": "2021-10-06T21:37:44Z",
+      "topic": "informática",
+      "words": 655,
+      "sha256": "9ce4d981d64005fd50a6cb2ef1d009048c2443a9b2a2352775f65e6c43cca295",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=138823272"
+    },
+    {
+      "title": "Autolisp",
+      "pageid": 3611983,
+      "revid": 173592402,
+      "timestamp": "2026-05-23T01:28:23Z",
+      "topic": "informática",
+      "words": 374,
+      "sha256": "5b457ac398f3ba2dd538714235405a40c0b9493de880e6bcbef7fe282690c247",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173592402"
+    },
+    {
+      "title": "Axiom",
+      "pageid": 378057,
+      "revid": 174789383,
+      "timestamp": "2026-08-10T15:12:21Z",
+      "topic": "informática",
+      "words": 148,
+      "sha256": "98c1ad72cdbb10adf9e765b69b67aebb4d4b6ece60e3cea700f874de5371bd6b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174789383"
+    },
+    {
+      "title": "Lenguaje de bajo nivel",
+      "pageid": 13513,
+      "revid": 172674103,
+      "timestamp": "2026-03-25T17:38:10Z",
+      "topic": "informática",
+      "words": 800,
+      "sha256": "c3869644b1f3433c3c8ecb1f2b38b76ca03809ff79ccc2d47729980d743feebe",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172674103"
+    },
+    {
+      "title": "Bc (lenguaje de programación)",
+      "pageid": 574282,
+      "revid": 174851097,
+      "timestamp": "2026-08-14T20:46:38Z",
+      "topic": "informática",
+      "words": 728,
+      "sha256": "d1567f6aaeeba792350190c61daaef8d28d299c3b627c1107cfc3cdd4375a86d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174851097"
+    },
+    {
+      "title": "BETA (lenguaje de programación)",
+      "pageid": 10283857,
+      "revid": 173643344,
+      "timestamp": "2026-05-26T06:27:24Z",
+      "topic": "informática",
+      "words": 598,
+      "sha256": "ed5004b3d6bc138e66aec614bce8ddc98b85a2fdd76e727482657ef8457dcbad",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173643344"
+    },
+    {
+      "title": "BISON",
+      "pageid": 7036887,
+      "revid": 124014203,
+      "timestamp": "2020-03-04T19:47:42Z",
+      "topic": "informática",
+      "words": 355,
+      "sha256": "daa7aa22ce52d1f1341439ee923e80762a22b78ef0bcc7bdadb83b8bcffce29a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=124014203"
+    },
+    {
+      "title": "C Sharp",
+      "pageid": 6223,
+      "revid": 174426998,
+      "timestamp": "2026-07-18T07:01:29Z",
+      "topic": "informática",
+      "words": 4022,
+      "sha256": "0b34a8b64a383c7595f206c0c6ee79c14c25d3a80d97264a691b397f7a74475e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174426998"
+    },
+    {
+      "title": "Carbon (lenguaje)",
+      "pageid": 11512834,
+      "revid": 175873750,
+      "timestamp": "2026-10-17T20:04:55Z",
+      "topic": "informática",
+      "words": 228,
+      "sha256": "54d1696673a006ac5fa1451f15c60631ef11bddc4d7f88ae4318a93369209b28",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175873750"
+    },
+    {
+      "title": "CFML",
+      "pageid": 399072,
+      "revid": 127542689,
+      "timestamp": "2020-07-07T08:12:52Z",
+      "topic": "informática",
+      "words": 81,
+      "sha256": "e1025ed88cc2131cc1e8b1eb213389195edfb743948541330c0dde4ba3eeb1fe",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=127542689"
+    },
+    {
+      "title": "Cg (lenguaje de programación)",
+      "pageid": 2070550,
+      "revid": 153876977,
+      "timestamp": "2023-09-20T08:42:01Z",
+      "topic": "informática",
+      "words": 788,
+      "sha256": "8462529757f0e4c3701d2fa9f17a2569675da4d3c77581eab759f690bc907113",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=153876977"
+    },
+    {
+      "title": "Characteristica universalis",
+      "pageid": 5475149,
+      "revid": 174415845,
+      "timestamp": "2026-07-17T15:15:53Z",
+      "topic": "informática",
+      "words": 240,
+      "sha256": "6eba9992fb7e4214523a15f7aff27f0788278943b85e33a0a22d2a74f2b39046",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174415845"
+    },
+    {
+      "title": "CHIP-8",
+      "pageid": 2552106,
+      "revid": 174389910,
+      "timestamp": "2026-07-15T18:27:22Z",
+      "topic": "informática",
+      "words": 941,
+      "sha256": "dcf9d7046432ee7cbfb0d20831d82f10716030dd441b5a75efe64a05bf2d42cf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174389910"
+    },
+    {
+      "title": "Cilk",
+      "pageid": 6099961,
+      "revid": 175324922,
+      "timestamp": "2026-09-12T22:58:23Z",
+      "topic": "informática",
+      "words": 1970,
+      "sha256": "3fb1b1a78a883399d9f392d1245cb9f5202577a5170935444ef18ff72dce9e07",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175324922"
+    },
+    {
+      "title": "Clipper (lenguaje de programación)",
+      "pageid": 738,
+      "revid": 175380818,
+      "timestamp": "2026-09-16T05:03:53Z",
+      "topic": "informática",
+      "words": 1896,
+      "sha256": "df2914e5f90524c462ea5587ab0317ee1c0f51a81e79322748ff7878f703870f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175380818"
+    },
+    {
+      "title": "CLIPS",
+      "pageid": 266259,
+      "revid": 175768307,
+      "timestamp": "2026-10-11T00:53:13Z",
+      "topic": "informática",
+      "words": 1376,
+      "sha256": "855796a3e98f6617f99ef1901defe6c7b749574cf48ba338c8838324ea0023bc",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175768307"
+    },
+    {
+      "title": "Código gestionado",
+      "pageid": 1891456,
+      "revid": 175534293,
+      "timestamp": "2026-09-26T08:36:14Z",
+      "topic": "informática",
+      "words": 229,
+      "sha256": "3df9afff18a8afa89a7eb574c8797e6db45c38c21641e2ce533b4787c698b2ee",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175534293"
+    },
+    {
+      "title": "Código inflado",
+      "pageid": 6305643,
+      "revid": 171299703,
+      "timestamp": "2026-01-02T22:08:52Z",
+      "topic": "informática",
+      "words": 662,
+      "sha256": "b90bc9e204be1c459a7df4ca0a0bf26233efd172231ec6a17e2c4eea5844788f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171299703"
+    },
+    {
+      "title": "CoffeeScript",
+      "pageid": 5320338,
+      "revid": 175696523,
+      "timestamp": "2026-10-06T21:07:30Z",
+      "topic": "informática",
+      "words": 602,
+      "sha256": "1b3e79fbf6d2cb23050d29423e237151609ae2216ae16d2c2edd3042cca0a7a5",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175696523"
+    },
+    {
+      "title": "COMAL",
+      "pageid": 864454,
+      "revid": 173668354,
+      "timestamp": "2026-05-27T18:22:07Z",
+      "topic": "informática",
+      "words": 144,
+      "sha256": "a07f44b8317e678f36ad8e81ffc03ba3c9d504f574a1365e18af017d24676f07",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173668354"
+    },
+    {
+      "title": "Combined Programming Language",
+      "pageid": 768873,
+      "revid": 157622168,
+      "timestamp": "2024-01-24T14:16:17Z",
+      "topic": "informática",
+      "words": 248,
+      "sha256": "da0fdae47596e66e76b9a587bb808e9abc9aa8303d67ae20ae938bbbd019ea90",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157622168"
+    },
+    {
+      "title": "Comet",
+      "pageid": 366530,
+      "revid": 175441199,
+      "timestamp": "2026-09-19T19:37:17Z",
+      "topic": "informática",
+      "words": 538,
+      "sha256": "553f28429154afd67efebbb1640a2707e6c5310178201f00409d3427eccffbeb",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175441199"
+    },
+    {
+      "title": "COMIT",
+      "pageid": 896102,
+      "revid": 117910292,
+      "timestamp": "2019-08-01T13:20:21Z",
+      "topic": "informática",
+      "words": 99,
+      "sha256": "1a0a257ed8a422c224f48a160c576fecd162bd8d31ec52cde72217463b2d09ca",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=117910292"
+    },
+    {
+      "title": "Common Music",
+      "pageid": 254454,
+      "revid": 117851870,
+      "timestamp": "2019-07-30T11:17:07Z",
+      "topic": "informática",
+      "words": 293,
+      "sha256": "9b0e2b2069dc322876869b6f3e143edfbc21bde21cda1cbfcb974913ff82067a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=117851870"
+    },
+    {
+      "title": "D (lenguaje de programación)",
+      "pageid": 117190,
+      "revid": 159995759,
+      "timestamp": "2024-05-08T23:50:39Z",
+      "topic": "informática",
+      "words": 1612,
+      "sha256": "d0289fd0da24e0c1e9ea316785d3a0826a108c5f6d6428aafdc3b8cf9b8a7df8",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=159995759"
+    },
+    {
+      "title": "Dafny",
+      "pageid": 8775914,
+      "revid": 159327541,
+      "timestamp": "2024-04-09T21:53:38Z",
+      "topic": "informática",
+      "words": 1073,
+      "sha256": "a0db59a4b2fcc18512298315ad0c6ed4c958880bd28a99825e997391ddfdf260",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=159327541"
+    },
+    {
+      "title": "Dart",
+      "pageid": 4899063,
+      "revid": 164853030,
+      "timestamp": "2025-01-19T05:43:45Z",
+      "topic": "informática",
+      "words": 526,
+      "sha256": "3da5c02f6f9b49ad0fc052120960b7304ad87438330d3bdab28f57509f883f02",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=164853030"
+    },
+    {
+      "title": "Data Language/Interface",
+      "pageid": 1388214,
+      "revid": 124560762,
+      "timestamp": "2020-03-25T21:10:34Z",
+      "topic": "informática",
+      "words": 335,
+      "sha256": "6eadd15ebd2da3d81279c03e44d96ff56cfeb4774db942ee20e6d9f05b497ffd",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=124560762"
+    },
+    {
+      "title": "Dialecto (programación)",
+      "pageid": 5232905,
+      "revid": 150904511,
+      "timestamp": "2023-05-02T03:51:50Z",
+      "topic": "informática",
+      "words": 167,
+      "sha256": "ec1f82a966195fdfa4427a3659f67efe582237952a119b7d298477a77090ea55",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=150904511"
+    },
+    {
+      "title": "Dicotomía de Ousterhout",
+      "pageid": 176332,
+      "revid": 153573308,
+      "timestamp": "2023-09-06T12:48:57Z",
+      "topic": "informática",
+      "words": 355,
+      "sha256": "003a529a56cfd2418fef258b6e11bc3a813b5417f5d057d86aa2b29e39a8a085",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=153573308"
+    },
+    {
+      "title": "Enfermedad infecciosa",
+      "pageid": 63897,
+      "revid": 175827419,
+      "timestamp": "2026-10-14T19:50:04Z",
+      "topic": "medicina",
+      "words": 5016,
+      "sha256": "a4d598730f15c6b1b1e4cec572cefd162c14e8e66b1d1338cb22054358f80830",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175827419"
+    },
+    {
+      "title": "Absceso cerebral",
+      "pageid": 7678325,
+      "revid": 167344052,
+      "timestamp": "2025-05-12T09:01:08Z",
+      "topic": "medicina",
+      "words": 934,
+      "sha256": "3169b92ab4311c67380d5742f84f87c521f89ad98713e276266a154be2324e2b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=167344052"
+    },
+    {
+      "title": "Absceso del psoas",
+      "pageid": 3646912,
+      "revid": 173106406,
+      "timestamp": "2026-04-22T16:12:39Z",
+      "topic": "medicina",
+      "words": 308,
+      "sha256": "0bc030d0975dcffe1a83415ed2d4cf7c0dd4d70dd20095c5157e149daf05dd58",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173106406"
+    },
+    {
+      "title": "Absceso hepático",
+      "pageid": 1897201,
+      "revid": 171034379,
+      "timestamp": "2025-12-17T10:53:12Z",
+      "topic": "medicina",
+      "words": 1870,
+      "sha256": "612485c09d97baaf35c54f05d414cacf27131fe9ca988a9c023f7727e1763af9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171034379"
+    },
+    {
+      "title": "Actinomicosis",
+      "pageid": 1735598,
+      "revid": 170967337,
+      "timestamp": "2025-12-13T19:29:29Z",
+      "topic": "medicina",
+      "words": 886,
+      "sha256": "04ed1d26067d484ec657c2ac4b43581c54effc2131e011096e935258907ea5fb",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170967337"
+    },
+    {
+      "title": "Adenoiditis",
+      "pageid": 832312,
+      "revid": 159063025,
+      "timestamp": "2024-03-27T15:09:05Z",
+      "topic": "medicina",
+      "words": 226,
+      "sha256": "f4d0b13dc45bfe8c013f8dcb34be5bcfa05f38a1f93df680cab1df24e8226763",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=159063025"
+    },
+    {
+      "title": "Neumonía adquirida en la comunidad",
+      "pageid": 1703614,
+      "revid": 174485872,
+      "timestamp": "2026-07-21T21:51:05Z",
+      "topic": "medicina",
+      "words": 4161,
+      "sha256": "12f3285274fe061c3047d3260d6190a39044b81f8804c6c3a06de8f8615cf516",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174485872"
+    },
+    {
+      "title": "Aislamiento (sanidad)",
+      "pageid": 9741627,
+      "revid": 175003030,
+      "timestamp": "2026-08-24T08:06:06Z",
+      "topic": "medicina",
+      "words": 692,
+      "sha256": "0e16e3c57493eaf9bba4c428186cb886036a78238245399baa68a87092ae4a8e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175003030"
+    },
+    {
+      "title": "Anaplasmosis granulocítica humana",
+      "pageid": 1901916,
+      "revid": 172511216,
+      "timestamp": "2026-03-15T08:38:40Z",
+      "topic": "medicina",
+      "words": 224,
+      "sha256": "4bdb1d17c6310c179cc2278774c82346a8cd9a2c6beb66881dd07b898c190bc2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172511216"
+    },
+    {
+      "title": "Aneurisma micótico",
+      "pageid": 7885263,
+      "revid": 157244604,
+      "timestamp": "2024-01-16T15:13:18Z",
+      "topic": "medicina",
+      "words": 606,
+      "sha256": "9f0be374272013a0076463bbee6c76cdadee3d73f37608a3afb431afc8cf479e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157244604"
+    },
+    {
+      "title": "Anisakiasis",
+      "pageid": 449409,
+      "revid": 176226010,
+      "timestamp": "2026-11-09T20:13:12Z",
+      "topic": "medicina",
+      "words": 187,
+      "sha256": "2c9a52db0a601b0e1876394d50bc2eaa85c836778e19d9178a509e9abd00836f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176226010"
+    },
+    {
+      "title": "Antibiograma",
+      "pageid": 2326672,
+      "revid": 174644983,
+      "timestamp": "2026-08-01T09:28:06Z",
+      "topic": "medicina",
+      "words": 434,
+      "sha256": "3c39e00728a676e400dcd5b2d306f99373a036dd4850699e4c12b7e4780e52cf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174644983"
+    },
+    {
+      "title": "Ántrax (forunculosis)",
+      "pageid": 41462,
+      "revid": 162660263,
+      "timestamp": "2024-09-25T16:16:35Z",
+      "topic": "medicina",
+      "words": 464,
+      "sha256": "1cb98ad2971d5fe14d4c31092d576fc6814a0e8ddc84836a0b7cc6b914192f8c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=162660263"
+    },
+    {
+      "title": "Autoinfección",
+      "pageid": 2423078,
+      "revid": 120670240,
+      "timestamp": "2019-10-22T23:29:42Z",
+      "topic": "medicina",
+      "words": 99,
+      "sha256": "df51d36b164fb54b699a0e8a5a9022bdc46b5cb5083a8fe7ffdf2bd385e1e3a4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120670240"
+    },
+    {
+      "title": "Babesiosis",
+      "pageid": 1180924,
+      "revid": 175865608,
+      "timestamp": "2026-10-17T05:41:11Z",
+      "topic": "medicina",
+      "words": 830,
+      "sha256": "6e46ee49c8ad62cbf98dc76e0b38630daa21ebda13e0b761976c5b5454f79b21",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175865608"
+    },
+    {
+      "title": "Bartonella",
+      "pageid": 1395661,
+      "revid": 170077519,
+      "timestamp": "2025-10-20T09:20:14Z",
+      "topic": "medicina",
+      "words": 597,
+      "sha256": "46bbd31722254e8fb113f33b776f481742e1d2918619b6546361e203481b5c32",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170077519"
+    },
+    {
+      "title": "Bartonelosis",
+      "pageid": 35904,
+      "revid": 175299084,
+      "timestamp": "2026-09-11T09:29:47Z",
+      "topic": "medicina",
+      "words": 1189,
+      "sha256": "7df07b2bcb58fa97b6df51461a74c6792e0c95899aef52e91655fe65ea650751",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175299084"
+    },
+    {
+      "title": "Borrelia hermsii",
+      "pageid": 7679280,
+      "revid": 168735288,
+      "timestamp": "2025-07-30T19:11:19Z",
+      "topic": "medicina",
+      "words": 607,
+      "sha256": "a53e7bdd33ffa1f1ac60fe5966ea6c8660897b63df5485aeeb211e6db4ec43c3",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168735288"
+    },
+    {
+      "title": "Borrelia recurrentis",
+      "pageid": 1318135,
+      "revid": 168735297,
+      "timestamp": "2025-07-30T19:12:01Z",
+      "topic": "medicina",
+      "words": 602,
+      "sha256": "2b39137333b1a28d7017c3f3a33e9f4e9d3ed79445b5d55e833af8da94fbdcd9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168735297"
+    },
+    {
+      "title": "Brucelosis",
+      "pageid": 104128,
+      "revid": 174473356,
+      "timestamp": "2026-07-21T03:41:13Z",
+      "topic": "medicina",
+      "words": 3330,
+      "sha256": "7a77e7d2f515c04f2f0b3da7e56547a937cd328c24a7c22ed85eae22a2cdcc69",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174473356"
+    },
+    {
+      "title": "Caries",
+      "pageid": 37432,
+      "revid": 176226387,
+      "timestamp": "2026-11-09T20:41:18Z",
+      "topic": "medicina",
+      "words": 2934,
+      "sha256": "234bc9ab1f1b91d8490cf11d451e3bdb7fac3046de9a5ded26622aafa1787696",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176226387"
+    },
+    {
+      "title": "Cáseum",
+      "pageid": 5977333,
+      "revid": 118712512,
+      "timestamp": "2019-08-30T09:43:48Z",
+      "topic": "medicina",
+      "words": 117,
+      "sha256": "6150b4916a442c6f216d1ba6bb9fa93af63c2abccdcce092e015ee4334884d83",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=118712512"
+    },
+    {
+      "title": "Centro de Investigación y Política de Enfermedades Infecciosas",
+      "pageid": 11023251,
+      "revid": 175235320,
+      "timestamp": "2026-09-07T07:16:17Z",
+      "topic": "medicina",
+      "words": 578,
+      "sha256": "6f6d04337fc441607317fbcc15d125bb89b5dcb961b30a5dfc97706d8a9f38c0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175235320"
+    },
+    {
+      "title": "Cerebritis",
+      "pageid": 741690,
+      "revid": 119497341,
+      "timestamp": "2019-09-18T15:43:47Z",
+      "topic": "medicina",
+      "words": 270,
+      "sha256": "0b50f840b301c5dd2eea36de737b861792a42270fdcc478bc193cbdfaa4180a2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=119497341"
+    },
+    {
+      "title": "Chikunguña",
+      "pageid": 284370,
+      "revid": 174113315,
+      "timestamp": "2026-06-26T01:30:23Z",
+      "topic": "medicina",
+      "words": 2135,
+      "sha256": "5ae49aa9d03d498d9c2de2504071e6bd16b05e23add448c882b425c41749a6e9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174113315"
+    },
+    {
+      "title": "Choque séptico",
+      "pageid": 712857,
+      "revid": 174420740,
+      "timestamp": "2026-07-17T21:50:04Z",
+      "topic": "medicina",
+      "words": 2576,
+      "sha256": "5d3d7e1d95beb30c2a521ff0502e6889c1d5470feb4539e89121f31e36257216",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174420740"
+    },
+    {
+      "title": "Cigomicosis",
+      "pageid": 4710079,
+      "revid": 175324594,
+      "timestamp": "2026-09-12T22:37:18Z",
+      "topic": "medicina",
+      "words": 470,
+      "sha256": "ea47ac821fb1f26565dabb9e75bb0e11e0bcbd57dc751a7cf2a580a773ce9b5b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175324594"
+    },
+    {
+      "title": "Cistitis",
+      "pageid": 36486,
+      "revid": 171342917,
+      "timestamp": "2026-01-05T05:41:13Z",
+      "topic": "medicina",
+      "words": 635,
+      "sha256": "a568d292c35de277b6ac609237ef577c72761c0589eece96b9f5e9acbaa53a12",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171342917"
+    },
+    {
+      "title": "Citotoxina traqueal",
+      "pageid": 94986,
+      "revid": 166939700,
+      "timestamp": "2025-04-19T08:04:55Z",
+      "topic": "medicina",
+      "words": 90,
+      "sha256": "896fa21c2608ea44bfb45d927bc14cb6c7885870af6d29a9fa9cb992c1fd28a9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=166939700"
+    },
+    {
+      "title": "Colesteatoma",
+      "pageid": 1197436,
+      "revid": 167570309,
+      "timestamp": "2025-05-23T21:52:34Z",
+      "topic": "medicina",
+      "words": 511,
+      "sha256": "b31b689d86d7a150294af578e2d97439379dbc878dd1aa54ebf946961657ce81",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=167570309"
+    },
+    {
+      "title": "Conjuntivitis",
+      "pageid": 34929,
+      "revid": 174845902,
+      "timestamp": "2026-08-14T14:10:59Z",
+      "topic": "medicina",
+      "words": 440,
+      "sha256": "5b96a23ad01890c8923f06e26449c7af8a91168c0f3361488052d6212e79cf69",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174845902"
+    },
+    {
+      "title": "Contagio intencionado de agentes infecciosos",
+      "pageid": 9044282,
+      "revid": 175506049,
+      "timestamp": "2026-09-24T09:52:15Z",
+      "topic": "medicina",
+      "words": 778,
+      "sha256": "d7d423a5362b129232d9b73cecb64607223e2916f45fecb1a56d73553fc4d9ad",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175506049"
+    },
+    {
+      "title": "Coproparasitología",
+      "pageid": 992028,
+      "revid": 119532731,
+      "timestamp": "2019-09-19T21:48:33Z",
+      "topic": "medicina",
+      "words": 79,
+      "sha256": "68431dbc271e9070182cbaafa016a8d25a67316eca9ba66f5339ec6333a92f79",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=119532731"
+    },
+    {
+      "title": "Dengue",
+      "pageid": 40377,
+      "revid": 176170678,
+      "timestamp": "2026-11-06T00:54:17Z",
+      "topic": "medicina",
+      "words": 7506,
+      "sha256": "3501c2369203e29174d42214526bc60c2555155d684b460e1222c3c7ce8dd4af",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176170678"
+    },
+    {
+      "title": "Dermatofitosis",
+      "pageid": 159197,
+      "revid": 175700445,
+      "timestamp": "2026-10-07T04:09:46Z",
+      "topic": "medicina",
+      "words": 3219,
+      "sha256": "c2ccaae3ef51f9cebfb0a9ce5fd467f4b2ca3f6594b52f3276b85b5f13ce4d6a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175700445"
+    },
+    {
+      "title": "Desviación leucocitaria",
+      "pageid": 9123170,
+      "revid": 162737190,
+      "timestamp": "2024-09-29T20:08:56Z",
+      "topic": "medicina",
+      "words": 537,
+      "sha256": "f326361dc01be2a282a23eae880bffb12f60ddc3c55eac5013d0ae4d38b5675d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=162737190"
+    },
+    {
+      "title": "Diarrea del viajero",
+      "pageid": 3240710,
+      "revid": 168986182,
+      "timestamp": "2025-08-14T20:39:49Z",
+      "topic": "medicina",
+      "words": 2542,
+      "sha256": "a939711f6bf7f67fcb7611fad7f52af1b1f25d131cde2327fa6985f4445d5f8b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168986182"
+    },
+    {
+      "title": "Difilobotriasis",
+      "pageid": 4620841,
+      "revid": 162515518,
+      "timestamp": "2024-09-18T01:15:46Z",
+      "topic": "medicina",
+      "words": 213,
+      "sha256": "d0a3e1b7cf0dcd724cba4db141e3fd290b21eee8eca6683db53018f223e28e95",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=162515518"
+    },
+    {
+      "title": "Discitis",
+      "pageid": 8611654,
+      "revid": 176211982,
+      "timestamp": "2026-11-08T22:36:04Z",
+      "topic": "medicina",
+      "words": 1080,
+      "sha256": "951689548b8a6eea8b0eeb335328240fe66def96c176e7dbaef4985de4c4610b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176211982"
+    },
+    {
+      "title": "Disentería",
+      "pageid": 60426,
+      "revid": 173765138,
+      "timestamp": "2026-06-02T20:41:28Z",
+      "topic": "medicina",
+      "words": 1559,
+      "sha256": "263a8aed8cdec88d7d4ad5ad4bb478a879fa9df981032c24dd4cf7f3854c94ea",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173765138"
+    },
+    {
+      "title": "Instrumento de cuerda",
+      "pageid": 31704,
+      "revid": 175926253,
+      "timestamp": "2026-10-21T00:15:30Z",
+      "topic": "música",
+      "words": 2227,
+      "sha256": "3d6b35ac524a94991fa9a205bfc67dc4cfeb62bffd28d5185772170ffec4a10b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175926253"
+    },
+    {
+      "title": "Abertura acústica",
+      "pageid": 5355198,
+      "revid": 174029673,
+      "timestamp": "2026-06-20T11:44:16Z",
+      "topic": "música",
+      "words": 200,
+      "sha256": "3e51e99f76a245f242bece4d1f615b3633aa910cb57a506856dccfb7eb4fa29e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174029673"
+    },
+    {
+      "title": "Afinación reentrante",
+      "pageid": 6206622,
+      "revid": 172475306,
+      "timestamp": "2026-03-12T23:25:02Z",
+      "topic": "música",
+      "words": 606,
+      "sha256": "8634516f23b0bed1d819bd215a11be3302c30f95af099c6ef54c92f0c7b7a7cd",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172475306"
+    },
+    {
+      "title": "Arco percutor",
+      "pageid": 2119447,
+      "revid": 164937783,
+      "timestamp": "2025-01-23T13:15:57Z",
+      "topic": "música",
+      "words": 83,
+      "sha256": "b0e57c843a875bd775c90cfa12324412ecc469b39dfba18841a36145262b461a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=164937783"
+    },
+    {
+      "title": "Bandolín tachirense",
+      "pageid": 8117252,
+      "revid": 170952371,
+      "timestamp": "2025-12-12T20:47:07Z",
+      "topic": "música",
+      "words": 2669,
+      "sha256": "1be16538e76a4815af99fbfb0ba031a63a846d372bffa73ccdecb1fe2cf01559",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170952371"
+    },
+    {
+      "title": "Buzuki",
+      "pageid": 910091,
+      "revid": 172258277,
+      "timestamp": "2026-02-27T03:05:56Z",
+      "topic": "música",
+      "words": 1361,
+      "sha256": "380be701cc6b60c6321a35d9dcd091271fdfe5cea281abbebbdc9fd54b2b9f61",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172258277"
+    },
+    {
+      "title": "Caja de resonancia",
+      "pageid": 707277,
+      "revid": 172688755,
+      "timestamp": "2026-03-26T16:47:04Z",
+      "topic": "música",
+      "words": 171,
+      "sha256": "133a0ed1ebefe604e7a65c848abe2f6e744b818c7fb42b31253b323b448e3f15",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172688755"
+    },
+    {
+      "title": "Capo",
+      "pageid": 1076717,
+      "revid": 176259523,
+      "timestamp": "2026-11-12T00:36:57Z",
+      "topic": "música",
+      "words": 815,
+      "sha256": "39c2d265cc5141c78202d712b52be6e92602b3bc5ddc1eaf6a7518c9f1acc57c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176259523"
+    },
+    {
+      "title": "Çeng",
+      "pageid": 9222029,
+      "revid": 165158473,
+      "timestamp": "2025-02-02T22:30:19Z",
+      "topic": "música",
+      "words": 1087,
+      "sha256": "8d46175373d8330f4ae23c9dc24c2b23fcf38c300ff2cd59a48223a4a22952a8",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=165158473"
+    },
+    {
+      "title": "Cuatro (instrumento musical)",
+      "pageid": 108134,
+      "revid": 175832263,
+      "timestamp": "2026-10-15T01:28:56Z",
+      "topic": "música",
+      "words": 1177,
+      "sha256": "5eca4e7790d98348a22a418fadd3f700e4d0e337f0bf9663a605fb28fef5cc1a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175832263"
+    },
+    {
+      "title": "Cuerda (música)",
+      "pageid": 1091453,
+      "revid": 170621408,
+      "timestamp": "2025-11-23T10:08:33Z",
+      "topic": "música",
+      "words": 1595,
+      "sha256": "bb912efa9f9b41066d0a8b95de6852b6deafa60ca70635516eb73b25d33e6f16",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170621408"
+    },
+    {
+      "title": "Cuerda de piano",
+      "pageid": 993405,
+      "revid": 151479487,
+      "timestamp": "2023-05-27T22:23:52Z",
+      "topic": "música",
+      "words": 754,
+      "sha256": "8425727fa74b9757e4c2f18aa0fc6b7d280fd2fbdf7e0be5dec4069e24d11e3a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=151479487"
+    },
+    {
+      "title": "Cuerda vibrante",
+      "pageid": 5879763,
+      "revid": 166974415,
+      "timestamp": "2025-04-21T00:39:58Z",
+      "topic": "música",
+      "words": 907,
+      "sha256": "94bdcae54a523433b00b1a44d3eaf14014e372837d00f325cad300b366121e30",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=166974415"
+    },
+    {
+      "title": "Diapasón (instrumento de cuerda)",
+      "pageid": 629614,
+      "revid": 172622543,
+      "timestamp": "2026-03-22T13:50:27Z",
+      "topic": "música",
+      "words": 90,
+      "sha256": "ea1b3e9ef9b3de4899dbd1f30e9f1d7d5c555a4a45830b8ad0890d4941ee6e61",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172622543"
+    },
+    {
+      "title": "Elixir Strings",
+      "pageid": 3197287,
+      "revid": 120678796,
+      "timestamp": "2019-10-23T07:57:03Z",
+      "topic": "música",
+      "words": 84,
+      "sha256": "22550f7a08029f66ac47bf4cf4721f504df8c5fcde00f284520a61419951e760",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120678796"
+    },
+    {
+      "title": "Fabricación artesanal de violines en Cremona",
+      "pageid": 7845367,
+      "revid": 165039240,
+      "timestamp": "2025-01-28T05:33:43Z",
+      "topic": "música",
+      "words": 460,
+      "sha256": "018482ca0286271457988308af56bea75805b2d1f7fb2ac294e945e91327e40a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=165039240"
+    },
+    {
+      "title": "Guitalele",
+      "pageid": 7858999,
+      "revid": 163208705,
+      "timestamp": "2024-10-25T00:18:23Z",
+      "topic": "música",
+      "words": 345,
+      "sha256": "06f4b827a38b97108854f1c9727c8eb6fc6772769489e8417c42a37580dc1111",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=163208705"
+    },
+    {
+      "title": "Guitarra caipira",
+      "pageid": 11428249,
+      "revid": 171989425,
+      "timestamp": "2026-02-10T10:36:32Z",
+      "topic": "música",
+      "words": 107,
+      "sha256": "829559f71acf206845fa758fc60a7c3ffd12809148fe8f6aee481a9aebd1d4b7",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171989425"
+    },
+    {
+      "title": "Guitarra clásica",
+      "pageid": 11175655,
+      "revid": 175430538,
+      "timestamp": "2026-09-19T09:08:43Z",
+      "topic": "música",
+      "words": 4665,
+      "sha256": "fd2d7b13f39913ab3deb61b9b379250f8f44d741bbcf8329af3f909cd576850a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175430538"
+    },
+    {
+      "title": "Guitarra contrabajo",
+      "pageid": 9376704,
+      "revid": 173103330,
+      "timestamp": "2026-04-22T12:37:39Z",
+      "topic": "música",
+      "words": 112,
+      "sha256": "70709e15cd21a92fc6dfbc22faa4fe8ed051fe63ac32a926bd846d0aafccd7be",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173103330"
+    },
+    {
+      "title": "Guitarrón argentino",
+      "pageid": 8513003,
+      "revid": 172484295,
+      "timestamp": "2026-03-13T15:10:11Z",
+      "topic": "música",
+      "words": 377,
+      "sha256": "71dbb63ffac8ce62fdbcef02d43b64212180e462a60f03c2efcf7d2e1079c306",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172484295"
+    },
+    {
+      "title": "Inanga",
+      "pageid": 11267679,
+      "revid": 171704310,
+      "timestamp": "2026-01-25T08:13:34Z",
+      "topic": "música",
+      "words": 461,
+      "sha256": "e74468e84c030edbacb5a576d835e36ac3025af9130c6af0dfcc58938d29a472",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171704310"
+    },
+    {
+      "title": "Instrumento de cuerda frotada",
+      "pageid": 237562,
+      "revid": 172942463,
+      "timestamp": "2026-04-12T08:45:33Z",
+      "topic": "música",
+      "words": 270,
+      "sha256": "c0b72fbae08486e119d89e988153d9775fab600a8c89585773f7d8acd977afeb",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172942463"
+    },
+    {
+      "title": "Instrumento de cuerda percutida",
+      "pageid": 237793,
+      "revid": 173546067,
+      "timestamp": "2026-05-20T04:30:59Z",
+      "topic": "música",
+      "words": 105,
+      "sha256": "22a4768f6448fa8d0be30cfc3737673099e770ef3248326e5a421ade54fa673f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173546067"
+    },
+    {
+      "title": "Jivari",
+      "pageid": 10207259,
+      "revid": 171986538,
+      "timestamp": "2026-02-10T05:06:35Z",
+      "topic": "música",
+      "words": 1091,
+      "sha256": "60ce8d7d9e66f46484bafb4c1bbba06e13f24d1ed2d53557068f20a7f6531f00",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171986538"
+    },
+    {
+      "title": "Kora (instrumento)",
+      "pageid": 1405279,
+      "revid": 170544516,
+      "timestamp": "2025-11-18T08:18:25Z",
+      "topic": "música",
+      "words": 550,
+      "sha256": "e924f6980688826ad38b3e6f6c058f85fcc0e98c77efe442da3b0a7db59bfd5f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170544516"
+    },
+    {
+      "title": "Kuitra",
+      "pageid": 9450623,
+      "revid": 174065591,
+      "timestamp": "2026-06-22T19:13:57Z",
+      "topic": "música",
+      "words": 170,
+      "sha256": "655dcb29593c934c0e694e5b7a976335bc730642cdb3717d6e0a0a954d428a8d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174065591"
+    },
+    {
+      "title": "Lira del toro de Ur",
+      "pageid": 11090842,
+      "revid": 171366069,
+      "timestamp": "2026-01-06T17:47:01Z",
+      "topic": "música",
+      "words": 797,
+      "sha256": "fef066116b044caf0fb94d981fd3fe6ba597c666d3ee0b6fc86d3965b24cd60a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171366069"
+    },
+    {
+      "title": "Púa (guitarra)",
+      "pageid": 9950095,
+      "revid": 167404194,
+      "timestamp": "2025-05-15T06:08:55Z",
+      "topic": "música",
+      "words": 2376,
+      "sha256": "7e0f528f2aea2425cdfa52b23536b1cd05af1a3d18e3ee78e8260b8caf42bc6c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=167404194"
+    },
+    {
+      "title": "Puente (instrumento musical)",
+      "pageid": 809259,
+      "revid": 168897308,
+      "timestamp": "2025-08-09T12:32:50Z",
+      "topic": "música",
+      "words": 881,
+      "sha256": "d99cdbc3a6a4a4c664611e109a5db9bfcc83afdef42e757ec275b5b8adaf9392",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168897308"
+    },
+    {
+      "title": "Roseta (instrumento musical)",
+      "pageid": 9373395,
+      "revid": 169648241,
+      "timestamp": "2025-09-24T11:09:04Z",
+      "topic": "música",
+      "words": 226,
+      "sha256": "ad72ef1be02f4108f6e13dbb31b37e58cf895bfa99cbcf5e6d76ebe0f3472b3a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=169648241"
+    },
+    {
+      "title": "Sambuca (instrumento)",
+      "pageid": 9120190,
+      "revid": 163666021,
+      "timestamp": "2024-11-19T17:59:36Z",
+      "topic": "música",
+      "words": 155,
+      "sha256": "9eb180df87d27504b483cc1c57498a6795f45e548b0ac10f58b0416ae0145df3",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=163666021"
+    },
+    {
+      "title": "Scordatura",
+      "pageid": 587281,
+      "revid": 158474909,
+      "timestamp": "2024-02-27T16:45:28Z",
+      "topic": "música",
+      "words": 432,
+      "sha256": "979778fdbafcce337bf2c08c3e0dfdb109c29f22c4c9bf6f290d644364845ae0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=158474909"
+    },
+    {
+      "title": "Traste",
+      "pageid": 132831,
+      "revid": 150941883,
+      "timestamp": "2023-05-04T00:57:35Z",
+      "topic": "música",
+      "words": 173,
+      "sha256": "98f96ea3ab637386d3f81f172bc4bdfa6a883b6c4eb4a51cb8d3ef3898ae6e19",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=150941883"
+    },
+    {
+      "title": "Voluta (instrumento musical)",
+      "pageid": 5654289,
+      "revid": 146912525,
+      "timestamp": "2022-10-26T17:03:29Z",
+      "topic": "música",
+      "words": 97,
+      "sha256": "092e0f7be0ff86d04d377807e0fd9f7f799e70b9f62f8a3f9fd07d5effdc902a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=146912525"
+    },
+    {
+      "title": "Orgánulo",
+      "pageid": 31846,
+      "revid": 175720336,
+      "timestamp": "2026-10-08T06:45:52Z",
+      "topic": "biología",
+      "words": 342,
+      "sha256": "4c2dca484e0f95a54c97153309cab4f0bbe251aef4870c07ba6727eae1981344",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175720336"
+    },
+    {
+      "title": "Acrosoma",
+      "pageid": 288141,
+      "revid": 170488768,
+      "timestamp": "2025-11-14T18:01:59Z",
+      "topic": "biología",
+      "words": 276,
+      "sha256": "2319cf0755ce5f69e242aca2f02228ba3f027ecbfd81eebcb8d5b98d192edc24",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170488768"
+    },
+    {
+      "title": "Alvéolo cortical",
+      "pageid": 6979867,
+      "revid": 167380124,
+      "timestamp": "2025-05-14T04:33:15Z",
+      "topic": "biología",
+      "words": 171,
+      "sha256": "e21b0a64368db5600358359fcebe557151a10dcc8ef6c5d6673ff45c0cc6c695",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=167380124"
+    },
+    {
+      "title": "Aparato de Golgi",
+      "pageid": 8696,
+      "revid": 176105489,
+      "timestamp": "2026-11-02T00:51:48Z",
+      "topic": "biología",
+      "words": 2264,
+      "sha256": "762b0e0f15823b69ec8bed6e5c93b20f7055869f940e867a68ee7216df0ed962",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176105489"
+    },
+    {
+      "title": "Apicoplasto",
+      "pageid": 6997637,
+      "revid": 154350343,
+      "timestamp": "2023-10-06T21:34:30Z",
+      "topic": "biología",
+      "words": 231,
+      "sha256": "9b3915ea9b2e7f1a9eed0488f83f221352d6a7427ed803cc52b0d357e3125caf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=154350343"
+    },
+    {
+      "title": "Áster",
+      "pageid": 34016,
+      "revid": 168989033,
+      "timestamp": "2025-08-15T00:24:41Z",
+      "topic": "biología",
+      "words": 319,
+      "sha256": "0ba0d648e0654e107ff5f003dfa438d1c6ab769780e5051bfa514ba18857ca79",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168989033"
+    },
+    {
+      "title": "Atlastina",
+      "pageid": 11602711,
+      "revid": 175848399,
+      "timestamp": "2026-10-16T01:26:45Z",
+      "topic": "biología",
+      "words": 526,
+      "sha256": "79c271d3109e96c5f49aad9f7a1fca82f87ace882ef8e79c4b3518ef7ed90bcd",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175848399"
+    },
+    {
+      "title": "Biorientación",
+      "pageid": 9352894,
+      "revid": 170078389,
+      "timestamp": "2025-10-20T10:52:28Z",
+      "topic": "biología",
+      "words": 386,
+      "sha256": "e3f74144a589a8576c1c0dd7298a44a9a056a9102b53030e0a78169e20ce942a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170078389"
+    },
+    {
+      "title": "Calciosoma",
+      "pageid": 8493125,
+      "revid": 120754338,
+      "timestamp": "2019-10-25T14:32:46Z",
+      "topic": "biología",
+      "words": 144,
+      "sha256": "13978dc9b0becd8362d895d3251fb5837acac4fd1ec355bcc02113bec6da41f3",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120754338"
+    },
+    {
+      "title": "Centriolo",
+      "pageid": 70963,
+      "revid": 168596023,
+      "timestamp": "2025-07-22T12:17:58Z",
+      "topic": "biología",
+      "words": 413,
+      "sha256": "537d7f32e1594a838413faffd6b9bdbfa26d93ee85fa58fb2b246179f78f476f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168596023"
+    },
+    {
+      "title": "Centro organizador de microtúbulos",
+      "pageid": 6480189,
+      "revid": 155192735,
+      "timestamp": "2023-11-09T18:41:21Z",
+      "topic": "biología",
+      "words": 1106,
+      "sha256": "929759260fcaf786593202bddb218891734d5a7c96b24dc7f1aff6e56f5c9d70",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=155192735"
+    },
+    {
+      "title": "Centrosoma",
+      "pageid": 113476,
+      "revid": 175995390,
+      "timestamp": "2026-10-25T16:51:36Z",
+      "topic": "biología",
+      "words": 1765,
+      "sha256": "636890204a2d13552c08858ca00cfaa633dd84d9e38a92cf4671365b841fd450",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175995390"
+    },
+    {
+      "title": "Cinétida",
+      "pageid": 7221714,
+      "revid": 120734071,
+      "timestamp": "2019-10-24T22:03:42Z",
+      "topic": "biología",
+      "words": 118,
+      "sha256": "be7b08da96a8922ea90281b17cd9069813d4bae2bcb51bc5e31325339ca0b315",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120734071"
+    },
+    {
+      "title": "Cinetoplasto",
+      "pageid": 1460230,
+      "revid": 174285091,
+      "timestamp": "2026-07-08T07:02:22Z",
+      "topic": "biología",
+      "words": 153,
+      "sha256": "d75bd9d63e669896b2e12f66c18ff627089eb04b409858bfce6f40396828e2a9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174285091"
+    },
+    {
+      "title": "Climp63",
+      "pageid": 11605587,
+      "revid": 175631834,
+      "timestamp": "2026-10-02T23:45:48Z",
+      "topic": "biología",
+      "words": 937,
+      "sha256": "c3635fd0519989abe2d306e3ba73ab0e7d184f579f38dea5888b743a93c8572f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175631834"
+    },
+    {
+      "title": "Cloroplasto",
+      "pageid": 1543257,
+      "revid": 169764940,
+      "timestamp": "2025-10-01T07:35:01Z",
+      "topic": "biología",
+      "words": 2113,
+      "sha256": "e61394ae75ba9744cd4f51e8a0136d302ae8bc6f804f7da655d8fb70bd46416b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=169764940"
+    },
+    {
+      "title": "Cuerpo basal",
+      "pageid": 1461195,
+      "revid": 170090808,
+      "timestamp": "2025-10-21T01:49:28Z",
+      "topic": "biología",
+      "words": 951,
+      "sha256": "254bd379e10ef0e7b6465a2969c1a2c41deb52a070bcc84e2d4be6b60a0b90af",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170090808"
+    },
+    {
+      "title": "Cuerpo lamelar",
+      "pageid": 9106499,
+      "revid": 171244687,
+      "timestamp": "2025-12-30T12:26:08Z",
+      "topic": "biología",
+      "words": 323,
+      "sha256": "5271e2d9b3dd230e2bc19eed04f97b119b1cd87de085917e05a8bce2982e3481",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=171244687"
+    },
+    {
+      "title": "Diplosoma (célula)",
+      "pageid": 2393329,
+      "revid": 168595958,
+      "timestamp": "2025-07-22T12:11:14Z",
+      "topic": "biología",
+      "words": 76,
+      "sha256": "82d95e83ad5a70b3d171f7facaabb79ce57ce2251ae597b141ab8c8987a8b4f0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=168595958"
+    },
+    {
+      "title": "Endosoma",
+      "pageid": 475854,
+      "revid": 157813120,
+      "timestamp": "2024-01-28T21:11:49Z",
+      "topic": "biología",
+      "words": 390,
+      "sha256": "eb059a5217389cc6f761bb0e33de80851a1d7bdcfec96b7ca188b1d02e7af4aa",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157813120"
+    },
+    {
+      "title": "Escintilón",
+      "pageid": 9550977,
+      "revid": 174510516,
+      "timestamp": "2026-07-23T14:20:50Z",
+      "topic": "biología",
+      "words": 725,
+      "sha256": "744130005ffe40ff3c0ae57681cca9545e8c0ab41726ee384a1b6b6e1dd46a66",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174510516"
+    },
+    {
+      "title": "Estatolito",
+      "pageid": 4151094,
+      "revid": 151927620,
+      "timestamp": "2023-06-18T17:42:28Z",
+      "topic": "biología",
+      "words": 466,
+      "sha256": "f7557b93a34e91ff784789e41b08721acee5862c291b78542f576fd9e360942f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=151927620"
+    },
+    {
+      "title": "Etioplasto",
+      "pageid": 7470055,
+      "revid": 147500870,
+      "timestamp": "2022-11-23T01:48:25Z",
+      "topic": "biología",
+      "words": 160,
+      "sha256": "848edf8123363630bc16b878bbdc63ac7f6d2818754d6cf942606329d97b69fa",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=147500870"
+    },
+    {
+      "title": "Extrusoma",
+      "pageid": 964148,
+      "revid": 120656156,
+      "timestamp": "2019-10-22T19:22:36Z",
+      "topic": "biología",
+      "words": 348,
+      "sha256": "e9f38bc7ecfa884ea898c7f6279efdd4e485bf23b1a7f3574d1e9dae9a8bcdde",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120656156"
+    },
+    {
+      "title": "Eyectosoma",
+      "pageid": 6979057,
+      "revid": 143457740,
+      "timestamp": "2022-05-11T00:54:42Z",
+      "topic": "biología",
+      "words": 63,
+      "sha256": "fd1ea789ffa8257f557796ea8853b20a95c33f06d3434d5b9bfe15bc5c4a30cf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=143457740"
+    },
+    {
+      "title": "Flagelo arqueano",
+      "pageid": 3167744,
+      "revid": 169666177,
+      "timestamp": "2025-09-25T14:23:26Z",
+      "topic": "biología",
+      "words": 496,
+      "sha256": "ea102bee8b79a999f4c07ebd0f76968706e4a4ab2a3ae064afceb510d650d53c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=169666177"
+    },
+    {
+      "title": "Gerontoplasto",
+      "pageid": 8460514,
+      "revid": 154520731,
+      "timestamp": "2023-10-10T17:12:44Z",
+      "topic": "biología",
+      "words": 138,
+      "sha256": "c75223fb9b33b4b6c06314c24e2abb5fe5f560ab32a04a8ffc0306c99ef33d5d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=154520731"
+    },
+    {
+      "title": "Glioxisoma",
+      "pageid": 1022360,
+      "revid": 145604488,
+      "timestamp": "2022-08-26T23:16:16Z",
+      "topic": "biología",
+      "words": 116,
+      "sha256": "d0cf41840704ea1c488a7482c8884c5d7262c18455db8e8baca124b25049c8c9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=145604488"
+    },
+    {
+      "title": "Gránulo específico",
+      "pageid": 9357948,
+      "revid": 148332126,
+      "timestamp": "2023-01-02T15:12:56Z",
+      "topic": "biología",
+      "words": 122,
+      "sha256": "38f08c60118a730ff464a1b0341dc027861e8368ca6988de9914c4ab7264fba2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=148332126"
+    },
+    {
+      "title": "Haptonema",
+      "pageid": 6979052,
+      "revid": 164448568,
+      "timestamp": "2025-01-02T20:25:57Z",
+      "topic": "biología",
+      "words": 75,
+      "sha256": "1531688eb742cb528903d7e2602b66c6b1df9ad1ff61e11357bd6641cbbf3f7f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=164448568"
+    },
+    {
+      "title": "Hemifusoma",
+      "pageid": 11445737,
+      "revid": 172341760,
+      "timestamp": "2026-03-04T16:04:56Z",
+      "topic": "biología",
+      "words": 1831,
+      "sha256": "6fac674b5491b0543bb1f8e71aedf93002466d295e88d002f44dd6a68c975071",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172341760"
+    },
+    {
+      "title": "Hidrogenosoma",
+      "pageid": 920189,
+      "revid": 149638813,
+      "timestamp": "2023-03-03T03:01:33Z",
+      "topic": "biología",
+      "words": 372,
+      "sha256": "6c10c089bfc9523e8020c6aaf4d3e78449707404bdec245516fc1d82122e36fc",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=149638813"
+    },
+    {
+      "title": "Laminilla media",
+      "pageid": 4161640,
+      "revid": 120683281,
+      "timestamp": "2019-10-23T09:33:12Z",
+      "topic": "biología",
+      "words": 54,
+      "sha256": "90b08be5d5477e03e6d6622fef5229f18f8a2ef5cf9b2ac78f4256a78f010341",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120683281"
+    },
+    {
+      "title": "Lipid Droplets",
+      "pageid": 3149844,
+      "revid": 149175922,
+      "timestamp": "2023-02-09T21:35:26Z",
+      "topic": "biología",
+      "words": 1605,
+      "sha256": "9efd78f77804c6e9d6d4e6fa1695a54d2ec552a272337fbc8400abcf9ec328c3",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=149175922"
+    },
+    {
+      "title": "Lisosoma",
+      "pageid": 31751,
+      "revid": 175935364,
+      "timestamp": "2026-10-21T17:00:06Z",
+      "topic": "biología",
+      "words": 1248,
+      "sha256": "440071941bc61d03ad19cc63f0e10772020cd444345083380cf79b64ce003d2a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175935364"
+    },
+    {
+      "title": "Loukoumasoma",
+      "pageid": 3873686,
+      "revid": 120680669,
+      "timestamp": "2019-10-23T08:38:01Z",
+      "topic": "biología",
+      "words": 87,
+      "sha256": "188f974999f40a251ec7de1efecf3aa3c03393e2130a08f260ce38e780f141cf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120680669"
+    },
+    {
+      "title": "Magnetosoma",
+      "pageid": 5112485,
+      "revid": 170917909,
+      "timestamp": "2025-12-11T00:25:15Z",
+      "topic": "biología",
+      "words": 504,
+      "sha256": "3ed07a51d536388fcc7e4977b1ce19676e6b457c538ac7e6310d63a08d704f00",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170917909"
+    },
+    {
+      "title": "Mancha ocular",
+      "pageid": 1427138,
+      "revid": 170588323,
+      "timestamp": "2025-11-21T01:38:57Z",
+      "topic": "biología",
+      "words": 468,
+      "sha256": "dddae9c0c7e3bbdbaf073992b0f945b4be27f9afcb979456c5a85a2c78eb49f2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170588323"
+    },
+    {
+      "title": "Melanosoma",
+      "pageid": 1022780,
+      "revid": 174785091,
+      "timestamp": "2026-08-10T07:53:09Z",
+      "topic": "biología",
+      "words": 1059,
+      "sha256": "708aabbcab9b12bf6806508492fba13c98e9145020ead21bc558e88f84cc3863",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174785091"
+    },
+    {
+      "title": "Membrana mitocondrial interna",
+      "pageid": 972782,
+      "revid": 175223630,
+      "timestamp": "2026-09-06T16:13:31Z",
+      "topic": "biología",
+      "words": 1291,
+      "sha256": "011a217da4baff30a0b336b5890d3bb71be11f450f6eb8c3fb39fc48a8888c47",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175223630"
+    },
+    {
+      "title": "Indicador económico",
+      "pageid": 8223119,
+      "revid": 174055178,
+      "timestamp": "2026-06-22T01:21:05Z",
+      "topic": "economía",
+      "words": 1771,
+      "sha256": "db28ef14f852a5f04e38c91aef59f1d3baf716a597ea4d50d70bf4c4bf4e2754",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174055178"
+    },
+    {
+      "title": "Brecha de producción",
+      "pageid": 7619554,
+      "revid": 172148443,
+      "timestamp": "2026-02-20T06:37:53Z",
+      "topic": "economía",
+      "words": 621,
+      "sha256": "fb2a994cd25b4a22d0eca3bf52ca4f621f3960cd6f9386e330306ee21cb1becd",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172148443"
+    },
+    {
+      "title": "Coste laboral",
+      "pageid": 5017601,
+      "revid": 131666043,
+      "timestamp": "2020-12-13T03:16:13Z",
+      "topic": "economía",
+      "words": 235,
+      "sha256": "85b5cc3d3a60239a4b04debca1bcfa46e02af7d4d116fcefec472fc3a25955a9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=131666043"
+    },
+    {
+      "title": "Costo de vida",
+      "pageid": 297507,
+      "revid": 172001958,
+      "timestamp": "2026-02-11T01:35:28Z",
+      "topic": "economía",
+      "words": 103,
+      "sha256": "cc7f58d2386edfc2f31c45440f227866fc15fac901fadea3cf829df757bbf8eb",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172001958"
+    },
+    {
+      "title": "Costos laborales unitarios",
+      "pageid": 4715039,
+      "revid": 120056323,
+      "timestamp": "2019-10-08T10:14:22Z",
+      "topic": "economía",
+      "words": 352,
+      "sha256": "83800f41734525b4546e5549e5db50e461314d5a4502c2ae20613c30ca57721d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=120056323"
+    },
+    {
+      "title": "Cuña fiscal",
+      "pageid": 5017666,
+      "revid": 176251533,
+      "timestamp": "2026-11-11T14:05:17Z",
+      "topic": "economía",
+      "words": 975,
+      "sha256": "beec3325e6a6081e5c080ddc99b9b6819f863696aae772c461cd7c9873872369",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176251533"
+    },
+    {
+      "title": "Deflactor",
+      "pageid": 2145779,
+      "revid": 153086415,
+      "timestamp": "2023-08-15T14:39:34Z",
+      "topic": "economía",
+      "words": 238,
+      "sha256": "1f2435cfeedbb439b6d1406e80ae825e38bf497f6a17287b8243f9b5f1a43f4a",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=153086415"
+    },
+    {
+      "title": "Desigualdad de ingreso",
+      "pageid": 2399137,
+      "revid": 175708025,
+      "timestamp": "2026-10-07T15:07:41Z",
+      "topic": "economía",
+      "words": 3266,
+      "sha256": "d4bb77ddc45baddc0e1a414a5ddd644e9c8fd7224932c6d23cef9a818262295e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175708025"
+    },
+    {
+      "title": "Desinflación",
+      "pageid": 1015689,
+      "revid": 161896786,
+      "timestamp": "2024-08-16T08:23:30Z",
+      "topic": "economía",
+      "words": 239,
+      "sha256": "a3de6e1390f8d007389e7986b42d23901e94ad5a973e617946e77f8b6772cddd",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=161896786"
+    },
+    {
+      "title": "Diferencial bancario",
+      "pageid": 9393329,
+      "revid": 176306412,
+      "timestamp": "2026-11-15T08:10:08Z",
+      "topic": "economía",
+      "words": 796,
+      "sha256": "3a2e15f4dbcdd3078eb54d827bc37877329157b1fdaae3aa6853a27456a84c8f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176306412"
+    },
+    {
+      "title": "Distribución de la renta",
+      "pageid": 397246,
+      "revid": 174173040,
+      "timestamp": "2026-06-30T01:24:49Z",
+      "topic": "economía",
+      "words": 1468,
+      "sha256": "086e5db1170b8811a740a27b57dec9c9b25fc45914aa054b690f2518e2c482ce",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174173040"
+    },
+    {
+      "title": "EMBI",
+      "pageid": 5072314,
+      "revid": 163780389,
+      "timestamp": "2024-11-26T00:39:05Z",
+      "topic": "economía",
+      "words": 150,
+      "sha256": "2eca7b6c4f24d366cb6d0fbb16f0ddbc9d2d86998c1a041c34fdc8e2beb3aa52",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=163780389"
+    },
+    {
+      "title": "Encuesta Continua de Presupuestos Familiares",
+      "pageid": 244406,
+      "revid": 176141616,
+      "timestamp": "2026-11-04T05:22:10Z",
+      "topic": "economía",
+      "words": 180,
+      "sha256": "6082694f9f0c7b8ee1e8437b0b83067b93223c14270869ff35e884a8b22c37c1",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=176141616"
+    },
+    {
+      "title": "Felicidad nacional bruta",
+      "pageid": 1515442,
+      "revid": 175688668,
+      "timestamp": "2026-10-06T11:25:34Z",
+      "topic": "economía",
+      "words": 300,
+      "sha256": "2b96b3918dda3323db00ef117f7ace504392cc38773eb7ffd2a7ce74de13373f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175688668"
+    },
+    {
+      "title": "Coeficiente de Gini",
+      "pageid": 90989,
+      "revid": 175413907,
+      "timestamp": "2026-09-18T08:33:41Z",
+      "topic": "economía",
+      "words": 605,
+      "sha256": "f3d7972ff74b1c4404dd6ed22dbd1c5070ddcef8e3cb131e0e917110d9314d9c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175413907"
+    },
+    {
+      "title": "I3E",
+      "pageid": 10133330,
+      "revid": 172200552,
+      "timestamp": "2026-02-23T11:13:39Z",
+      "topic": "economía",
+      "words": 452,
+      "sha256": "76d1f96b1ed058233f70110b513f2b83b7d489d062c9697d86e593e1d2a80352",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172200552"
+    },
+    {
+      "title": "Ilusión monetaria",
+      "pageid": 295163,
+      "revid": 159989539,
+      "timestamp": "2024-05-08T17:49:18Z",
+      "topic": "economía",
+      "words": 230,
+      "sha256": "9872ed6a20c3105513bb8a01aa75e3c2d889c81b100e581399081b0854971521",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=159989539"
+    },
+    {
+      "title": "Indicador social",
+      "pageid": 62684,
+      "revid": 164433978,
+      "timestamp": "2025-01-02T00:48:33Z",
+      "topic": "economía",
+      "words": 632,
+      "sha256": "6797f5c25fc1f43eda37e7cda96edd606444c657f63bd0130e5a7671d44ce0a2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=164433978"
+    },
+    {
+      "title": "Índice de precios de la vivienda",
+      "pageid": 2694756,
+      "revid": 157140554,
+      "timestamp": "2024-01-14T16:23:50Z",
+      "topic": "economía",
+      "words": 608,
+      "sha256": "686a49f7fc48d5b98f9be3edeafa7082fe0d769765ad84ad023015837444bca6",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157140554"
+    },
+    {
+      "title": "Índice Big Mac",
+      "pageid": 252380,
+      "revid": 174621424,
+      "timestamp": "2026-07-30T19:21:06Z",
+      "topic": "economía",
+      "words": 1559,
+      "sha256": "14073d55a7721f01baec29515b8a279c8354ededad71c25923d026469d0f9386",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174621424"
+    },
+    {
+      "title": "Índice de Atkinson",
+      "pageid": 549566,
+      "revid": 174460186,
+      "timestamp": "2026-07-20T11:05:31Z",
+      "topic": "economía",
+      "words": 253,
+      "sha256": "855274c300d1f2bcc130d58064ca4c7e8f764dc45511877a2eeca6ff25874967",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174460186"
+    },
+    {
+      "title": "Índice de bienestar económico sostenible",
+      "pageid": 713884,
+      "revid": 157564242,
+      "timestamp": "2024-01-23T13:04:43Z",
+      "topic": "economía",
+      "words": 187,
+      "sha256": "d9600bf596ca5dfe408a1e3255e3fc78fffb4f600b5369ab9a5d6c547b8bd05b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=157564242"
+    },
+    {
+      "title": "Índice de competitividad en viajes y turismo",
+      "pageid": 1528974,
+      "revid": 174399845,
+      "timestamp": "2026-07-16T13:02:17Z",
+      "topic": "economía",
+      "words": 1020,
+      "sha256": "65e0f1a8306c74e5342ef7ddd655631a49abbdc93cc7acf83b1dddfdcc2594e0",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=174399845"
+    },
+    {
+      "title": "Índice de competitividad global",
+      "pageid": 44289,
+      "revid": 173535394,
+      "timestamp": "2026-05-19T15:29:44Z",
+      "topic": "economía",
+      "words": 369,
+      "sha256": "d115e5427078709f4dc29598509138ee703940b7f78e2ee366c3645b3f0f9ddf",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=173535394"
+    },
+    {
+      "title": "Índice de complejidad económica",
+      "pageid": 10967300,
+      "revid": 169990010,
+      "timestamp": "2025-10-15T14:17:24Z",
+      "topic": "economía",
+      "words": 556,
+      "sha256": "69c7beb046b4595309a2c401ee7774f6ed3fea0c586a6b5f2bbd525111ccbf75",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=169990010"
+    },
+    {
+      "title": "Índice de compromiso con el desarrollo",
+      "pageid": 8533972,
+      "revid": 155858458,
+      "timestamp": "2023-12-06T21:15:08Z",
+      "topic": "economía",
+      "words": 1856,
+      "sha256": "2ac8189260ab3983934a4df32d94491bd770e125fd10d2b8721dd0cdeddc5108",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=155858458"
+    },
+    {
+      "title": "Índice de desarrollo inclusivo",
+      "pageid": 9553042,
+      "revid": 170802409,
+      "timestamp": "2025-12-04T09:06:49Z",
+      "topic": "economía",
+      "words": 236,
+      "sha256": "e00ed4486b425b2f17d4445d60428a6242e6889bee2c9f7c588723a3a7c9673f",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170802409"
+    },
+    {
+      "title": "Índice de desigualdad de género",
+      "pageid": 7503155,
+      "revid": 170802430,
+      "timestamp": "2025-12-04T09:10:57Z",
+      "topic": "economía",
+      "words": 2173,
+      "sha256": "695711ff4ab78b7cbb4618c3790b5b87bea414dd61932db4d4a40b579e5c6cf4",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170802430"
+    },
+    {
+      "title": "Índice de facilidad para hacer negocios",
+      "pageid": 4215214,
+      "revid": 175884544,
+      "timestamp": "2026-10-18T14:21:29Z",
+      "topic": "economía",
+      "words": 1014,
+      "sha256": "e217541b991ff17e274c6e0b8c5710ff2df4ac0619dff81051e244ea8d094de9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175884544"
+    },
+    {
+      "title": "Índice de globalización",
+      "pageid": 4213863,
+      "revid": 175365054,
+      "timestamp": "2026-09-15T06:48:21Z",
+      "topic": "economía",
+      "words": 150,
+      "sha256": "9336a0d47167160f7ec3944fbee645a14fa5aa9878e45a2a17b472fd0f5d6f0c",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175365054"
+    },
+    {
+      "title": "Índice de Herfindahl",
+      "pageid": 1515834,
+      "revid": 170802152,
+      "timestamp": "2025-12-04T08:32:09Z",
+      "topic": "economía",
+      "words": 803,
+      "sha256": "4643b85fb21e32cade20d605dec0eae71491c876d17385ec6645997e71ef4b7b",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=170802152"
+    },
+    {
+      "title": "Índice de Kaitz",
+      "pageid": 9247923,
+      "revid": 167663105,
+      "timestamp": "2025-05-28T23:24:09Z",
+      "topic": "economía",
+      "words": 62,
+      "sha256": "32496559a7f566c3bdb74dd90c09ca1ab7a9fb259d1fca2d861a66818a23dd9e",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=167663105"
+    },
+    {
+      "title": "Índice de la economía del conocimiento",
+      "pageid": 2603093,
+      "revid": 119623351,
+      "timestamp": "2019-09-23T06:04:27Z",
+      "topic": "economía",
+      "words": 153,
+      "sha256": "709ba776669b2a08ee4a6edd37633ccb35e11a5377b45ccfaa8582265cb550c2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=119623351"
+    },
+    {
+      "title": "Índice de la ropa interior para hombres",
+      "pageid": 10197338,
+      "revid": 152301127,
+      "timestamp": "2023-07-06T11:40:23Z",
+      "topic": "economía",
+      "words": 117,
+      "sha256": "ca569bbed7804dc38a1014308c25acadf5385e25994b38ddca90fa08a5c6dc53",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=152301127"
+    },
+    {
+      "title": "Índice de Lerner",
+      "pageid": 969746,
+      "revid": 175764653,
+      "timestamp": "2026-10-10T20:30:45Z",
+      "topic": "economía",
+      "words": 808,
+      "sha256": "cc6deec594db64c3ad8cc622b494f79fc897654d294f13b29bc57c2cdd391633",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=175764653"
+    },
+    {
+      "title": "Índice de Libertad Económica",
+      "pageid": 6620535,
+      "revid": 172600618,
+      "timestamp": "2026-03-21T01:21:05Z",
+      "topic": "economía",
+      "words": 1449,
+      "sha256": "7e695f5c54a1add8701ab348c8ec6d92beb12687ab8516c7f6863936d8e9e89d",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172600618"
+    },
+    {
+      "title": "Índice de los rascacielos",
+      "pageid": 8419569,
+      "revid": 172088760,
+      "timestamp": "2026-02-16T16:42:42Z",
+      "topic": "economía",
+      "words": 1462,
+      "sha256": "b84c930b07c1d06973b5187d601451173981b05e40a57ac85380d80f806028c9",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=172088760"
+    },
+    {
+      "title": "Índice de Malmquist",
+      "pageid": 7730117,
+      "revid": 152397421,
+      "timestamp": "2023-07-11T05:26:33Z",
+      "topic": "economía",
+      "words": 265,
+      "sha256": "7484a1d5b3c3fe8acf7f82a0a116c6dbbf85bdcf263b89293069c5e7b2f5bcf2",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=152397421"
+    },
+    {
+      "title": "Índice de Pareto",
+      "pageid": 107762,
+      "revid": 129335832,
+      "timestamp": "2020-09-17T08:11:41Z",
+      "topic": "economía",
+      "words": 301,
+      "sha256": "62922b28a12e6cbdce1a7819015fc0ddf2239bfc8af9dd8163325e37e1ab93a6",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=129335832"
+    },
+    {
+      "title": "Índice de pobreza Foster-Greer-Thorbecke",
+      "pageid": 6018781,
+      "revid": 162194913,
+      "timestamp": "2024-09-01T02:59:38Z",
+      "topic": "economía",
+      "words": 448,
+      "sha256": "b383426f465dc737367223ec489dd7cb28598099a89b162e799afd255cfcee40",
+      "url": "https://es.wikipedia.org/w/index.php?oldid=162194913"
+    }
+  ],
+  "excluded": [
+    {
+      "title": "A Sharp (.NET)",
+      "topic": "informática",
+      "reason": "short<50"
+    },
+    {
+      "title": "ABC ALGOL",
+      "topic": "informática",
+      "reason": "short<50"
+    },
+    {
+      "title": "ABLE",
+      "topic": "informática",
+      "reason": "short<50"
+    },
+    {
+      "title": "ABSET",
+      "topic": "informática",
+      "reason": "short<50"
+    },
+    {
+      "title": "ABSYS",
+      "topic": "informática",
+      "reason": "short<50"
+    },
+    {
+      "title": "CRAN",
+      "topic": "informática",
+      "reason": "short<50"
+    },
+    {
+      "title": "Golpeador",
+      "topic": "música",
+      "reason": "short<50"
+    },
+    {
+      "title": "Tonkori",
+      "topic": "música",
+      "reason": "short<50"
+    }
+  ],
+  "stats": {
+    "articles": 275,
+    "by_topic": {
+      "astronomía": 40,
+      "biología": 40,
+      "economía": 40,
+      "informática": 40,
+      "medicina": 40,
+      "música": 35,
+      "química": 40
+    },
+    "words_total": 320582,
+    "words_mean": 1165.8,
+    "words_min": 54,
+    "words_max": 9286,
+    "excluded": {
+      "short<50": 8
+    }
+  }
+}

@@ -102,3 +102,20 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Decisiones:** ver `docs/fragmentacion.md` (palabras `\S+` sobre el texto
   original; páginas por primera/última palabra; sin colas redundantes).
 - **Pruebas:** `python -m pytest -q` → `185 passed, 1 warning` (Windows, Python 3.12.10).
+
+## DOC-05 — Corpus Wikipedia en español
+
+- **Issue:** #5 · **Rama:** `feature/DOC-05-wikipedia-corpus` (apilada sobre DOC-07)
+- **Cambios:** `backend/app/corpus/wikipedia.py` (cliente con pausas y
+  reintentos, conversión de wikitexto, `freeze`, `build`, estadísticas);
+  `DocumentService.ingest_corpus_text`; CLI `corpus freeze|build|import|stats`;
+  `corpus/wikipedia_es/topics.json` y `manifest.json` versionados;
+  `data/corpus/` ignorado; dependencia `mwparserfromhell`;
+  `tests/test_wikipedia_corpus.py` (9 pruebas, sin red).
+- **Ejecución real (2026-11-17, UTC):** `freeze` → 275 artículos, 8 excluidos
+  por < 50 palabras; `build` desde cero → 275/275 con SHA-256 idéntico;
+  `import` → 275 documentos y 1978 fragmentos en ~11 s; segunda importación →
+  0 nuevos (idempotente). Durante la exploración inicial la API respondió
+  HTTP 429; por eso el cliente espera 1 s entre peticiones y respeta `Retry-After`.
+- **Pruebas:** `python -m pytest -q` → `194 passed, 1 warning`.
+- **Limitaciones:** muestreo alfabético por categoría y temas desbalanceados (ver `docs/corpus.md`).
