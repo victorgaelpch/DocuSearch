@@ -22,15 +22,17 @@ python -m pytest -q
 python -m uvicorn backend.app.main:app --reload
 ```
 
-## Instalación opcional del lector documental
+## Lectores de documentos
 
-Cuando se implemente DOC-03, se podrán instalar dependencias con:
+Desde DOC-03, PyMuPDF y python-docx son dependencias principales y se instalan
+con `pip install -e ".[dev]"`. El extra `documents` conserva `python-multipart`,
+necesario para la carga de archivos de DOC-04.
+
+Para regenerar los archivos de prueba sintéticos:
 
 ```bash
-python -m pip install -e ".[dev,documents]"
+python tests/fixtures/generate_fixtures.py
 ```
-
-La opción `documents` solo instala las bibliotecas; **la extracción aún no está implementada**.
 
 ## Flujo Git
 

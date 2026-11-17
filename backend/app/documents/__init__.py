@@ -1,7 +1,4 @@
-"""Modelos, persistencia de metadatos y almacenamiento de originales (DOC-02).
-
-Los lectores PDF/DOCX/TXT corresponden a DOC-03.
-"""
+"""Modelos y persistencia (DOC-02) y lectores PDF/DOCX/TXT (DOC-03)."""
 
 from .models import (
     DEFAULT_COLLECTION,
@@ -14,6 +11,18 @@ from .models import (
     make_chunk_id,
     make_document_id,
 )
+from .readers import (
+    SUPPORTED_EXTENSIONS,
+    CorruptFileError,
+    EmptyFileError,
+    ExtractionError,
+    ExtractionResult,
+    TextSection,
+    UnsupportedFormatError,
+    build_document,
+    extract_document,
+    get_reader,
+)
 from .repository import (
     DocumentNotFoundError,
     DocumentRepository,
@@ -24,6 +33,16 @@ from .repository import (
 from .storage import OriginalStore, UnsafePathError, build_storage_path
 
 __all__ = [
+    "SUPPORTED_EXTENSIONS",
+    "CorruptFileError",
+    "EmptyFileError",
+    "ExtractionError",
+    "ExtractionResult",
+    "TextSection",
+    "UnsupportedFormatError",
+    "build_document",
+    "extract_document",
+    "get_reader",
     "DEFAULT_COLLECTION",
     "WIKIPEDIA_COLLECTION",
     "Chunk",

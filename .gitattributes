@@ -1,0 +1,4 @@
+# Fixtures de prueba: conservar bytes exactos en cualquier sistema operativo.
+tests/fixtures/*.txt -text
+tests/fixtures/*.pdf binary
+tests/fixtures/*.docx binary

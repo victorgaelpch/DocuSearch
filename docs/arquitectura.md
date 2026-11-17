@@ -25,6 +25,7 @@ Usuario -> Frontend -> FastAPI -> Documentos / Búsqueda
 ### Contratos implementados (DOC-02)
 
 - `Document`, `Chunk` y `SearchHit`, con persistencia SQLite y almacén de originales. Detalle en `docs/modelo-datos.md`.
+- Lectores PDF (PyMuPDF), DOCX (python-docx) y TXT con `extract_document` (DOC-03). Detalle en `docs/lectores.md`.
 
 ### Contratos planeados (no implementados)
 

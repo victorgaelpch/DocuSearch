@@ -1,0 +1,22 @@
+{
+  "muestra.pdf": {
+    "title": "Informe de prueba DocuSearch",
+    "pages": [
+      "Introducción a la recuperación de información.\nLos buscadores ordenan documentos por relevancia.",
+      "Segunda página: el índice invertido acelera la búsqueda.\nCañón, pingüino y acción son palabras con tildes."
+    ]
+  },
+  "muestra.docx": {
+    "title": "Apuntes de prueba",
+    "blocks": [
+      "Resumen del curso de Procesamiento de Lenguaje Natural.",
+      "La lematización reduce las palabras a su forma base.",
+      [["Método", "Tipo"], ["BM25", "léxico"]],
+      "Conclusión: combinar métodos mejora la búsqueda."
+    ],
+    "text": "Resumen del curso de Procesamiento de Lenguaje Natural.\n\nLa lematización reduce las palabras a su forma base.\n\nMétodo | Tipo\n\nBM25 | léxico\n\nConclusión: combinar métodos mejora la búsqueda."
+  },
+  "muestra.txt": {
+    "text": "Notas de la clase de búsqueda semántica.\nLos embeddings representan el significado de las oraciones.\nÑandú y corazón conservan sus acentos."
+  }
+}
