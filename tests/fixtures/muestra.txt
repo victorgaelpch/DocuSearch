@@ -1,0 +1,3 @@
+Notas de la clase de búsqueda semántica.
+Los embeddings representan el significado de las oraciones.
+Ñandú y corazón conservan sus acentos.
