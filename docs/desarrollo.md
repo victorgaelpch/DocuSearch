@@ -7,7 +7,7 @@ En Windows PowerShell, desde la raíz del repositorio:
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,model]"
 python -m pytest -q
 python -m uvicorn backend.app.main:app --reload
 ```

@@ -76,3 +76,16 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Pendientes / riesgos:** sin autenticación; el límite de tamaño no evita
   que Starlette guarde temporalmente el cuerpo multipart (usar límite en proxy);
   sin endpoint de borrado ni reindexación.
+
+## DOC-06 — Preprocesamiento PLN léxico y semántico
+
+- **Issue:** #6 · **Rama:** `feature/DOC-06-nlp-preprocessing` (apilada sobre DOC-04)
+- **Objetivo:** separar la normalización para TF-IDF/BM25 de la destinada a Transformers.
+- **Cambios:** `backend/app/nlp/normalization.py` (`clean_text`, `strip_accents`),
+  `lexical.py` (`LexicalPipeline`), `semantic.py` (`prepare_semantic`);
+  `tests/test_nlp_preprocessing.py` (32 pruebas); dependencia `spacy>=3.8,<3.9`
+  y extra `model` con `es_core_news_sm` 3.8.0 fijado; CI instala `.[dev,model]`.
+- **Decisiones:** ver `docs/preprocesamiento.md` (lista de stopwords ajustada,
+  plegado de tildes conservando la ñ, fallback sin lematizar).
+- **Riesgo:** `es_core_news_sm` es GPL-3.0.
+- **Pruebas:** `python -m pytest -q` → `167 passed, 1 warning` (Windows, Python 3.12.10, spaCy 3.8.18).
