@@ -161,3 +161,48 @@ def format_table(report: dict[str, Any]) -> str:
                 f"{values['mrr@10']:.3f} | {values['ndcg@10']:.3f} |"
             )
     return "\n".join(lines)
+
+
+def benchmark_latency(
+    engine: SearchEngine,
+    queries: Sequence[str],
+    *,
+    methods: Sequence[str] = ("bm25", "tfidf"),
+    collection: str = "wikipedia_es",
+    k: int = 10,
+    repeats: int = 5,
+) -> dict[str, Any]:
+    """Latencia de consultas (ms) con índices ya construidos.
+
+    Mide ``SearchEngine.search`` completo (preprocesamiento de la consulta,
+    ranking y armado de resultados), sin HTTP.
+    """
+    import time
+
+    started = time.perf_counter()
+    engine.describe(collection)  # construye corpus e índices (arranque)
+    warmup_ms = (time.perf_counter() - started) * 1000
+    report: dict[str, Any] = {
+        "collection": collection,
+        "k": k,
+        "repeats": repeats,
+        "queries": len(queries),
+        "build_ms": round(warmup_ms, 1),
+        "methods": {},
+    }
+    for method in methods:
+        samples: list[float] = []
+        for _ in range(repeats):
+            for query in queries:
+                t0 = time.perf_counter()
+                engine.search(query, method=method, k=k, collection=collection)
+                samples.append((time.perf_counter() - t0) * 1000)
+        samples.sort()
+        report["methods"][method] = {
+            "n": len(samples),
+            "p50_ms": round(statistics.median(samples), 2),
+            "p95_ms": round(samples[max(0, math.ceil(0.95 * len(samples)) - 1)], 2),
+            "max_ms": round(samples[-1], 2),
+            "under_2s": samples[-1] < 2000,
+        }
+    return report

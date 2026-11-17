@@ -37,6 +37,15 @@ Un texto que queda vacío tras la limpieza se trata como vacío (`is_blank`).
    (`año` ≠ `ano`). *Decisión propia*: hace que las consultas escritas sin
    tildes coincidan; es configurable (`fold_accents=False`).
 
+8. **Forma superficial (v2, DOC-11)**: si hay lematizador, cada palabra
+   produce además su forma superficial normalizada con prefijo `=`; por
+   ejemplo, `volcanes` produce `volcan` y `=volcanes`. Motivo: en consultas
+   cortas sin contexto, spaCy etiqueta mal la categoría gramatical (`dengue` →
+   VERB → `denguir`; `lava` → `lavar`) y el lema no coincidía con el del
+   documento. Con la forma superficial la coincidencia exacta se conserva. Se
+   desactiva con `index_surface_forms=False`. Efecto medido en
+   `docs/evaluacion.md`.
+
 Los números se conservan (`1492`). La configuración exacta se expone en
 `pipeline.config` y se guardará junto a los índices para reproducibilidad.
 

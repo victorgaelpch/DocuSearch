@@ -11,6 +11,15 @@ Si el modelo ``es_core_news_sm`` no está instalado y ``require_model`` es
 ``False``, se usa el tokenizador básico de spaCy **sin lematización** y se
 registra en ``config`` (``"lemmatizer": null``), para que los índices
 construidos así no se confundan con los lematizados.
+
+**Formas superficiales (versión 2).** El lematizador de spaCy depende de la
+etiqueta gramatical, y en consultas cortas sin contexto la asigna mal
+(``dengue`` → ``denguir``, ``lava`` → ``lavar``). Por eso, cuando hay
+lematizador, cada palabra produce dos términos: su lema y su forma
+superficial normalizada con prefijo ``=`` (``"lava"`` y ``"=lava"``). Si la
+consulta se lematiza mal, la forma exacta sigue coincidiendo con el
+documento; las coincidencias exactas pesan algo más que las solo por lema.
+Se desactiva con ``index_surface_forms=False``.
 """
 
 from __future__ import annotations
@@ -24,7 +33,8 @@ from .normalization import clean_text, strip_accents
 
 logger = logging.getLogger(__name__)
 
-PIPELINE_VERSION = 1
+PIPELINE_VERSION = 2
+SURFACE_PREFIX = "="
 DEFAULT_SPACY_MODEL = "es_core_news_sm"
 
 # Palabras de la lista de spaCy que en búsqueda sí aportan contenido.
@@ -61,6 +71,7 @@ class LexicalPipeline:
     remove_stopwords: bool = True
     fold_accents: bool = True
     min_token_length: int = 1
+    index_surface_forms: bool = True
     require_model: bool = False
     batch_size: int = 64
     _nlp: Any = field(default=None, init=False, repr=False)
@@ -109,7 +120,12 @@ class LexicalPipeline:
             "lowercase": True,
             "fold_accents": self.fold_accents,
             "min_token_length": self.min_token_length,
+            "surface_forms": self._emit_surface,
         }
+
+    @property
+    def _emit_surface(self) -> bool:
+        return self.index_surface_forms and self._lemmatizer_available
 
     # -- procesamiento -------------------------------------------------------
     def _tokens_from_doc(self, doc: Any) -> list[str]:
@@ -133,7 +149,15 @@ class LexicalPipeline:
             if len(term) < self.min_token_length or not any(ch.isalnum() for ch in term):
                 continue
             tokens.append(term)
+            if self._emit_surface:
+                form = strip_accents(surface) if self.fold_accents else surface
+                tokens.append(SURFACE_PREFIX + form)
         return tokens
+
+    @staticmethod
+    def lemmas(tokens: Iterable[str]) -> list[str]:
+        """Solo los lemas (sin formas superficiales), p. ej. para mostrar."""
+        return [t for t in tokens if not t.startswith(SURFACE_PREFIX)]
 
     def process(self, text: str | None) -> list[str]:
         """Tokens normalizados de un texto (lista vacía si no hay contenido)."""
