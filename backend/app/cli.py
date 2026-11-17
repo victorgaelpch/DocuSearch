@@ -6,6 +6,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli corpus freeze|build|import|stats
     python -m backend.app.cli evaluate [--output evaluation/results/x.json]
     python -m backend.app.cli reindex [--collection user]
+    python -m backend.app.cli benchmark [--repeats 5]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -148,6 +149,21 @@ def _cmd_evaluate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_benchmark(args: argparse.Namespace) -> int:
+    from backend.app.search.evaluation import benchmark_latency, load_queries
+
+    settings = Settings.from_env()
+    queries, _ = load_queries(Path(args.queries))
+    report = benchmark_latency(
+        _search_engine(settings),
+        [q.query for q in queries],
+        collection=args.collection,
+        repeats=args.repeats,
+    )
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0 if all(m["under_2s"] for m in report["methods"].values()) else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -167,6 +183,11 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--methods", nargs="+", default=["tfidf", "bm25"])
     evaluate.add_argument("--output", default=None)
     evaluate.set_defaults(func=_cmd_evaluate)
+    benchmark = sub.add_parser("benchmark", help="medir la latencia de búsqueda")
+    benchmark.add_argument("--queries", default=str(REPO_ROOT / "evaluation" / "queries_wikipedia_es.json"))
+    benchmark.add_argument("--collection", default=WIKIPEDIA_COLLECTION)
+    benchmark.add_argument("--repeats", type=int, default=5)
+    benchmark.set_defaults(func=_cmd_benchmark)
     return parser
 
 
