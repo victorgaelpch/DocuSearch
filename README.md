@@ -2,7 +2,7 @@
 
 Buscador de documentos en español, diseñado para evolucionar hacia una plataforma de gestión y consulta documental con inteligencia artificial.
 
-> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`). La lectura y carga de PDF, DOCX y TXT corresponde a [DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3) y [DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4): **todavía no está implementada**.
+> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`). La carga por API corresponde a [DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4): **todavía no está implementada**.
 
 ## Requisitos
 
@@ -48,7 +48,7 @@ python -m pytest -q
 
 | Ruta | Responsabilidad |
 | --- | --- |
-| `backend/app/documents/` | Modelos, repositorio SQLite y almacén de originales (DOC-02); lectores (DOC-03) |
+| `backend/app/documents/` | Modelos, repositorio SQLite, almacén de originales (DOC-02) y lectores PDF/DOCX/TXT (DOC-03) |
 | `backend/app/nlp/` | Limpieza y segmentación del corpus (DOC-06/07) |
 | `backend/app/search/` | Índices y ranking de búsqueda (DOC-08/09) |
 | `backend/app/api/` | Rutas API (DOC-04/10) |
