@@ -119,3 +119,16 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   HTTP 429; por eso el cliente espera 1 s entre peticiones y respeta `Retry-After`.
 - **Pruebas:** `python -m pytest -q` → `194 passed, 1 warning`.
 - **Limitaciones:** muestreo alfabético por categoría y temas desbalanceados (ver `docs/corpus.md`).
+
+## DOC-08 — Índice y búsqueda TF-IDF
+
+- **Issue:** #8 · **Rama:** `feature/DOC-08-tfidf` (apilada sobre DOC-05)
+- **Cambios:** `backend/app/search/lexical_corpus.py` (`TokenCache`,
+  `build_lexical_corpus`), `ranking.py` (`top_k`, `validate_k`), `tfidf.py`
+  (`TfidfIndex`), `engine.py` (`SearchEngine`, `make_snippet`); campo `page` en
+  `SearchHit`; `DocumentRepository.collection_signature`; dependencias
+  `numpy` y `scikit-learn`; `tests/conftest.py` y `tests/test_tfidf.py`
+  (23 pruebas).
+- **Medición real:** corpus `wikipedia_es` → 1978 fragmentos, vocabulario de
+  24 384 términos; primera construcción 38,3 s; consulta con caché ~17 ms.
+- **Pruebas:** `python -m pytest -q` → `217 passed, 1 warning`.

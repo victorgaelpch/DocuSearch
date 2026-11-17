@@ -273,6 +273,18 @@ class DocumentRepository:
             )
         return self.get_document(doc_id)
 
+    def collection_signature(self, collection: str | None) -> tuple[Any, ...]:
+        """Firma barata que cambia al cargar, borrar o refragmentar documentos."""
+        where, params = ("", ()) if collection is None else ("WHERE d.collection = ?", (collection,))
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT COUNT(DISTINCT d.doc_id), COALESCE(MAX(d.updated_at), ''), "
+                "COUNT(c.chunk_id), COALESCE(SUM(c.char_end), 0) "
+                f"FROM documents d LEFT JOIN chunks c ON c.doc_id = d.doc_id {where}",
+                params,
+            ).fetchone()
+        return tuple(row)
+
     def count_chunks(self, doc_id: str | None = None) -> int:
         with self._connect() as connection:
             if doc_id is None:
