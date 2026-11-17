@@ -28,6 +28,7 @@ Usuario -> Frontend -> FastAPI -> Documentos / Búsqueda
 - Lectores PDF (PyMuPDF), DOCX (python-docx) y TXT con `extract_document` (DOC-03). Detalle en `docs/lectores.md`.
 - `/documents`: carga, listado, consulta y descarga con validación de nombre, tamaño y tipo real (DOC-04). Detalle en `docs/api.md`.
 - Pipelines léxico (spaCy `es_core_news_sm`) y semántico separados, con limpieza común (DOC-06). Detalle en `docs/preprocesamiento.md`.
+- Embeddings con `paraphrase-multilingual-MiniLM-L12-v2` en CPU, como dependencia opcional (extra `semantic`) y por ventanas de ≤128 tokens (DOC-12). Detalle en `docs/embeddings.md`.
 - Fragmentación 200/30 con offsets y páginas, integrada en la carga y regenerable con `python -m backend.app.cli rechunk` (DOC-07). Detalle en `docs/fragmentacion.md`.
 - Corpus `wikipedia_es` (275 artículos, revisiones fijadas) en una colección separada de `user` (DOC-05). Detalle en `docs/corpus.md`.
 - `SearchEngine` con índice TF-IDF en memoria, caché de tokens en `data/indexes/` y reconstrucción automática al cambiar la colección (DOC-08). Detalle en `docs/busqueda.md`.

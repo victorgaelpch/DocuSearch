@@ -2,7 +2,7 @@
 
 Buscador de documentos en español, diseñado para evolucionar hacia una plataforma de gestión y consulta documental con inteligencia artificial.
 
-> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`); corpus experimental de Wikipedia en español con revisiones fijadas ([DOC-05](https://github.com/victorgaelpch/DocuSearch/issues/5), ver `docs/corpus.md`). Motor de búsqueda TF-IDF con caché de tokens ([DOC-08](https://github.com/victorgaelpch/DocuSearch/issues/8), ver `docs/busqueda.md`). BM25 como método por defecto y evaluación frente a TF-IDF con consultas anotadas ([DOC-09](https://github.com/victorgaelpch/DocuSearch/issues/9), ver `docs/evaluacion.md`). Endpoint `GET /search` y comando `reindex` ([DOC-10](https://github.com/victorgaelpch/DocuSearch/issues/10)). Suite de pruebas v0.1 de extremo a extremo y medición de latencia ([DOC-11](https://github.com/victorgaelpch/DocuSearch/issues/11), ver `docs/pruebas.md`). La búsqueda semántica (embeddings + FAISS, v0.2) **todavía no está implementada**.
+> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`); corpus experimental de Wikipedia en español con revisiones fijadas ([DOC-05](https://github.com/victorgaelpch/DocuSearch/issues/5), ver `docs/corpus.md`). Motor de búsqueda TF-IDF con caché de tokens ([DOC-08](https://github.com/victorgaelpch/DocuSearch/issues/8), ver `docs/busqueda.md`). BM25 como método por defecto y evaluación frente a TF-IDF con consultas anotadas ([DOC-09](https://github.com/victorgaelpch/DocuSearch/issues/9), ver `docs/evaluacion.md`). Endpoint `GET /search` y comando `reindex` ([DOC-10](https://github.com/victorgaelpch/DocuSearch/issues/10)). Suite de pruebas v0.1 de extremo a extremo y medición de latencia ([DOC-11](https://github.com/victorgaelpch/DocuSearch/issues/11), ver `docs/pruebas.md`). v0.2 en curso: servicio de embeddings multilingüe en CPU ([DOC-12](https://github.com/victorgaelpch/DocuSearch/issues/23), ver `docs/embeddings.md`). El índice FAISS y la búsqueda semántica **todavía no están implementados**.
 
 ## Requisitos
 
@@ -17,6 +17,7 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev,model]"   # model: es_core_news_sm 3.8.0 para lematizar
+python -m pip install -e ".[semantic]"    # opcional (v0.2): embeddings; instala PyTorch, ver docs/embeddings.md
 ```
 
 Si solo tienes otra versión compatible de Python, reemplaza `py -3.11` por `python`.
@@ -73,7 +74,7 @@ Detalle de la estrategia, resultados y fallos encontrados en `docs/pruebas.md`.
 | Ruta | Responsabilidad |
 | --- | --- |
 | `backend/app/documents/` | Modelos, repositorio SQLite, almacén de originales (DOC-02) y lectores PDF/DOCX/TXT (DOC-03) |
-| `backend/app/nlp/` | Limpieza, pipelines léxico y semántico (DOC-06); fragmentación (DOC-07) |
+| `backend/app/nlp/` | Limpieza, pipelines léxico y semántico (DOC-06); fragmentación (DOC-07); embeddings (DOC-12) |
 | `backend/app/search/` | Corpus léxico, TF-IDF, BM25, ranking, motor y evaluación (DOC-08/09) |
 | `evaluation/` | Consultas anotadas y resultados de evaluación versionados |
 | `backend/app/api/` | Endpoints de documentos (DOC-04) y búsqueda (DOC-10) |

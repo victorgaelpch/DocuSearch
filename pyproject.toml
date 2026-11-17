@@ -32,9 +32,18 @@ model = [
   "es_core_news_sm @ https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.8.0/es_core_news_sm-3.8.0-py3-none-any.whl",
 ]
 
+# Búsqueda semántica (v0.2): instala PyTorch. En Linux, para evitar la variante
+# CUDA, instalar antes torch desde https://download.pytorch.org/whl/cpu (ver docs/embeddings.md).
+semantic = [
+  "sentence-transformers>=6.3,<7",
+]
+
 [tool.setuptools.packages.find]
 include = ["backend", "backend.*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+markers = [
+  "semantic_model: usa el modelo de embeddings real (requiere el extra semantic y DOCUSEARCH_TEST_SEMANTIC_MODEL=1)",
+]

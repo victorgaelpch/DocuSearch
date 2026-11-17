@@ -7,6 +7,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli evaluate [--output evaluation/results/x.json]
     python -m backend.app.cli reindex [--collection user]
     python -m backend.app.cli benchmark [--repeats 5]
+    python -m backend.app.cli embeddings [--collection wikipedia_es] [--limit 200]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -164,6 +165,40 @@ def _cmd_benchmark(args: argparse.Namespace) -> int:
     return 0 if all(m["under_2s"] for m in report["methods"].values()) else 1
 
 
+def _cmd_embeddings(args: argparse.Namespace) -> int:
+    """Carga el modelo de embeddings y, opcionalmente, mide la codificación."""
+    import time
+
+    from backend.app.documents.repository import DocumentRepository
+    from backend.app.nlp.embeddings import EmbeddingUnavailableError, get_encoder
+
+    encoder = get_encoder()
+    started = time.perf_counter()
+    try:
+        config = encoder.config  # fuerza la carga del modelo
+    except EmbeddingUnavailableError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    report: dict = {"config": config, "load_seconds": round(time.perf_counter() - started, 2)}
+    if args.collection:
+        repository = DocumentRepository(Settings.from_env().paths.metadata_db)
+        texts = [chunk.text for chunk in repository.iter_chunks(collection=args.collection)]
+        if args.limit:
+            texts = texts[: args.limit]
+        started = time.perf_counter()
+        vectors = encoder.encode(texts)
+        elapsed = time.perf_counter() - started
+        report["encoding"] = {
+            "collection": args.collection,
+            "chunks": len(texts),
+            "seconds": round(elapsed, 2),
+            "chunks_per_second": round(len(texts) / elapsed, 1) if elapsed else None,
+            "shape": list(vectors.shape),
+        }
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -188,6 +223,10 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--collection", default=WIKIPEDIA_COLLECTION)
     benchmark.add_argument("--repeats", type=int, default=5)
     benchmark.set_defaults(func=_cmd_benchmark)
+    embeddings = sub.add_parser("embeddings", help="cargar el modelo de embeddings y medir la codificación")
+    embeddings.add_argument("--collection", default=None, help="codificar los fragmentos de esta colección")
+    embeddings.add_argument("--limit", type=int, default=None, help="máximo de fragmentos a codificar")
+    embeddings.set_defaults(func=_cmd_embeddings)
     return parser
 
 
