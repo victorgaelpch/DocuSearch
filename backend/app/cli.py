@@ -8,6 +8,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli reindex [--collection user]
     python -m backend.app.cli benchmark [--repeats 5]
     python -m backend.app.cli embeddings [--collection wikipedia_es] [--limit 200]
+    python -m backend.app.cli semantic-index [--collection wikipedia_es] [--rebuild]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -199,6 +200,34 @@ def _cmd_embeddings(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_semantic_index(args: argparse.Namespace) -> int:
+    """Construye o sincroniza el índice FAISS de una o varias colecciones."""
+    from backend.app.documents.models import DEFAULT_COLLECTION
+    from backend.app.documents.repository import DocumentRepository
+    from backend.app.nlp import embeddings
+    from backend.app.search.semantic_index import SemanticIndexManager
+
+    settings = Settings.from_env()
+    settings.paths.ensure()
+    collections = args.collection or [DEFAULT_COLLECTION, WIKIPEDIA_COLLECTION]
+    try:
+        manager = SemanticIndexManager(
+            DocumentRepository(settings.paths.metadata_db), embeddings.get_encoder(), settings.paths.indexes_dir
+        )
+        reports = []
+        for collection in collections:
+            if args.rebuild:
+                reports.append(manager.rebuild(collection).as_dict())
+            else:
+                manager.index(collection)
+                reports.append(manager.last_reports[collection].as_dict())
+    except embeddings.EmbeddingUnavailableError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps({"indexes": reports}, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -227,6 +256,10 @@ def build_parser() -> argparse.ArgumentParser:
     embeddings.add_argument("--collection", default=None, help="codificar los fragmentos de esta colección")
     embeddings.add_argument("--limit", type=int, default=None, help="máximo de fragmentos a codificar")
     embeddings.set_defaults(func=_cmd_embeddings)
+    semantic = sub.add_parser("semantic-index", help="construir o sincronizar el índice semántico FAISS")
+    semantic.add_argument("--collection", action="append", help="colección (repetible; por defecto, todas)")
+    semantic.add_argument("--rebuild", action="store_true", help="reconstruir desde cero")
+    semantic.set_defaults(func=_cmd_semantic_index)
     return parser
 
 

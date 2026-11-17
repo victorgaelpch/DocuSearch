@@ -200,3 +200,27 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Pruebas:** `python -m pytest -q` → `285 passed, 3 skipped` (las 3 omitidas
   usan el modelo real; con `DOCUSEARCH_TEST_SEMANTIC_MODEL=1` pasan las 19 de
   `tests/test_embeddings.py`). Cobertura total del 97 %; `embeddings.py` al 100 %.
+
+## DOC-13 — Índice FAISS persistente y versionado
+
+- **Issue:** #24 · **Rama:** `feature/DOC-13-faiss-index`
+- **Cambios:** `backend/app/search/semantic_index.py` (`SemanticIndex`,
+  `SemanticIndexManager`, `SyncReport`); `faiss-cpu` en el extra
+  `semantic`; CLI `semantic-index`; `tests/test_semantic_index.py`;
+  `docs/indice-semantico.md`.
+- **Decisiones:**
+  - `IndexFlatIP` (coseno exacto) porque con ~2000 fragmentos FAISS tarda
+    0,2 ms y no hay que aceptar la pérdida de precisión de un índice
+    aproximado.
+  - Serialización desde Python, para admitir rutas con tildes en Windows,
+    con SHA-256 en `meta.json`.
+  - Sincronización por `chunk_id` y hash del texto: solo se codifica lo
+    nuevo o cambiado.
+  - Al subir un documento no se codifica en la misma petición; se añade en
+    la siguiente sincronización.
+- **Mediciones reales (`wikipedia_es`):** construcción en 113,6 s; carga del
+  índice en 5,3 ms; búsqueda con k=100 en p95 de 16,2 ms; 3 MB en disco.
+- **CI:** instala `faiss-cpu` (sin PyTorch) para ejecutar las pruebas del
+  índice con el codificador simulado.
+- **Pruebas:** `python -m pytest -q` → `303 passed, 3 skipped` (las 3 omitidas
+  usan el modelo real); cobertura total del 97 %, `semantic_index.py` al 97 %.
