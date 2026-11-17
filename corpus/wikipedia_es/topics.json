@@ -1,0 +1,13 @@
+{
+  "description": "Temas y categorías de es.wikipedia.org usados para el corpus experimental de DocuSearch AI.",
+  "articles_per_topic": 40,
+  "topics": [
+    {"topic": "química", "categories": ["Elementos químicos"]},
+    {"topic": "astronomía", "categories": ["Constelaciones"]},
+    {"topic": "informática", "categories": ["Lenguajes de programación"]},
+    {"topic": "medicina", "categories": ["Enfermedades infecciosas"]},
+    {"topic": "música", "categories": ["Instrumentos de cuerda"]},
+    {"topic": "biología", "categories": ["Orgánulos celulares"]},
+    {"topic": "economía", "categories": ["Indicadores económicos"]}
+  ]
+}
