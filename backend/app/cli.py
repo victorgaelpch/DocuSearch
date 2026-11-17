@@ -5,6 +5,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli rechunk [--collection user]
     python -m backend.app.cli corpus freeze|build|import|stats
     python -m backend.app.cli evaluate [--output evaluation/results/x.json]
+    python -m backend.app.cli reindex [--collection user]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -108,6 +109,27 @@ def _search_engine(settings: Settings):
     )
 
 
+def _cmd_reindex(args: argparse.Namespace) -> int:
+    """Refragmenta desde los originales y reconstruye los índices léxicos."""
+    settings = Settings.from_env()
+    service = DocumentService(settings)
+    report = service.rechunk(args.collection)
+    engine = _search_engine(settings)
+    collections = [args.collection] if args.collection else ["user", WIKIPEDIA_COLLECTION]
+    indexes = [engine.rebuild(c) for c in collections]
+    print(
+        json.dumps(
+            {
+                "rechunk": {"documents": report.documents, "chunks": report.chunks, "failed": report.failed},
+                "indexes": indexes,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 1 if report.failed else 0
+
+
 def _cmd_evaluate(args: argparse.Namespace) -> int:
     from backend.app.search.evaluation import evaluate, format_table, load_queries
 
@@ -136,6 +158,9 @@ def build_parser() -> argparse.ArgumentParser:
     corpus.add_argument("action", choices=["freeze", "build", "import", "stats"])
     corpus.add_argument("--min-words", type=int, default=50)
     corpus.set_defaults(func=_cmd_corpus)
+    reindex = sub.add_parser("reindex", help="refragmentar y reconstruir los índices de búsqueda")
+    reindex.add_argument("--collection", default=None, help="colección (por defecto, todas)")
+    reindex.set_defaults(func=_cmd_reindex)
     evaluate = sub.add_parser("evaluate", help="evaluar métodos con consultas anotadas")
     evaluate.add_argument("--queries", default=str(REPO_ROOT / "evaluation" / "queries_wikipedia_es.json"))
     evaluate.add_argument("--collection", default=WIKIPEDIA_COLLECTION)
