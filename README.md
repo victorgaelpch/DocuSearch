@@ -2,7 +2,7 @@
 
 Buscador de documentos en español, diseñado para evolucionar hacia una plataforma de gestión y consulta documental con inteligencia artificial.
 
-> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`). La búsqueda (DOC-08 a DOC-10) **todavía no está implementada**.
+> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`); corpus experimental de Wikipedia en español con revisiones fijadas ([DOC-05](https://github.com/victorgaelpch/DocuSearch/issues/5), ver `docs/corpus.md`). La búsqueda (DOC-08 a DOC-10) **todavía no está implementada**.
 
 ## Requisitos
 
@@ -56,6 +56,8 @@ python -m pytest -q
 | `backend/app/nlp/` | Limpieza, pipelines léxico y semántico (DOC-06); fragmentación (DOC-07) |
 | `backend/app/search/` | Índices y ranking de búsqueda (DOC-08/09) |
 | `backend/app/api/` | Endpoints de documentos (DOC-04); búsqueda (DOC-10) |
+| `backend/app/corpus/` | Corpus experimental de Wikipedia (DOC-05) |
+| `corpus/` | Configuración y manifiesto versionados del corpus |
 | `frontend/` | Interfaz web en una etapa posterior |
 | `tests/` | Pruebas automatizadas |
 | `docs/` | Diseño y puesta en marcha |
