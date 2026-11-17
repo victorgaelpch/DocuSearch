@@ -32,6 +32,7 @@ data/extracted/
 data/indexes/
 data/indices/
 data/cache/
+data/corpus/
 data/*.db
 data/*.db-*
 data/*.sqlite*

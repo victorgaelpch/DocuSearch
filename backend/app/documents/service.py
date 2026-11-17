@@ -9,12 +9,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from backend.app.config import Settings
 
 from backend.app.nlp.chunking import ChunkingConfig, chunk_extraction
 
-from .models import DEFAULT_COLLECTION, Chunk, Document, ExtractionStatus
+from .models import DEFAULT_COLLECTION, Chunk, Document, ExtractionStatus, SourceType
 from .readers import ExtractionResult, build_document, extract_document
 from .repository import DocumentRepository, DuplicateDocumentError
 from .storage import OriginalStore
@@ -97,6 +98,35 @@ class DocumentService:
                 self.store.delete(document.storage_path)
             raise
         return IngestResult(document=document, extraction=extraction, chunks=chunks)
+
+    def ingest_corpus_text(
+        self,
+        *,
+        collection: str,
+        title: str,
+        text: str,
+        filename: str,
+        source_uri: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> IngestResult:
+        """Registra un texto de un corpus experimental (no de un usuario).
+
+        Se guarda como ``.txt`` UTF-8 en ``originals/<colección>/`` y nunca se
+        mezcla con la colección ``user``: el ``doc_id`` depende de la colección.
+        """
+        if collection == DEFAULT_COLLECTION:
+            raise ValueError("los corpus experimentales no pueden usar la colección 'user'")
+        data = text.encode("utf-8")
+        extraction = extract_document(data, filename)
+        if extraction.status is not ExtractionStatus.EXTRACTED:
+            raise UploadValidationError("no_text", f"texto vacío o inválido: {title}")
+        extraction = extraction.model_copy(update={"title": title[:500]})
+        document = build_document(
+            extraction, collection=collection, source_type=SourceType.CORPUS, source_uri=source_uri
+        )
+        if metadata:
+            document = document.model_copy(update={"extra": {**document.extra, **metadata}})
+        return self._store_new(document, extraction, data)
 
     def rechunk(self, collection: str | None = None) -> RechunkReport:
         """Vuelve a extraer y fragmentar desde los originales (reindexación).
