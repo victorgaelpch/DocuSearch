@@ -33,6 +33,7 @@ data/indexes/
 data/indices/
 data/cache/
 data/*.db
+data/*.db-*
 data/*.sqlite*
 
 # Artefactos generados
