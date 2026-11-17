@@ -2,7 +2,7 @@
 
 Define la forma estable de un resultado para que TF-IDF, BM25 y la búsqueda
 semántica (DOC-08/09/10 y v0.2) devuelvan lo mismo. Reindexar o cambiar de
-método no requiere cambiar este esquema. La búsqueda aún no está implementada.
+método no requiere cambiar este esquema.
 """
 
 from __future__ import annotations
@@ -34,5 +34,6 @@ class SearchHit(BaseModel):
     title: str
     original_filename: str
     snippet: str
+    page: Optional[int] = Field(default=None, ge=1, description="Página inicial del fragmento")
     page_start: Optional[int] = Field(default=None, ge=1)
     page_end: Optional[int] = Field(default=None, ge=1)

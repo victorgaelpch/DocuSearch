@@ -1,1 +1,1 @@
-"""Future lexical and vector indexes / retrieval (DOC-08/09)."""
+"""Índices léxicos, ranking y motor de búsqueda (DOC-08 en adelante)."""
