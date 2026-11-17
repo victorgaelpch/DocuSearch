@@ -260,6 +260,29 @@ class DocumentRepository:
             )
         return updated
 
+    def update_extra(self, doc_id: str, updates: dict[str, Any]) -> Document:
+        """Combina ``updates`` con los metadatos adicionales del documento."""
+        document = self.get_document(doc_id)
+        extra = {**document.extra, **updates}
+        now = utc_now()
+        Document.model_validate({**document.model_dump(), "extra": extra, "updated_at": now})
+        with self._connect() as connection:
+            connection.execute(
+                "UPDATE documents SET extra = ?, updated_at = ? WHERE doc_id = ?",
+                (json.dumps(extra, ensure_ascii=False, sort_keys=True), _isoformat(now), doc_id),
+            )
+        return self.get_document(doc_id)
+
+    def count_chunks(self, doc_id: str | None = None) -> int:
+        with self._connect() as connection:
+            if doc_id is None:
+                row = connection.execute("SELECT COUNT(*) FROM chunks").fetchone()
+            else:
+                row = connection.execute(
+                    "SELECT COUNT(*) FROM chunks WHERE doc_id = ?", (doc_id,)
+                ).fetchone()
+        return int(row[0])
+
     def delete_document(self, doc_id: str) -> None:
         """Elimina metadatos y fragmentos (el original se gestiona aparte)."""
         with self._connect() as connection:

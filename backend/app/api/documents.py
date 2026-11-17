@@ -4,6 +4,7 @@
 * ``GET /documents``: lista paginada de documentos del usuario.
 * ``GET /documents/{doc_id}``: metadatos de un documento.
 * ``GET /documents/{doc_id}/download``: descarga del original como adjunto.
+* ``GET /documents/{doc_id}/chunks``: fragmentos con offsets y páginas (DOC-07).
 
 La ruta interna del original nunca se expone en las respuestas.
 """
@@ -76,7 +77,25 @@ class DocumentOut(BaseModel):
 
 class UploadOut(DocumentOut):
     word_count: int
+    chunk_count: int
     warnings: list[str]
+
+
+class ChunkOut(BaseModel):
+    chunk_id: str
+    ordinal: int
+    text: str
+    char_start: int
+    char_end: int
+    page_start: Optional[int] = None
+    page_end: Optional[int] = None
+    word_count: int
+
+
+class ChunkListOut(BaseModel):
+    doc_id: str
+    chunking: dict[str, Any]
+    items: list[ChunkOut]
 
 
 class DocumentListOut(BaseModel):
@@ -150,7 +169,10 @@ async def upload_document(
 
     base = DocumentOut.from_document(result.document).model_dump()
     return UploadOut(
-        **base, word_count=result.extraction.word_count, warnings=result.extraction.warnings
+        **base,
+        word_count=result.extraction.word_count,
+        chunk_count=len(result.chunks),
+        warnings=result.extraction.warnings,
     )
 
 
@@ -205,4 +227,26 @@ def download_document(
         filename=document.original_filename,
         content_disposition_type="attachment",
         headers={"X-Content-Type-Options": "nosniff", "Cache-Control": "no-store"},
+    )
+
+
+@router.get(
+    "/{doc_id}/chunks",
+    response_model=ChunkListOut,
+    responses={404: {"model": ErrorResponse}},
+    summary="Listar los fragmentos de un documento",
+)
+def list_chunks(
+    doc_id: DocIdPath,
+    service: DocumentService = Depends(get_document_service),
+):
+    try:
+        document = service.get_document(doc_id)
+        chunks = service.get_chunks(doc_id)
+    except DocumentNotFoundError:
+        return _error(404, "not_found", "documento no encontrado")
+    return ChunkListOut(
+        doc_id=doc_id,
+        chunking=document.extra.get("chunking", {}),
+        items=[ChunkOut(**c.model_dump(exclude={"doc_id"})) for c in chunks],
     )
