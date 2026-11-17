@@ -89,3 +89,16 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   plegado de tildes conservando la ñ, fallback sin lematizar).
 - **Riesgo:** `es_core_news_sm` es GPL-3.0.
 - **Pruebas:** `python -m pytest -q` → `167 passed, 1 warning` (Windows, Python 3.12.10, spaCy 3.8.18).
+
+## DOC-07 — Fragmentación 200/30
+
+- **Issue:** #7 · **Rama:** `feature/DOC-07-chunking` (apilada sobre DOC-06)
+- **Cambios:** `backend/app/nlp/chunking.py` (`ChunkingConfig`, `chunk_text`,
+  `chunk_extraction`); `DocumentService` fragmenta en la carga (todo-o-nada) y
+  `rechunk` regenera desde originales; `DocumentRepository.update_extra` y
+  `count_chunks`; `GET /documents/{doc_id}/chunks`; `chunk_count` en la
+  respuesta de carga; CLI `python -m backend.app.cli rechunk`;
+  `Settings.chunk_size/chunk_overlap`; `tests/test_chunking.py` (18 pruebas).
+- **Decisiones:** ver `docs/fragmentacion.md` (palabras `\S+` sobre el texto
+  original; páginas por primera/última palabra; sin colas redundantes).
+- **Pruebas:** `python -m pytest -q` → `185 passed, 1 warning` (Windows, Python 3.12.10).

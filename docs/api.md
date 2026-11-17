@@ -11,6 +11,7 @@ Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 | `POST` | `/documents` | Carga multipart (campo `file`) de un `.pdf`, `.docx` o `.txt` | 201, 400, 409, 413, 415, 422 |
 | `GET` | `/documents?limit=50&offset=0` | Lista paginada (`limit` 1–200) | 200, 422 |
 | `GET` | `/documents/{doc_id}` | Metadatos de un documento | 200, 404, 422 |
+| `GET` | `/documents/{doc_id}/chunks` | Fragmentos con offsets, páginas y configuración (DOC-07) | 200, 404, 422 |
 | `GET` | `/documents/{doc_id}/download` | Original como adjunto (`Content-Disposition: attachment`, `X-Content-Type-Options: nosniff`) | 200, 404, 422 |
 
 Ejemplo con PowerShell:
@@ -25,7 +26,7 @@ curl.exe http://127.0.0.1:8000/documents
 Incluye los metadatos del documento (`doc_id`, `title`, `original_filename`,
 `mime_type`, `size_bytes`, `sha256`, `created_at`, `updated_at`,
 `extraction_status`, `extraction_error`, `page_count`, `language`, `metadata`,
-`download_url`) más `word_count` y `warnings` de la extracción. **La ruta
+`download_url`) más `word_count`, `chunk_count` y `warnings` de la extracción. **La ruta
 interna del original no se expone.**
 
 ## Errores
@@ -76,6 +77,7 @@ formato inválido, `limit` fuera de rango) mantienen el formato estándar
 | `DOCUSEARCH_DATA_DIR` | `data/` | Raíz de originales, `metadata.db` e índices |
 | `DOCUSEARCH_MAX_UPLOAD_MB` | `20` | Tamaño máximo de carga |
 | `DOCUSEARCH_MAX_DOCX_UNCOMPRESSED_MB` | `200` | Límite de descompresión de DOCX |
+| `DOCUSEARCH_CHUNK_SIZE` / `DOCUSEARCH_CHUNK_OVERLAP` | `200` / `30` | Fragmentación (DOC-07) |
 
 ## Limitaciones
 
@@ -85,8 +87,7 @@ formato inválido, `limit` fuera de rango) mantienen el formato estándar
   (p. ej. `client_max_body_size` en nginx).
 - Sin autenticación ni separación por usuario: todos los documentos están en la
   colección `user`. No exponer la API a internet en este estado.
-- El texto extraído no se persiste todavía; la fragmentación (DOC-07) volverá a
-  extraerlo del original.
+- El texto se persiste como fragmentos (DOC-07); `rechunk` lo regenera desde los originales.
 - No hay endpoint de borrado ni de reindexación (fuera del alcance de DOC-04).
 - El tipo de PDF se valida por cabecera; los PDF malformados se detectan al
   extraer (422 `corrupt_file`).
