@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from backend.app.api.documents import router as documents_router
+from backend.app.api.search import router as search_router
 from backend.app.config import Settings
 
 
@@ -23,6 +24,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok"}
 
     application.include_router(documents_router)
+    application.include_router(search_router)
     return application
 
 
