@@ -1,4 +1,4 @@
-# API de documentos (DOC-04)
+# API de documentos y búsqueda (DOC-04, DOC-10)
 
 Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 `backend/app/documents/validation.py`. La documentación interactiva está en
@@ -11,6 +11,8 @@ Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 | `POST` | `/documents` | Carga multipart (campo `file`) de un `.pdf`, `.docx` o `.txt` | 201, 400, 409, 413, 415, 422 |
 | `GET` | `/documents?limit=50&offset=0` | Lista paginada (`limit` 1–200) | 200, 422 |
 | `GET` | `/documents/{doc_id}` | Metadatos de un documento | 200, 404, 422 |
+| `GET` | `/search` | Búsqueda BM25/TF-IDF (DOC-10) | 200, 422 |
+| `GET` | `/search/index` | Versión y parámetros de los índices | 200, 422 |
 | `GET` | `/documents/{doc_id}/chunks` | Fragmentos con offsets, páginas y configuración (DOC-07) | 200, 404, 422 |
 | `GET` | `/documents/{doc_id}/download` | Original como adjunto (`Content-Disposition: attachment`, `X-Content-Type-Options: nosniff`) | 200, 404, 422 |
 
@@ -20,6 +22,71 @@ Ejemplo con PowerShell:
 curl.exe -F "file=@C:\ruta\informe.pdf" http://127.0.0.1:8000/documents
 curl.exe http://127.0.0.1:8000/documents
 ```
+
+## Búsqueda (DOC-10)
+
+`GET /search?q=...&method=bm25&k=10&collection=user`
+
+| Parámetro | Valores | Por defecto |
+| --- | --- | --- |
+| `q` | texto, entre 1 y 500 caracteres, en UTF-8 | obligatorio |
+| `method` | `bm25`, `tfidf` | `bm25` |
+| `k` | entero entre 1 y 100 | `10` |
+| `collection` | `user` (documentos cargados), `wikipedia_es` (corpus) | `user` |
+
+Respuesta:
+
+```json
+{
+  "query": "índice invertido", "query_tokens": ["indice", "invertido"],
+  "method": "bm25", "k": 10, "collection": "user",
+  "index_version": "…", "total": 1, "took_ms": 4.9,
+  "results": [{
+    "rank": 1, "score": 2.003206, "method": "bm25",
+    "doc_id": "doc_…", "chunk_id": "doc_…_c00000",
+    "title": "Informe de prueba DocuSearch", "original_filename": "muestra.pdf",
+    "snippet": "…", "page": 1, "page_start": 1, "page_end": 2,
+    "download_url": "/documents/doc_…/download"
+  }]
+}
+```
+
+- Para la misma `index_version`, el orden siempre es el mismo (puntuación y,
+  en empate, `chunk_id`). La versión cambia al cargar o refragmentar.
+- Una consulta vacía o solo con espacios devuelve 422 `empty_query`. Una
+  consulta con caracteres que no son UTF-8 devuelve 422 `invalid_encoding`.
+  `k`, `method` o `collection` fuera de rango devuelven el 422 estándar de
+  FastAPI, que indica el campo afectado.
+- Una consulta sin coincidencias, o formada solo por stopwords, devuelve 200
+  con `total: 0`.
+- `GET /search/index?collection=user` devuelve la `index_version`, el número
+  de fragmentos y los parámetros de BM25, TF-IDF y del pipeline léxico.
+- La primera consulta de cada método tras arrancar el servidor tarda alrededor
+  de 1,4 s, porque carga spaCy y scikit-learn y construye el índice. Las
+  siguientes tardan unos milisegundos (medido en local con 3 documentos).
+
+Ejemplos en PowerShell (`Invoke-RestMethod` envía UTF-8 correctamente):
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:8000/search?q=enfermedad transmitida por mosquitos&collection=wikipedia_es"
+Invoke-RestMethod "http://127.0.0.1:8000/search?q=índice invertido&method=tfidf&k=5"
+```
+
+> En Git Bash para Windows, `curl --data-urlencode` puede enviar las tildes en
+> otra codificación; la API lo rechaza con `invalid_encoding`.
+
+### Reindexación
+
+```powershell
+python -m backend.app.cli reindex                    # todas las colecciones
+python -m backend.app.cli reindex --collection user
+```
+
+Vuelve a extraer y fragmentar todos los documentos desde sus originales con la
+configuración actual, y reconstruye los índices y la caché de tokens. Un
+servidor en marcha detecta el cambio y reconstruye sus índices en memoria en
+la siguiente consulta. Se ofrece como **comando local**, no como endpoint,
+porque la API todavía no tiene autenticación.
 
 ## Respuesta de carga (201)
 
