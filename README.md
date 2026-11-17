@@ -2,7 +2,7 @@
 
 Buscador de documentos en español, diseñado para evolucionar hacia una plataforma de gestión y consulta documental con inteligencia artificial.
 
-> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`). La búsqueda (DOC-07 a DOC-10) **todavía no está implementada**.
+> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`). La búsqueda (DOC-08 a DOC-10) **todavía no está implementada**.
 
 ## Requisitos
 
@@ -28,7 +28,7 @@ python -m uvicorn backend.app.main:app --reload
 ```
 
 - Estado del servicio: http://127.0.0.1:8000/health
-- Documentos: `POST /documents`, `GET /documents`, `GET /documents/{doc_id}`, `GET /documents/{doc_id}/download` (ver `docs/api.md`)
+- Documentos: `POST /documents`, `GET /documents`, `GET /documents/{doc_id}`, `GET /documents/{doc_id}/download`, `GET /documents/{doc_id}/chunks` (ver `docs/api.md`)
 - Documentación automática: http://127.0.0.1:8000/docs
 
 ## Datos locales

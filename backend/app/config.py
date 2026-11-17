@@ -55,6 +55,8 @@ MAX_UPLOAD_MB_ENV = "DOCUSEARCH_MAX_UPLOAD_MB"
 DEFAULT_MAX_UPLOAD_MB = 20
 MAX_DOCX_UNCOMPRESSED_MB_ENV = "DOCUSEARCH_MAX_DOCX_UNCOMPRESSED_MB"
 DEFAULT_MAX_DOCX_UNCOMPRESSED_MB = 200
+CHUNK_SIZE_ENV = "DOCUSEARCH_CHUNK_SIZE"
+CHUNK_OVERLAP_ENV = "DOCUSEARCH_CHUNK_OVERLAP"
 
 
 def _positive_float_env(name: str, default: float) -> float:
@@ -77,6 +79,8 @@ class Settings:
     paths: DataPaths
     max_upload_bytes: int
     max_docx_uncompressed_bytes: int
+    chunk_size: int = 200
+    chunk_overlap: int = 30
 
     @classmethod
     def from_env(cls, data_dir: str | os.PathLike[str] | None = None) -> "Settings":
@@ -88,4 +92,6 @@ class Settings:
             paths=get_data_paths(data_dir),
             max_upload_bytes=int(upload_mb * 1024 * 1024),
             max_docx_uncompressed_bytes=int(docx_mb * 1024 * 1024),
+            chunk_size=int(_positive_float_env(CHUNK_SIZE_ENV, 200)),
+            chunk_overlap=int(os.environ.get(CHUNK_OVERLAP_ENV, "30") or 30),
         )
