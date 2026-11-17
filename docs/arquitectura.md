@@ -22,10 +22,12 @@ Usuario -> Frontend -> FastAPI -> Documentos / Búsqueda
 - `/health` retorna un JSON estable para pruebas y CI.
 - Las rutas y funciones de extracción no están implementadas en esta etapa.
 
+### Contratos implementados (DOC-02)
+
+- `Document`, `Chunk` y `SearchHit`, con persistencia SQLite y almacén de originales. Detalle en `docs/modelo-datos.md`.
+
 ### Contratos planeados (no implementados)
 
-- `Document`: ID estable, nombre/título, origen, MIME, tamaño, hash, ubicación y fecha.
-- `Chunk`: ID estable, `doc_id`, texto, posición y página cuando aplica.
 - `/documents`: cargar y consultar archivos con validaciones (DOC-04).
 - `/search`: recuperar top-k con fragmento, puntuación y procedencia (DOC-10).
 
