@@ -24,9 +24,9 @@ python -m uvicorn backend.app.main:app --reload
 
 ## Lectores de documentos
 
-Desde DOC-03, PyMuPDF y python-docx son dependencias principales y se instalan
-con `pip install -e ".[dev]"`. El extra `documents` conserva `python-multipart`,
-necesario para la carga de archivos de DOC-04.
+Desde DOC-04, PyMuPDF, python-docx y python-multipart son dependencias
+principales y se instalan con `pip install -e ".[dev]"`. El extra `documents`
+se eliminó (pip solo mostrará un aviso si se sigue usando).
 
 Para regenerar los archivos de prueba sintéticos:
 

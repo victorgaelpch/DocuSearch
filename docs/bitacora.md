@@ -49,3 +49,30 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   `78 passed, 1 warning` (misma advertencia de Starlette/httpx).
 - **Pendientes:** endpoints de carga con validación de tipo real y tamaño
   (DOC-04); OCR (DOC-23); Google Docs (DOC-22).
+
+## DOC-04 — Endpoints para subir, listar y descargar documentos
+
+- **Issue:** #4 · **Rama:** `feature/DOC-04-document-api`
+- **Objetivo:** usar documentos reales vía API antes del motor de búsqueda.
+- **Cambios:**
+  - `backend/app/api/documents.py`: `POST /documents`, `GET /documents`,
+    `GET /documents/{doc_id}`, `GET /documents/{doc_id}/download`.
+  - `backend/app/documents/validation.py`: nombre seguro, extensión, tamaño,
+    tipo real por firma, límite de descompresión de DOCX y rechazo de macros.
+  - `backend/app/documents/service.py`: orquestación validación → extracción →
+    original → metadatos, con limpieza del original si falla el registro.
+  - `backend/app/config.py`: `Settings` con límites configurables por entorno.
+  - `backend/app/main.py`: fábrica `create_app(settings)`; los servicios de
+    datos se crean en la primera petición (importar la app no crea archivos).
+  - `pyproject.toml`: `python-multipart` pasa a dependencias principales; se
+    elimina el extra `documents`.
+- **Decisiones:** ver `docs/api.md`. Duplicado → 409 con el `doc_id`
+  existente. PDF sin texto → se acepta con `needs_ocr`. Archivos dañados o sin
+  texto → 422 sin guardar nada.
+- **Pruebas:** `python -m pytest -q` en Windows, Python 3.12.10 →
+  `135 passed, 1 warning`. Prueba manual con `uvicorn` y `curl`: carga de PDF
+  (201), consulta (200), descarga con bytes idénticos al original, `.exe`
+  rechazado (415) y duplicado (409).
+- **Pendientes / riesgos:** sin autenticación; el límite de tamaño no evita
+  que Starlette guarde temporalmente el cuerpo multipart (usar límite en proxy);
+  sin endpoint de borrado ni reindexación.
