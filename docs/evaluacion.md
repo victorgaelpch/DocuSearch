@@ -30,7 +30,29 @@ python -m backend.app.cli evaluate --output evaluation/results/wikipedia_es_tfid
 - **Entorno:** Windows, CPU, Python 3.12.10, spaCy 3.8.18 con
   `es_core_news_sm` 3.8.0 y scikit-learn 1.9.1.
 
-## Resultados (ejecución real del 2026-11-17)
+## Resultados con el pipeline léxico v2 (vigente)
+
+Mismas consultas y corpus. El pipeline indexa el lema y la forma superficial
+(ver `docs/preprocesamiento.md`). Versión del índice: `8bb022c3ffe1f1d6`.
+Archivo: `evaluation/results/wikipedia_es_tfidf_bm25_v2.json`.
+
+| Método | Consultas | Tipo | Recall@1 | Recall@5 | Recall@10 | MRR@10 | nDCG@10 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| tfidf | 32 | todas | 0.750 | 0.958 | 1.000 | 0.845 | 0.878 |
+| tfidf | 15 | léxicas | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| tfidf | 17 | paráfrasis | 0.529 | 0.922 | 1.000 | 0.708 | 0.770 |
+| bm25 | 32 | todas | 0.792 | 0.958 | 1.000 | 0.905 | 0.921 |
+| bm25 | 15 | léxicas | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| bm25 | 17 | paráfrasis | 0.608 | 0.922 | 1.000 | 0.822 | 0.851 |
+
+**Sobre el cambio:** la corrección no se eligió mirando estas métricas. Surgió
+de un defecto funcional detectado por las pruebas de extremo a extremo
+(DOC-11): la consulta `dengue` no encontraba el artículo Dengue. Aun así, se
+midió sobre el mismo conjunto de consultas, así que la mejora de v1 a v2
+(BM25: MRR@10 de 0.880 a 0.905) debe confirmarse con consultas nuevas. Con v2,
+BM25 ya recupera P12 (Desinflación), aunque en la posición 7.
+
+## Resultados con el pipeline léxico v1 (histórico, ejecución del 2026-11-17)
 
 | Método | Consultas | Tipo | Recall@1 | Recall@5 | Recall@10 | MRR@10 | nDCG@10 |
 | --- | --- | --- | --- | --- | --- | --- | --- |

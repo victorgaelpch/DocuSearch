@@ -164,3 +164,20 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Fallo encontrado en pruebas:** una consulta "sin resultados" contenía
   "palabra", que sí aparece en los fixtures; se corrigió la prueba.
 - **Pruebas:** `python -m pytest -q` → `258 passed, 1 warning`.
+
+## DOC-11 — Pruebas del MVP v0.1
+
+- **Issue:** #11 · **Rama:** `feature/DOC-11-v01-tests` (apilada sobre DOC-10)
+- **Cambios:** `tests/test_v01_end_to_end.py` (flujo completo, 27 cargas
+  inválidas, reinicio, latencia, CLI); `benchmark_latency` y CLI `benchmark`;
+  `pytest-cov` en `dev`; `docs/pruebas.md`; comandos de prueba en el README.
+- **Fallo encontrado y corregido:** las consultas cortas se lematizaban mal
+  (`dengue` → `denguir`, `lava` → `lavar`) porque spaCy etiqueta sin contexto.
+  El pipeline léxico pasa a la **v2**, que indexa el lema y la forma
+  superficial con prefijo `=`. Se añadieron pruebas de regresión y la caché de
+  tokens se invalida por versión.
+- **Evaluación repetida (v2):** BM25 MRR@10 0.905 y nDCG@10 0.921; TF-IDF
+  0.845 y 0.878. La v1 queda como histórico en `docs/evaluacion.md`.
+- **Benchmark real:** BM25 p95 de 26,9 ms y máximo de 28,0 ms; TF-IDF p95 de
+  28,5 ms y máximo de 32,1 ms (32 consultas × 5); arranque de 5,1 s con caché.
+- **Pruebas:** `python -m pytest -q` → `269 passed, 1 warning`; cobertura del 96 %.
