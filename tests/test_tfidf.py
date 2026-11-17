@@ -136,8 +136,8 @@ def test_describe_records_parameters(engine: SearchEngine) -> None:
     info = engine.describe()
     assert info["chunks"] == 4
     assert info["lexical_pipeline"]["pipeline"] == "lexical"
-    tfidf = info["indexes"][0]
-    assert tfidf["method"] == "tfidf" and "scikit_learn" in tfidf["params"]
+    tfidf = next(i for i in info["indexes"] if i["method"] == "tfidf")
+    assert "scikit_learn" in tfidf["params"]
 
 
 def test_token_cache_avoids_reprocessing(service: DocumentService, lexical_pipeline, monkeypatch) -> None:

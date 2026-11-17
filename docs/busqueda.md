@@ -1,7 +1,8 @@
 # Búsqueda léxica (DOC-08, DOC-09)
 
 Código: `backend/app/search/` — `lexical_corpus.py` (tokens con caché),
-`ranking.py` (top-k), `tfidf.py`, `engine.py` (`SearchEngine`).
+`ranking.py` (top-k), `tfidf.py`, `bm25.py`, `engine.py` (`SearchEngine`),
+`evaluation.py`.
 
 ## Flujo
 
@@ -35,6 +36,22 @@ normalizados (analizador identidad), con estos parámetros:
 Con vectores L2, la puntuación es la **similitud coseno** entre consulta y
 fragmento (entre 0 y 1). Los parámetros y la versión de scikit-learn se
 exponen en `SearchEngine.describe()`.
+
+## BM25 (DOC-09)
+
+Implementación propia (`backend/app/search/bm25.py`) con índice invertido y
+`numpy`. Es el **método por defecto** del motor.
+
+| Parámetro | Valor |
+| --- | --- |
+| `k1` | 1.5 (saturación de la frecuencia del término) |
+| `b` | 0.75 (normalización por longitud del fragmento) |
+| idf | `ln(1 + (N − df + 0.5) / (df + 0.5))`, nunca negativo |
+| Términos de la consulta | cada término único cuenta una vez |
+
+TF-IDF y BM25 se construyen sobre **el mismo corpus léxico** (mismos tokens y
+la misma `index_version`), por lo que se pueden comparar directamente. La
+comparación está en `docs/evaluacion.md`.
 
 ## Ranking
 

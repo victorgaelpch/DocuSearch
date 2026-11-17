@@ -24,6 +24,7 @@ from backend.app.nlp.semantic import prepare_semantic
 from .lexical_corpus import LexicalCorpus, build_lexical_corpus
 from .models import SearchHit, SearchMethod
 from .ranking import DEFAULT_TOP_K, validate_k
+from .bm25 import BM25Index
 from .tfidf import TfidfIndex
 
 SNIPPET_CHARS = 300
@@ -44,7 +45,14 @@ def _tfidf_factory(corpus: LexicalCorpus) -> LexicalIndex:
     return TfidfIndex(corpus.tokens, corpus.chunk_ids)
 
 
-INDEX_FACTORIES: dict[SearchMethod, IndexFactory] = {SearchMethod.TFIDF: _tfidf_factory}
+def _bm25_factory(corpus: LexicalCorpus) -> LexicalIndex:
+    return BM25Index(corpus.tokens, corpus.chunk_ids)
+
+
+INDEX_FACTORIES: dict[SearchMethod, IndexFactory] = {
+    SearchMethod.BM25: _bm25_factory,
+    SearchMethod.TFIDF: _tfidf_factory,
+}
 
 
 class UnsupportedMethodError(ValueError):
@@ -150,7 +158,7 @@ class SearchEngine:
         self,
         query: str,
         *,
-        method: SearchMethod | str = SearchMethod.TFIDF,
+        method: SearchMethod | str = SearchMethod.BM25,
         k: int = DEFAULT_TOP_K,
         collection: str = DEFAULT_COLLECTION,
     ) -> SearchResponse:

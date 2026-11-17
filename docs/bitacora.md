@@ -132,3 +132,19 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Medición real:** corpus `wikipedia_es` → 1978 fragmentos, vocabulario de
   24 384 términos; primera construcción 38,3 s; consulta con caché ~17 ms.
 - **Pruebas:** `python -m pytest -q` → `217 passed, 1 warning`.
+
+## DOC-09 — BM25 como línea base experimental
+
+- **Issue:** #9 · **Rama:** `feature/DOC-09-bm25` (apilada sobre DOC-08)
+- **Cambios:** `backend/app/search/bm25.py` (`BM25Index`), registro en el
+  motor como método por defecto; `evaluation.py` (Recall@k, MRR@10, nDCG@10 a
+  nivel de documento); CLI `evaluate`; `evaluation/queries_wikipedia_es.json`
+  (32 consultas: 15 léxicas, 17 paráfrasis); resultados reales en
+  `evaluation/results/wikipedia_es_tfidf_bm25.json`; `tests/test_bm25.py`
+  (21 pruebas).
+- **Resultados reales:** MRR@10 0.880 (BM25) frente a 0.828 (TF-IDF); nDCG@10
+  0.890 frente a 0.856. BM25 falla P12 (Desinflación). Latencia media de unos
+  72 ms por consulta con profundidad 100. Ver `docs/evaluacion.md`.
+- **Limitaciones:** consultas redactadas por el asistente, pendientes de
+  revisión humana; corpus pequeño y temas muy separados.
+- **Pruebas:** `python -m pytest -q` → `234 passed, 1 warning`.

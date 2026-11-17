@@ -4,6 +4,7 @@ Uso (desde la raíz del repositorio)::
 
     python -m backend.app.cli rechunk [--collection user]
     python -m backend.app.cli corpus freeze|build|import|stats
+    python -m backend.app.cli evaluate [--output evaluation/results/x.json]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -98,6 +99,33 @@ def _cmd_corpus(args: argparse.Namespace) -> int:
     return 0
 
 
+def _search_engine(settings: Settings):
+    from backend.app.search.engine import SearchEngine
+
+    service = DocumentService(settings)
+    return SearchEngine(
+        service.repository, cache_path=settings.paths.indexes_dir / "lexical_tokens.json"
+    )
+
+
+def _cmd_evaluate(args: argparse.Namespace) -> int:
+    from backend.app.search.evaluation import evaluate, format_table, load_queries
+
+    settings = Settings.from_env()
+    queries, meta = load_queries(Path(args.queries))
+    engine = _search_engine(settings)
+    engine.describe(args.collection)  # construye los índices fuera de la medición
+    report = evaluate(engine, queries, methods=args.methods, collection=args.collection)
+    report["queries_file"] = meta.get("name")
+    print(format_table(report))
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"resultados guardados en {output}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -108,6 +136,12 @@ def build_parser() -> argparse.ArgumentParser:
     corpus.add_argument("action", choices=["freeze", "build", "import", "stats"])
     corpus.add_argument("--min-words", type=int, default=50)
     corpus.set_defaults(func=_cmd_corpus)
+    evaluate = sub.add_parser("evaluate", help="evaluar métodos con consultas anotadas")
+    evaluate.add_argument("--queries", default=str(REPO_ROOT / "evaluation" / "queries_wikipedia_es.json"))
+    evaluate.add_argument("--collection", default=WIKIPEDIA_COLLECTION)
+    evaluate.add_argument("--methods", nargs="+", default=["tfidf", "bm25"])
+    evaluate.add_argument("--output", default=None)
+    evaluate.set_defaults(func=_cmd_evaluate)
     return parser
 
 
