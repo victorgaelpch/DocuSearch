@@ -181,3 +181,22 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Benchmark real:** BM25 p95 de 26,9 ms y máximo de 28,0 ms; TF-IDF p95 de
   28,5 ms y máximo de 32,1 ms (32 consultas × 5); arranque de 5,1 s con caché.
 - **Pruebas:** `python -m pytest -q` → `269 passed, 1 warning`; cobertura del 96 %.
+
+## DOC-12 — Servicio de embeddings multilingüe en CPU
+
+- **Issue:** #23 · **Rama:** `feature/DOC-12-embeddings`
+- **Cambios:** `backend/app/nlp/embeddings.py` (`SentenceTransformerEncoder`
+  con carga perezosa y revisión fijada, `split_windows`, `HashingEncoder`
+  para pruebas, `get_encoder`); extra `semantic` (`sentence-transformers`
+  6.x); CLI `embeddings`; marca de pytest `semantic_model`;
+  `tests/test_embeddings.py`; `docs/embeddings.md`.
+- **Hallazgo:** el modelo admite 128 tokens y el 96 % de los fragmentos de
+  `wikipedia_es` los supera (mediana de 304). Truncando, el modelo vería el
+  43 % del texto. Se codifica por ventanas de ≤126 tokens y se promedia
+  ponderando por tokens. La estrategia se eligió por cobertura, sin mirar
+  métricas de recuperación; su comparación queda para DOC-16.
+- **Mediciones reales:** 1978 fragmentos en 105 s en CPU (18,8/s); consulta
+  p95 de 18,4 ms; modelo de ~458 MB en la caché local (fuera del repositorio).
+- **Pruebas:** `python -m pytest -q` → `285 passed, 3 skipped` (las 3 omitidas
+  usan el modelo real; con `DOCUSEARCH_TEST_SEMANTIC_MODEL=1` pasan las 19 de
+  `tests/test_embeddings.py`). Cobertura total del 97 %; `embeddings.py` al 100 %.
