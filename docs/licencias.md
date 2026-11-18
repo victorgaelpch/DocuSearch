@@ -1,10 +1,46 @@
 # Licencias del proyecto y de sus dependencias (DOC-18)
 
-> **Estado: pendiente de decisión del equipo.** Este documento reúne los
-> datos y las opciones para decidir; no elige la licencia ni es asesoría
-> legal. El repositorio todavía **no declara licencia**. Hasta que exista un
-> archivo `LICENSE`, nadie fuera del equipo tiene permiso para reutilizar el
-> código.
+> **Decisión: `AGPL-3.0-or-later` (opción A).** La eligió el asistente de
+> desarrollo por delegación expresa del usuario ("escoge la mejor a tu
+> criterio"), el 2026-11-18. No es asesoría legal.
+>
+> Aplicada en `LICENSE` (texto oficial de gnu.org, SHA-256 `0d96a4ff…abcb0`),
+> en `pyproject.toml` (`license = "AGPL-3.0-or-later"`), en
+> `THIRD_PARTY_NOTICES.md` y en el README.
+
+## Por qué la opción A
+
+1. **Es la única que no exige trabajo técnico ni empeora el sistema.**
+   - La opción B obliga a sustituir PyMuPDF, que se usa en la lectura de PDF
+     y en el OCR, y la lematización.
+   - Además, habría que volver a medir la calidad, que probablemente bajaría
+     en algunos PDF.
+2. **Elimina la ambigüedad del modelo GPL.** La AGPL-3.0 es compatible con la
+   GPL-3.0 (sección 13 de ambas), así que no importa si el modelo
+   `es_core_news_sm` se considera parte del programa o no.
+3. **No tiene coste económico**, a diferencia de la opción C (licencia
+   comercial de PyMuPDF).
+4. **Encaja con el proyecto:** es académico y el repositorio ya es público.
+   La AGPL garantiza que las mejoras de quien lo ofrezca como servicio vuelvan
+   a estar disponibles.
+5. **"o posterior"** permite adoptar futuras versiones de la licencia que
+   publique la FSF. Es compatible con PyMuPDF (AGPL-3.0) porque el conjunto
+   se distribuye bajo la versión 3.
+
+**Lo que implica:**
+- Cualquiera puede usar, estudiar y modificar el código.
+- Quien distribuya el programa, o lo ofrezca modificado a usuarios a través
+  de una red, debe publicar su código fuente bajo la misma licencia.
+- No permite incorporarlo en productos de código cerrado. Si algún día se
+  necesitara, habría que aplicar la opción B o la C.
+
+**Cambiar de decisión:** mientras el código tenga un único origen (este
+equipo), los autores pueden volver a licenciarlo. Si se aceptan
+contribuciones externas, hará falta su consentimiento.
+
+---
+
+*Análisis previo a la decisión (se conserva como referencia):*
 
 ## Inventario
 
@@ -76,11 +112,9 @@ Como dato para decidir:
 - Si se quiere permitir su uso en productos cerrados, la opción **B** es la
   única sin coste económico, pero exige trabajo y una nueva evaluación.
 
-## Qué queda por hacer cuando el equipo decida
+## Lista de aplicación
 
-- [ ] Elegir la opción y registrarla en `docs/bitacora.md`.
-- [ ] Añadir `LICENSE` y el campo `license` de `pyproject.toml`.
-- [ ] Opción B: abrir Issues para sustituir el lector PDF y la lematización,
-      y repetir DOC-16.
-- [ ] Añadir un archivo de avisos de terceros (`THIRD_PARTY_NOTICES`) si se
-      distribuyen binarios o imágenes de contenedor.
+- [x] Elegir la opción y registrarla en `docs/bitacora.md` (opción A).
+- [x] Añadir `LICENSE` y el campo `license` de `pyproject.toml`.
+- [x] Añadir `THIRD_PARTY_NOTICES.md`.
+- [ ] (No aplica con la opción A) Sustituir el lector PDF y la lematización.
