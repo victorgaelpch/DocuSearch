@@ -37,17 +37,81 @@ class AnnotatedQuery:
     query: str
     kind: str
     relevant_titles: tuple[str, ...]
+    split: str = "test"
 
 
-def load_queries(path: Path) -> tuple[list[AnnotatedQuery], dict[str, Any]]:
+def load_queries(path: Path, split: str | None = None) -> tuple[list[AnnotatedQuery], dict[str, Any]]:
+    """Carga consultas anotadas; ``split`` filtra por ``dev``/``test`` (sin campo: ``test``)."""
     data = json.loads(path.read_text(encoding="utf-8"))
     queries = [
-        AnnotatedQuery(q["id"], q["query"], q.get("type", "unknown"), tuple(q["relevant"]))
+        AnnotatedQuery(q["id"], q["query"], q.get("type", "unknown"), tuple(q["relevant"]), q.get("split", "test"))
         for q in data["queries"]
     ]
     if len({q.qid for q in queries}) != len(queries):
         raise ValueError("hay identificadores de consulta repetidos")
+    if split is not None:
+        queries = [q for q in queries if q.split == split]
+        if not queries:
+            raise ValueError(f"no hay consultas en el conjunto {split!r}")
     return queries, data
+
+
+def paired_permutation_test(a: Sequence[float], b: Sequence[float], *, samples: int = 10000, seed: int = 0) -> float:
+    """p-valor bilateral de la diferencia de medias de dos métodos sobre las mismas consultas.
+
+    Prueba de aleatorización pareada (*sign-flip*): bajo la hipótesis nula
+    los dos métodos son intercambiables en cada consulta, así que el signo de
+    cada diferencia es aleatorio. Con 16 consultas o menos se enumeran todas
+    las combinaciones (exacta); si no, ``samples`` muestras con semilla fija.
+    """
+    import itertools
+    import random
+
+    if len(a) != len(b):
+        raise ValueError("las dos listas deben tener la misma longitud")
+    diffs = [x - y for x, y in zip(a, b)]
+    if not diffs or not any(diffs):
+        return 1.0
+    observed = abs(sum(diffs))
+    tolerance = 1e-12
+    if len(diffs) <= 16:
+        signs_iter = itertools.product((1, -1), repeat=len(diffs))
+        total = 2 ** len(diffs)
+    else:
+        rng = random.Random(seed)
+        signs_iter = ([rng.choice((1, -1)) for _ in diffs] for _ in range(samples))
+        total = samples
+    extreme = sum(
+        1 for signs in signs_iter if abs(sum(sign * d for sign, d in zip(signs, diffs))) >= observed - tolerance
+    )
+    return extreme / total
+
+
+def compare_methods(
+    report: dict[str, Any], baseline: str, metrics: Sequence[str] = ("mrr@10", "ndcg@10")
+) -> dict[str, Any]:
+    """Diferencia media, victorias/derrotas y p-valor de cada método frente a ``baseline``."""
+    by_method: dict[str, dict[str, dict[str, Any]]] = {}
+    for row in report["per_query"]:
+        by_method.setdefault(row["method"], {})[row["id"]] = row
+    if baseline not in by_method:
+        raise ValueError(f"método base no evaluado: {baseline}")
+    ids = sorted(by_method[baseline])
+    result: dict[str, Any] = {}
+    for method, per_id in by_method.items():
+        if method == baseline:
+            continue
+        result[method] = {}
+        for metric in metrics:
+            a = [per_id[i][metric] for i in ids]
+            b = [by_method[baseline][i][metric] for i in ids]
+            result[method][metric] = {
+                "mean_difference": round(statistics.fmean(x - y for x, y in zip(a, b)), 4),
+                "wins": sum(x > y for x, y in zip(a, b)),
+                "losses": sum(x < y for x, y in zip(a, b)),
+                "p_value": round(paired_permutation_test(a, b), 4),
+            }
+    return {"baseline": baseline, "test": "paired_permutation", "comparisons": result}
 
 
 def recall_at(ranking: Sequence[str], relevant: set[str], k: int) -> float:
@@ -111,6 +175,7 @@ def evaluate(
             row: dict[str, Any] = {
                 "id": query.qid,
                 "type": query.kind,
+                "split": query.split,
                 "method": method,
                 "mrr@10": reciprocal_rank(ranking, relevant),
                 "ndcg@10": ndcg_at(ranking, relevant),

@@ -1,0 +1,324 @@
+{
+  "collection": "wikipedia_es",
+  "index_version": "f64ace628846e933",
+  "depth": 100,
+  "methods": [
+    "semantic"
+  ],
+  "summary": {
+    "semantic": {
+      "all": {
+        "queries": 16,
+        "recall@1": 0.4375,
+        "recall@5": 0.75,
+        "recall@10": 0.9375,
+        "mrr@10": 0.5645,
+        "ndcg@10": 0.6517,
+        "mean_ms": 101.24,
+        "max_ms": 114.78
+      },
+      "lexical": {
+        "queries": 8,
+        "recall@1": 0.625,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr@10": 0.75,
+        "ndcg@10": 0.8115,
+        "mean_ms": 101.39,
+        "max_ms": 112.86
+      },
+      "paraphrase": {
+        "queries": 8,
+        "recall@1": 0.25,
+        "recall@5": 0.5,
+        "recall@10": 0.875,
+        "mrr@10": 0.379,
+        "ndcg@10": 0.4919,
+        "mean_ms": 101.1,
+        "max_ms": 114.78
+      }
+    }
+  },
+  "per_query": [
+    {
+      "id": "D01",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.25,
+      "ndcg@10": 0.43067655807339306,
+      "took_ms": 95.96,
+      "recall@1": 0.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D02",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 95.4,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D03",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 103.57,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D04",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.25,
+      "ndcg@10": 0.43067655807339306,
+      "took_ms": 112.86,
+      "recall@1": 0.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D05",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 94.59,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D06",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.5,
+      "ndcg@10": 0.6309297535714575,
+      "took_ms": 102.07,
+      "recall@1": 0.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D07",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 105.21,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D08",
+      "type": "lexical",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 101.43,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D09",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.14285714285714285,
+      "ndcg@10": 0.3333333333333333,
+      "took_ms": 91.94,
+      "recall@1": 0.0,
+      "recall@5": 0.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D10",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.3333333333333333,
+      "ndcg@10": 0.5,
+      "took_ms": 112.0,
+      "recall@1": 0.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D11",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.1111111111111111,
+      "ndcg@10": 0.3010299956639812,
+      "took_ms": 114.78,
+      "recall@1": 0.0,
+      "recall@5": 0.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D12",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 95.36,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D13",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.1111111111111111,
+      "ndcg@10": 0.3010299956639812,
+      "took_ms": 91.65,
+      "recall@1": 0.0,
+      "recall@5": 0.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D14",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "took_ms": 97.55,
+      "recall@1": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    },
+    {
+      "id": "D15",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.0,
+      "ndcg@10": 0.0,
+      "took_ms": 103.03,
+      "recall@1": 0.0,
+      "recall@5": 0.0,
+      "recall@10": 0.0
+    },
+    {
+      "id": "D16",
+      "type": "paraphrase",
+      "split": "dev",
+      "method": "semantic",
+      "mrr@10": 0.3333333333333333,
+      "ndcg@10": 0.5,
+      "took_ms": 102.5,
+      "recall@1": 0.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0
+    }
+  ],
+  "engine": {
+    "collection": "wikipedia_es",
+    "index_version": "8bb022c3ffe1f1d6",
+    "chunks": 1978,
+    "lexical_pipeline": {
+      "pipeline": "lexical",
+      "version": 2,
+      "lemmatizer": "es_core_news_sm-3.8.0",
+      "remove_stopwords": true,
+      "stopwords": "spacy-es-minus-content-words:479",
+      "lowercase": true,
+      "fold_accents": true,
+      "min_token_length": 1,
+      "surface_forms": true
+    },
+    "indexes": [
+      {
+        "method": "bm25",
+        "chunks": 1978,
+        "vocabulary": 54561,
+        "params": {
+          "k1": 1.5,
+          "b": 0.75,
+          "idf": "ln(1 + (N - df + 0.5) / (df + 0.5))",
+          "avgdl": 191.351,
+          "query_terms": "unique"
+        }
+      },
+      {
+        "method": "tfidf",
+        "chunks": 1978,
+        "vocabulary": 54561,
+        "params": {
+          "norm": "l2",
+          "use_idf": true,
+          "smooth_idf": true,
+          "sublinear_tf": false,
+          "min_df": 1,
+          "scikit_learn": "1.9.1"
+        }
+      },
+      {
+        "method": "semantic",
+        "collection": "wikipedia_es",
+        "index": "faiss.IndexFlatIP",
+        "metric": "cosine",
+        "chunks": 1978,
+        "dimension": 384,
+        "version": "f64ace628846e933",
+        "encoder": {
+          "encoder": "sentence-transformers",
+          "version": 1,
+          "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+          "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+          "dimension": 384,
+          "max_tokens": 126,
+          "long_text": "truncate",
+          "normalized": true,
+          "dtype": "float32",
+          "text_pipeline": {
+            "pipeline": "semantic",
+            "version": 1,
+            "remove_stopwords": false,
+            "lowercase": false,
+            "lemmatize": false,
+            "joins_wrapped_lines": true
+          }
+        },
+        "available": true,
+        "loaded": true
+      },
+      {
+        "method": "hybrid",
+        "fusion": "reciprocal_rank_fusion",
+        "params": {
+          "k": 60,
+          "candidates": 100
+        },
+        "combines": [
+          "bm25",
+          "semantic"
+        ]
+      }
+    ]
+  },
+  "queries_file": "wikipedia_es_v2",
+  "split": "dev",
+  "long_text": "truncate"
+}

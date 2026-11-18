@@ -103,12 +103,29 @@ def _cmd_corpus(args: argparse.Namespace) -> int:
     return 0
 
 
-def _search_engine(settings: Settings):
+def _search_engine(settings: Settings, long_text: str | None = None):
+    """Motor de búsqueda; ``long_text`` distinto de ``mean`` usa otro codificador e índice aparte."""
     from backend.app.search.engine import SearchEngine
 
     service = DocumentService(settings)
+    indexes_dir = settings.paths.indexes_dir
+    encoder_factory = None
+    if long_text and long_text != "mean":
+        import dataclasses
+
+        from backend.app.nlp.embeddings import EmbeddingConfig, SentenceTransformerEncoder
+
+        config = dataclasses.replace(EmbeddingConfig.from_env(), long_text=long_text)
+
+        def encoder_factory():
+            return SentenceTransformerEncoder(config)
+
+        indexes_dir = settings.paths.indexes_dir / f"experiment-{long_text}"
     return SearchEngine(
-        service.repository, cache_path=settings.paths.indexes_dir / "lexical_tokens.json"
+        service.repository,
+        cache_path=settings.paths.indexes_dir / "lexical_tokens.json",
+        indexes_dir=indexes_dir,
+        encoder_factory=encoder_factory,
     )
 
 
@@ -144,15 +161,28 @@ def _cmd_reindex(args: argparse.Namespace) -> int:
 
 
 def _cmd_evaluate(args: argparse.Namespace) -> int:
-    from backend.app.search.evaluation import evaluate, format_table, load_queries
+    from backend.app.search.evaluation import compare_methods, evaluate, format_table, load_queries
 
     settings = Settings.from_env()
-    queries, meta = load_queries(Path(args.queries))
-    engine = _search_engine(settings)
+    queries, meta = load_queries(Path(args.queries), split=args.split)
+    engine = _search_engine(settings, long_text=args.long_text)
     engine.describe(args.collection)  # construye los índices fuera de la medición
+    if {"semantic", "hybrid"} & set(args.methods):
+        engine.semantic.index(args.collection)
     report = evaluate(engine, queries, methods=args.methods, collection=args.collection)
     report["queries_file"] = meta.get("name")
+    report["split"] = args.split or "all"
+    if args.long_text:
+        report["long_text"] = args.long_text
+    if args.baseline in args.methods and len(args.methods) > 1:
+        report["significance"] = compare_methods(report, args.baseline)
     print(format_table(report))
+    for method, metrics in report.get("significance", {}).get("comparisons", {}).items():
+        for metric, values in metrics.items():
+            print(
+                f"{method} vs {args.baseline} {metric}: diferencia {values['mean_difference']:+.4f} "
+                f"(gana {values['wins']}, pierde {values['losses']}, p={values['p_value']:.4f})"
+            )
     if args.output:
         output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
@@ -257,6 +287,14 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--collection", default=WIKIPEDIA_COLLECTION)
     evaluate.add_argument("--methods", nargs="+", default=["tfidf", "bm25"])
     evaluate.add_argument("--output", default=None)
+    evaluate.add_argument("--split", choices=["dev", "test"], default=None, help="subconjunto de consultas")
+    evaluate.add_argument("--baseline", default="bm25", help="método de referencia para la prueba de significación")
+    evaluate.add_argument(
+        "--long-text",
+        choices=["mean", "truncate"],
+        default=None,
+        help="estrategia de textos largos del codificador (experimento con índice aparte)",
+    )
     evaluate.set_defaults(func=_cmd_evaluate)
     benchmark = sub.add_parser("benchmark", help="medir la latencia de búsqueda")
     benchmark.add_argument("--queries", default=str(REPO_ROOT / "evaluation" / "queries_wikipedia_es.json"))

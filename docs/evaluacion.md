@@ -1,4 +1,164 @@
-# Evaluación de la línea base léxica: TF-IDF vs BM25 (DOC-09)
+# Evaluación de la recuperación (DOC-09, DOC-16)
+
+## Evaluación v0.2: léxica vs semántica vs híbrida (DOC-16)
+
+Consultas: `evaluation/queries_wikipedia_es_v2.json`. Resultados por
+consulta: `evaluation/results/wikipedia_es_v2_test.json` (prueba) y
+`evaluation/results/v2_dev_semantic_{mean,truncate}.json` (desarrollo).
+
+```powershell
+python -m backend.app.cli semantic-index --collection wikipedia_es
+python -m backend.app.cli evaluate --queries evaluation/queries_wikipedia_es_v2.json --split test --methods tfidf bm25 semantic hybrid --output evaluation/results/wikipedia_es_v2_test.json
+```
+
+### Metodología
+
+- **Corpus:** el mismo `wikipedia_es` v1 (275 artículos, 1978 fragmentos).
+- **Consultas nuevas:** 48 en español.
+  - **Desarrollo (16):** 8 léxicas y 8 paráfrasis. Solo para decisiones de
+    diseño.
+  - **Prueba (32):** 12 léxicas y 20 paráfrasis. Solo para este informe.
+  - Ningún artículo relevante coincide con los del conjunto v1 (lo comprueba
+    una prueba automática).
+- **Anotación:** se redactaron y anotaron por título **antes** de ejecutar
+  ningún método; el archivo se confirmó en un commit propio antes de evaluar.
+  Las redactó el asistente de desarrollo: **siguen pendientes de revisión
+  humana** y, hasta entonces, el Issue #27 no se da por cerrado.
+- **Sin ajuste con el conjunto de prueba:**
+  - BM25 usa `k1=1.5` y `b=0.75`.
+  - RRF usa `k=60` (valor del artículo original).
+  - La semántica no tiene umbral más allá de coseno > 0.
+  - La única decisión que se contrastó con datos (la estrategia de textos
+    largos) se tomó con el conjunto de desarrollo.
+- **Significación:** prueba de aleatorización pareada (*sign-flip*) sobre
+  MRR@10 y nDCG@10 por consulta, de cada método frente a BM25.
+  - 10 000 permutaciones con semilla fija; es exacta con 16 consultas o
+    menos.
+  - p < 0,05 se considera significativo; no se corrige por comparaciones
+    múltiples.
+- **Entorno:** Windows, CPU, Python 3.12.10.
+  - spaCy 3.8 con `es_core_news_sm` 3.8.0;
+  - `sentence-transformers` 6.3.0, PyTorch 2.15.0 y `faiss-cpu` 1.16.0;
+  - modelo `paraphrase-multilingual-MiniLM-L12-v2`, revisión `e8f8c211…`.
+
+### Decisión con el conjunto de desarrollo: ventanas frente a truncado
+
+| Estrategia (semantic, 16 consultas dev) | Recall@1 | Recall@10 | MRR@10 | nDCG@10 |
+| --- | --- | --- | --- | --- |
+| Ventanas promediadas (`mean`, por defecto) | 0.500 | 0.875 | 0.617 | 0.679 |
+| Truncado a 128 tokens (`truncate`) | 0.438 | 0.938 | 0.565 | 0.652 |
+
+Las ventanas ganan en 6 consultas y pierden en 3 (MRR@10 +0,053, p=0,50).
+No hay evidencia para cambiar la estrategia elegida en DOC-12 por cobertura,
+así que se mantiene `mean`. Por tipo de consulta el resultado es mixto: en
+las paráfrasis de desarrollo el truncado fue algo mejor.
+
+### Resultados en el conjunto de prueba (32 consultas)
+
+| Método | Consultas | Tipo | Recall@1 | Recall@5 | Recall@10 | MRR@10 | nDCG@10 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| tfidf | 32 | todas | 0.641 | 0.875 | 0.922 | 0.754 | 0.788 |
+| tfidf | 12 | léxicas | 0.875 | 0.958 | 0.958 | 0.944 | 0.926 |
+| tfidf | 20 | paráfrasis | 0.500 | 0.825 | 0.900 | 0.639 | 0.706 |
+| bm25 | 32 | todas | 0.766 | 0.875 | 0.953 | 0.840 | 0.861 |
+| bm25 | 12 | léxicas | 0.958 | 0.958 | 0.958 | 1.000 | 0.968 |
+| bm25 | 20 | paráfrasis | 0.650 | 0.825 | 0.950 | 0.745 | 0.797 |
+| semantic | 32 | todas | 0.688 | 0.812 | 0.922 | 0.777 | 0.797 |
+| semantic | 12 | léxicas | 0.875 | 0.958 | 0.958 | 0.944 | 0.926 |
+| semantic | 20 | paráfrasis | 0.575 | 0.725 | 0.900 | 0.677 | 0.720 |
+| hybrid | 32 | todas | 0.781 | 0.891 | 0.922 | 0.852 | 0.861 |
+| hybrid | 12 | léxicas | 0.958 | 0.958 | 0.958 | 1.000 | 0.968 |
+| hybrid | 20 | paráfrasis | 0.675 | 0.850 | 0.900 | 0.764 | 0.797 |
+
+Frente a BM25, sobre todas las consultas de prueba:
+
+| Método | Δ MRR@10 | Gana / pierde | p | Δ nDCG@10 | p |
+| --- | --- | --- | --- | --- | --- |
+| tfidf | −0,087 | 0 / 7 | **0,014** | −0,072 | **0,014** |
+| semantic | −0,063 | 4 / 8 | 0,305 | −0,064 | 0,169 |
+| hybrid | +0,012 | 3 / 4 | 0,847 | −0,000 | 1,000 |
+
+### Lectura
+
+- **La búsqueda semántica no supera a BM25 en este corpus**, ni siquiera en
+  las paráfrasis (MRR@10 de 0,677 frente a 0,745). La diferencia no es
+  significativa (p=0,31), pero tampoco hay ventaja.
+- **La híbrida empata con BM25** (MRR@10 de 0,852 frente a 0,840; p=0,85). Es
+  el mejor método en Recall@1 (0,781) y Recall@5 (0,891), y en las paráfrasis
+  (MRR@10 de 0,764), pero con diferencias pequeñas y no significativas.
+- **La única diferencia significativa** es que BM25 supera a TF-IDF (p=0,014),
+  lo que confirma el resultado de DOC-09 con consultas nuevas.
+- **La mejora de v1 a v2 del pipeline léxico** (DOC-11) se midió con el mismo
+  conjunto con que se encontró. Con consultas nuevas, BM25 v2 obtiene MRR@10
+  de 0,840. No hay medición de v1 sobre estas consultas, así que no se puede
+  afirmar cuánto aportó.
+
+**Análisis de errores (MRR@10 por consulta, prueba):**
+
+- **La semántica acierta donde BM25 falla.** Son consultas sin las palabras
+  del artículo:
+  - T18, *"mapa de las estrellas del cielo"* → Carta estelar: BM25 0,25,
+    semántica 1,0.
+  - T25, *"prueba de laboratorio que mide la sensibilidad de una bacteria…"* →
+    Antibiograma: BM25 0,5, semántica 1,0.
+  - T16, *"veneno clásico…"* → Arsénico: BM25 0,5, semántica 1,0.
+- **La semántica falla donde BM25 acierta.** El artículo contiene literalmente
+  una palabra rara de la consulta:
+  - T14 *"…pilas recargables de níquel"* → Cadmio: semántica 0,14.
+  - T31 *"…países emergentes por endeudarse…"* → EMBI: semántica 0,10.
+  - T02 → Elemento sintético: semántica 0,33.
+- **La híbrida conserva las ganancias de ambos:** 1,0 en T16, T18 y T25, y en
+  T02, T13 y T24. Pierde parte en T14 (0,33) y T31 (0,5).
+- **Ningún método resuelve** T22 (Código inflado), T26 (Coproparasitología)
+  ni T27 (Scordatura): son conceptos que la consulta describe con palabras
+  que no aparecen en el texto.
+
+**Por qué la semántica rinde menos de lo esperado (hipótesis, no medidas):**
+
+1. Muchas "paráfrasis" comparten palabras poco frecuentes con el cuerpo del
+   artículo, aunque no con su título. Eso favorece a BM25: Wikipedia define
+   los conceptos con esas mismas palabras.
+2. `MiniLM-L12` multilingüe es un modelo pequeño y general.
+3. Promediar las ventanas de un fragmento diluye la señal de un término
+   concreto.
+
+Modelos mayores (p. ej. `multilingual-e5`) o reordenar con un *cross-encoder*
+son líneas para una fase posterior. Habría que probarlas con el conjunto de
+desarrollo, no con el de prueba.
+
+### Conjunto v1 con los cuatro métodos (no independiente)
+
+`evaluation/results/wikipedia_es_v1_queries_v02_methods.json`. Estas 32
+consultas ya se habían usado en DOC-09 y DOC-11, así que solo sirven de
+referencia:
+
+| Método | MRR@10 | nDCG@10 | Δ MRR@10 vs BM25 (p) |
+| --- | --- | --- | --- |
+| tfidf | 0.845 | 0.878 | −0,061 (0,132) |
+| bm25 | 0.905 | 0.921 | — |
+| semantic | 0.785 | 0.814 | −0,121 (0,092) |
+| hybrid | 0.861 | 0.893 | −0,045 (0,325) |
+
+### Recomendación
+
+Mantener **BM25 como método por defecto**. Ofrecer `hybrid` como alternativa
+para consultas descriptivas. La búsqueda semántica sola no se recomienda
+como método principal con este modelo.
+
+### Limitaciones
+
+- 32 consultas de prueba y un corpus pequeño, con temas muy separados. Las
+  diferencias de unas pocas consultas cambian las medias, y solo la
+  comparación con TF-IDF es significativa.
+- Consultas redactadas por el asistente, no por usuarios reales ni por un
+  anotador independiente. Necesitan revisión humana.
+- La relevancia es binaria y por título, así que un artículo relacionado
+  (p. ej. Elemento químico para T02) cuenta como no relevante.
+- `documentacion.pdf` no estaba disponible para contrastar la metodología.
+
+---
+
+## Evaluación v0.1: TF-IDF vs BM25 (DOC-09)
 
 Código: `backend/app/search/evaluation.py`. Consultas:
 `evaluation/queries_wikipedia_es.json`. Resultados completos, por consulta:

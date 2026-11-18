@@ -271,3 +271,24 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   candidatos semánticos (híbrida: p50 de 101 ms). Con una sola consulta, p50
   de 42,2 ms y p95 de 55,7 ms; la semántica pasa de 37,1 a 32,8 ms de p50.
 - **Pruebas:** `python -m pytest -q` → `321 passed, 4 skipped`.
+
+## DOC-16 — Evaluación v0.2: léxica vs semántica vs híbrida
+
+- **Issue:** #27 (sigue abierto: falta la revisión humana de las consultas)
+  · **Rama:** `feature/DOC-16-evaluation-v02` (apilada sobre DOC-15)
+- **Cambios:**
+  - `evaluation/queries_wikipedia_es_v2.json` con 48 consultas nuevas (16 de
+    desarrollo y 32 de prueba), confirmado en un commit propio antes de
+    evaluar;
+  - `--split`, `paired_permutation_test`, `compare_methods`;
+  - CLI `evaluate --split --baseline --long-text`;
+  - resultados en `evaluation/results/`;
+  - `tests/test_evaluation_v02.py`.
+- **Decisión con desarrollo:** ventanas frente a truncado: MRR@10 de 0,617
+  frente a 0,565 (p=0,50). Se mantienen las ventanas.
+- **Resultados de prueba (MRR@10):** BM25 0,840; híbrida 0,852 (p=0,85);
+  semántica 0,777 (p=0,31); TF-IDF 0,754 (p=0,014).
+- **Conclusión:** la semántica no supera a BM25 en este corpus, ni en las
+  paráfrasis; la híbrida empata. BM25 sigue por defecto. Se documentan el
+  análisis de errores y las hipótesis.
+- **Pruebas:** `python -m pytest -q` → `326 passed, 4 skipped`.
