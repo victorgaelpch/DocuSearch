@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -347,6 +347,19 @@ class DocumentRepository:
                 "SELECT * FROM chunks WHERE chunk_id = ?", (chunk_id,)
             ).fetchone()
         return _row_to_chunk(row) if row else None
+
+    def get_chunks_by_ids(self, chunk_ids: Sequence[str]) -> dict[str, Chunk]:
+        """Fragmentos por ``chunk_id`` en una sola consulta (los inexistentes se omiten)."""
+        found: dict[str, Chunk] = {}
+        ids = list(dict.fromkeys(chunk_ids))
+        with self._connect() as connection:
+            for start in range(0, len(ids), 500):  # límite de parámetros de SQLite
+                batch = ids[start : start + 500]
+                rows = connection.execute(
+                    f"SELECT * FROM chunks WHERE chunk_id IN ({','.join('?' * len(batch))})", batch
+                ).fetchall()
+                found.update((row["chunk_id"], _row_to_chunk(row)) for row in rows)
+        return found
 
     def iter_chunks(self, collection: str | None = None) -> Iterator[Chunk]:
         """Recorre fragmentos en orden estable (útil para construir índices)."""

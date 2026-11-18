@@ -30,7 +30,7 @@ curl.exe http://127.0.0.1:8000/documents
 | Parámetro | Valores | Por defecto |
 | --- | --- | --- |
 | `q` | texto, entre 1 y 500 caracteres, en UTF-8 | obligatorio |
-| `method` | `bm25`, `tfidf`, `semantic` | `bm25` |
+| `method` | `bm25`, `tfidf`, `semantic`, `hybrid` | `bm25` |
 | `k` | entero entre 1 y 100 | `10` |
 | `collection` | `user` (documentos cargados), `wikipedia_es` (corpus) | `user` |
 
@@ -67,6 +67,9 @@ Respuesta:
   fragmentos con coseno mayor que 0, igual que los léxicos solo devuelven
   puntuación positiva. Requiere el extra `semantic`; sin él responde 503
   `semantic_unavailable` y los métodos léxicos siguen funcionando.
+- **`method=hybrid` (DOC-15)** fusiona BM25 y la búsqueda semántica con
+  Reciprocal Rank Fusion (k=60); `score` es la puntuación RRF. Ver
+  `docs/busqueda.md`. Tiene los mismos requisitos y errores que `semantic`.
 - La primera búsqueda semántica sobre una colección carga el modelo (~9 s) y
   codifica los fragmentos que aún no estén en el índice. Con un corpus grande
   puede tardar minutos (`wikipedia_es`: 114 s); para evitarlo, construye el
@@ -126,7 +129,7 @@ Todos los errores propios usan el formato:
 | 415 | `unsupported_format`, `content_mismatch`, `macros_not_allowed` | Extensión no admitida, contenido que no corresponde a la extensión o DOCX con macros |
 | 422 | `corrupt_file`, `no_text` | Archivo dañado o sin texto extraíble |
 | 404 | `not_found`, `original_missing` | Documento inexistente o original ausente en disco |
-| 503 | `semantic_unavailable` | `method=semantic` sin el extra `semantic` o sin poder cargar el modelo |
+| 503 | `semantic_unavailable` | `method=semantic` o `hybrid` sin el extra `semantic` o sin poder cargar el modelo |
 
 Los errores de validación de FastAPI (campo `file` ausente, `doc_id` con
 formato inválido, `limit` fuera de rango) mantienen el formato estándar

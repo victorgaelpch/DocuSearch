@@ -4,8 +4,8 @@
 
 Recupera fragmentos de documentos PDF, DOCX y TXT cargados (colección
 ``user``) o del corpus experimental (``wikipedia_es``) con BM25 (por
-defecto), TF-IDF o búsqueda semántica (``semantic``, requiere el extra
-``semantic``). El orden es determinista para la misma ``index_version``.
+defecto), TF-IDF, búsqueda semántica (``semantic``) o híbrida (``hybrid``);
+las dos últimas requieren el extra ``semantic``. El orden es determinista para la misma ``index_version``.
 """
 
 from __future__ import annotations
@@ -32,6 +32,7 @@ class Method(str, Enum):
     bm25 = "bm25"
     tfidf = "tfidf"
     semantic = "semantic"
+    hybrid = "hybrid"
 
 
 class Collection(str, Enum):
@@ -88,7 +89,7 @@ def get_search_engine(
         422: {"model": ErrorResponse, "description": "Consulta vacía o parámetros inválidos"},
         503: {"model": ErrorResponse, "description": "Búsqueda semántica no disponible (falta el extra `semantic` o el modelo)"},
     },
-    summary="Buscar fragmentos por texto libre (BM25, TF-IDF o semántica)",
+    summary="Buscar fragmentos por texto libre (BM25, TF-IDF, semántica o híbrida)",
 )
 def search(
     q: Annotated[
@@ -101,7 +102,7 @@ def search(
         ),
     ],
     method: Annotated[
-        Method, Query(description="`bm25` (por defecto), `tfidf` o `semantic` (por significado)")
+        Method, Query(description="`bm25` (por defecto), `tfidf`, `semantic` (por significado) o `hybrid` (BM25 + semántica)")
     ] = Method.bm25,
     k: Annotated[int, Query(ge=1, le=MAX_TOP_K, description="Número de resultados")] = DEFAULT_TOP_K,
     collection: Annotated[

@@ -225,3 +225,14 @@ def test_build_storage_path_validates_inputs(args) -> None:
     doc_id = args[0] or make_document_id(compute_sha256(b"z"))
     with pytest.raises(UnsafePathError):
         build_storage_path(doc_id, args[1], args[2])
+
+
+def test_get_chunks_by_ids_batches_and_skips_missing(repo: DocumentRepository) -> None:
+    document = _make(b"contenido para lotes")
+    repo.add_document(document)
+    chunks = _chunks(document.doc_id, [f"texto {i}" for i in range(600)])
+    repo.replace_chunks(document.doc_id, chunks)
+    wanted = [c.chunk_id for c in reversed(chunks)] + ["doc_inexistente_c00000", chunks[0].chunk_id]
+    found = repo.get_chunks_by_ids(wanted)
+    assert len(found) == 600 and found[chunks[599].chunk_id].text == "texto 599"
+    assert repo.get_chunks_by_ids([]) == {}

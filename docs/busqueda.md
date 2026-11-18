@@ -1,4 +1,4 @@
-# Búsqueda léxica (DOC-08, DOC-09)
+# Búsqueda léxica (DOC-08, DOC-09) e híbrida (DOC-15)
 
 Código: `backend/app/search/` — `lexical_corpus.py` (tokens con caché),
 `ranking.py` (top-k), `tfidf.py`, `bm25.py`, `engine.py` (`SearchEngine`),
@@ -82,3 +82,41 @@ sistemática del requisito de menos de 2 segundos queda para DOC-11.
   servidor (rápido gracias a la caché de tokens).
 - Un resultado es un fragmento, no un documento: un mismo documento puede
   aparecer varias veces en el top-k.
+
+## Búsqueda híbrida (DOC-15)
+
+Código: `backend/app/search/hybrid.py` y `SearchEngine._hybrid`. Se usa con
+`GET /search?method=hybrid`.
+
+1. Se obtienen los 100 mejores fragmentos de BM25 y los 100 mejores de la
+   búsqueda semántica (`docs/indice-semantico.md`).
+2. Se fusionan con **Reciprocal Rank Fusion** (Cormack, Clarke y Büttcher,
+   2009): `RRF(d) = Σ 1 / (60 + posición_m(d))`. Un fragmento que solo
+   aparece en una lista suma solo esa parte.
+3. Se devuelven los `k` mejores. Los empates se deshacen por `chunk_id`.
+
+**Por qué RRF:** solo usa posiciones, así que no hay que normalizar
+puntuaciones de escalas distintas (BM25 no está acotado; el coseno va de −1 a
+1) ni elegir pesos.
+
+**Por qué k = 60:** es el valor del artículo original. Se fijó antes de
+evaluar y no se ajustó con las consultas de evaluación (ver DOC-16).
+
+**Respuesta:**
+- `score` es la puntuación RRF; como mucho vale 2/61 ≈ 0,0328.
+- `query_tokens` son los de BM25.
+- `index_version` combina las versiones de ambos índices y el valor de `k`.
+- Requiere el extra `semantic`; sin él, 503 `semantic_unavailable`.
+
+**Latencia medida** (`wikipedia_es`, 1978 fragmentos, 32 consultas × 5, k=10,
+índices construidos, CPU):
+
+| Método | p50 | p95 | Máximo |
+| --- | --- | --- | --- |
+| bm25 | 13,1 ms | 16,0 ms | 18,8 ms |
+| semantic | 32,8 ms | 40,7 ms | 50,4 ms |
+| hybrid | 42,2 ms | 55,7 ms | 70,8 ms |
+
+La primera versión leía de SQLite uno a uno los 100 fragmentos candidatos y
+tardaba 101 ms en p50. Con una sola consulta (`get_chunks_by_ids`) bajó a
+42 ms.
