@@ -396,3 +396,21 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Tiempos:** importación 3,5 min; índice semántico 4,2 min; evaluación
   total 14 min.
 - **Pruebas:** `python -m pytest -q` → `381 passed, 5 skipped`.
+
+## DOC-18 (cierre) — Licencia AGPL-3.0-or-later
+
+- **Issue:** #29 · **Rama:** `feature/DOC-18-license` (apilada sobre DOC-16 MIRACL)
+- **Decisión:** el usuario delegó la elección ("escoge la mejor a tu
+  criterio"). Se elige `AGPL-3.0-or-later`:
+  - es compatible con PyMuPDF (AGPL-3.0) y con `es_core_news_sm` (GPL-3.0);
+  - no requiere cambios técnicos ni empeora la calidad;
+  - no tiene coste;
+  - encaja con un proyecto académico público.
+- **Cambios:**
+  - `LICENSE` con el texto oficial de gnu.org (SHA-256 `0d96a4ff…abcb0`);
+  - `pyproject.toml`: `license`, `license-files`; `setuptools>=77` para el
+    formato SPDX de PEP 639;
+  - `THIRD_PARTY_NOTICES.md`;
+  - sección de licencia en el README;
+  - `docs/licencias.md` con la decisión y su motivo.
+- **Verificación:** el paquete instalado declara `License-Expression: AGPL-3.0-or-later` y los dos archivos de licencia; `python -m pytest -q` → `381 passed, 5 skipped`.

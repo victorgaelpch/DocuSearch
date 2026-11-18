@@ -102,3 +102,14 @@ La etapa posterior incorporará embeddings multilingües y FAISS para búsqueda 
 ## Seguridad y datos
 
 No subas documentos personales, PDFs de usuarios, índices, bases de datos ni secretos al repositorio. `.gitignore` excluye los directorios de trabajo locales y los archivos `.env`. Revisa también `docs/arquitectura.md`.
+
+## Licencia
+
+DocuSearch AI se distribuye bajo la **GNU Affero General Public License v3.0
+o posterior** (`AGPL-3.0-or-later`); ver [`LICENSE`](LICENSE). Si ofreces el
+servicio modificado a otras personas a través de una red, la AGPL te obliga a
+poner a su disposición el código fuente de esa versión.
+
+Las licencias de las dependencias, modelos y datos de terceros se resumen en
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md), y el motivo de la elección
+en `docs/licencias.md`.
