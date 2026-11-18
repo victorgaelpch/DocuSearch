@@ -353,3 +353,24 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   antes de confirmar nada y `.gitignore` pasa a ignorar todo `data/` salvo
   `data/README.md`.
 - **Pruebas:** `python -m pytest -q` → `346 passed, 4 skipped`.
+
+## DOC-22 — Importar Google Docs públicos por enlace
+
+- **Issue:** #30 (queda abierta la parte de documentos privados con OAuth)
+  · **Rama:** `feature/DOC-22-google-docs-import` (apilada sobre la mejora
+  del OCR en español)
+- **Cambios:**
+  - `backend/app/documents/google_docs.py`: validación de la URL, export a
+    DOCX, redirecciones seguras, límites, nombre del archivo;
+  - `SourceType.GOOGLE_DOCS`;
+  - `DocumentService.ingest_google_doc`;
+  - `POST /documents/import`;
+  - `source_type` y `source_uri` en las respuestas;
+  - `tests/test_google_docs_import.py` (30 pruebas, una con red opcional).
+- **Verificación real:**
+  - plantilla pública de Chromium → 201 en 1,15 s, 981 palabras, 6
+    fragmentos;
+  - documento restringido → 403 `not_public`;
+  - ID inexistente → 404 `not_found`.
+- **Sin credenciales:** no se usa ni se guarda ningún token.
+- **Pruebas:** `python -m pytest -q` → `375 passed, 5 skipped` (la omitida nueva necesita red).
