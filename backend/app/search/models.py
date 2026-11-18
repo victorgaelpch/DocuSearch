@@ -19,6 +19,7 @@ class SearchMethod(str, Enum):
     TFIDF = "tfidf"
     BM25 = "bm25"
     SEMANTIC = "semantic"
+    HYBRID = "hybrid"
 
 
 class SearchHit(BaseModel):

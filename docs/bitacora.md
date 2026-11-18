@@ -250,3 +250,24 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   resultados (prueba opcional `semantic_model`).
 - **Pruebas:** `python -m pytest -q` → `312 passed, 4 skipped` (las omitidas
   usan el modelo real; con `DOCUSEARCH_TEST_SEMANTIC_MODEL=1` también pasan).
+
+## DOC-15 — Búsqueda híbrida BM25 + semántica
+
+- **Issue:** #26 · **Rama:** `feature/DOC-15-hybrid-search` (apilada sobre DOC-14)
+- **Cambios:**
+  - `backend/app/search/hybrid.py` (`reciprocal_rank_fusion`, `RRF_K=60`,
+    100 candidatos por método);
+  - `method=hybrid` en el motor y en `GET /search`;
+  - `DocumentRepository.get_chunks_by_ids`;
+  - `tests/test_hybrid_search.py`.
+- **Decisiones:**
+  - RRF porque solo usa posiciones y no requiere normalizar puntuaciones ni
+    elegir pesos.
+  - k=60 del artículo original, fijado antes de evaluar.
+- **Fallo propio corregido:** una prueba esperaba que un identificador
+  repetido desplazara las posiciones siguientes; la implementación (y el
+  sentido de "posición") no lo hace, y se corrigió la prueba.
+- **Optimización medida:** la búsqueda leía de SQLite uno a uno los 100
+  candidatos semánticos (híbrida: p50 de 101 ms). Con una sola consulta, p50
+  de 42,2 ms y p95 de 55,7 ms; la semántica pasa de 37,1 a 32,8 ms de p50.
+- **Pruebas:** `python -m pytest -q` → `321 passed, 4 skipped`.

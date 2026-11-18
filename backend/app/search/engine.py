@@ -1,6 +1,7 @@
 """Motor de búsqueda sobre los fragmentos persistidos (DOC-08/09/14).
 
-Métodos: BM25 y TF-IDF (léxicos) y ``semantic`` (embeddings + FAISS, DOC-14).
+Métodos: BM25 y TF-IDF (léxicos), ``semantic`` (embeddings + FAISS, DOC-14) e
+``hybrid`` (BM25 + semántica con Reciprocal Rank Fusion, DOC-15).
 La búsqueda semántica es opcional: requiere el extra ``semantic`` y, si falta,
 lanza ``EmbeddingUnavailableError`` sin afectar a los métodos léxicos.
 
@@ -13,6 +14,7 @@ lanza ``EmbeddingUnavailableError`` sin afectar a los métodos léxicos.
 
 from __future__ import annotations
 
+import hashlib
 import threading
 import time
 from collections.abc import Callable
@@ -32,6 +34,7 @@ from .models import SearchHit, SearchMethod
 from .ranking import DEFAULT_TOP_K, validate_k
 from .bm25 import BM25Index
 from .tfidf import TfidfIndex
+from .hybrid import CANDIDATE_DEPTH, RRF_K, reciprocal_rank_fusion
 from .semantic_index import SemanticIndexManager
 
 SNIPPET_CHARS = 300
@@ -123,7 +126,7 @@ class SearchEngine:
 
     @staticmethod
     def available_methods() -> list[str]:
-        return [m.value for m in INDEX_FACTORIES] + [SearchMethod.SEMANTIC.value]
+        return [m.value for m in INDEX_FACTORIES] + [SearchMethod.SEMANTIC.value, SearchMethod.HYBRID.value]
 
     @property
     def semantic(self) -> SemanticIndexManager:
@@ -182,7 +185,9 @@ class SearchEngine:
             "chunks": len(state.corpus),
             "lexical_pipeline": self.pipeline.config,
             "indexes": [self._index(state, m).describe() for m in INDEX_FACTORIES]
-            + [self._semantic_description(collection)],
+            + [self._semantic_description(collection)]
+            + [{"method": "hybrid", "fusion": "reciprocal_rank_fusion", "params": {"k": RRF_K, "candidates": CANDIDATE_DEPTH},
+                "combines": ["bm25", "semantic"]}],
         }
 
     def search(
@@ -200,25 +205,14 @@ class SearchEngine:
             method = SearchMethod(method)
         except ValueError as exc:
             raise UnsupportedMethodError(f"método no admitido: {method}") from exc
-        if method not in INDEX_FACTORIES and method is not SearchMethod.SEMANTIC:
+        if method not in INDEX_FACTORIES and method not in (SearchMethod.SEMANTIC, SearchMethod.HYBRID):
             raise UnsupportedMethodError(
                 f"método no disponible: {method.value}; use {', '.join(self.available_methods())}"
             )
-        if method is SearchMethod.SEMANTIC:
-            query_tokens: list[str] = []
-            index = self.semantic.index(collection)
-            pairs = index.search(query or "", k) if (query or "").strip() else []
-            # coseno > 0, como el resto de métodos (puntuación positiva); se omite
-            # un fragmento borrado entre la sincronización y la consulta
-            found = ((self.repository.get_chunk(chunk_id), score) for chunk_id, score in pairs if score > 0)
-            ranked = [(chunk, score) for chunk, score in found if chunk is not None]
-            version = index.version
+        if method is SearchMethod.HYBRID:
+            ranked, query_tokens, version = self._hybrid(query, k, collection)
         else:
-            query_tokens = self.pipeline.process(query or "")
-            state = self._state(collection)
-            positions = self._index(state, method).search(query_tokens, k) if query_tokens else []
-            ranked = [(state.corpus.chunks[position], score) for position, score in positions]
-            version = state.corpus.version
+            ranked, query_tokens, version = self._ranked(method, query, k, collection)
         return SearchResponse(
             query=query,
             method=method,
@@ -229,6 +223,34 @@ class SearchEngine:
             hits=self._hits(ranked, method),
             took_ms=round((time.perf_counter() - started) * 1000, 2),
         )
+
+    def _ranked(
+        self, method: SearchMethod, query: str, k: int, collection: str
+    ) -> tuple[list[tuple[Chunk, float]], list[str], str]:
+        """Fragmentos ordenados de un método simple, tokens de la consulta y versión."""
+        if method is SearchMethod.SEMANTIC:
+            index = self.semantic.index(collection)
+            pairs = index.search(query or "", k) if (query or "").strip() else []
+            # coseno > 0, como el resto de métodos (puntuación positiva); se omite
+            # un fragmento borrado entre la sincronización y la consulta
+            positive = [(chunk_id, score) for chunk_id, score in pairs if score > 0]
+            chunks = self.repository.get_chunks_by_ids([chunk_id for chunk_id, _ in positive])
+            return [(chunks[cid], score) for cid, score in positive if cid in chunks], [], index.version
+        query_tokens = self.pipeline.process(query or "")
+        state = self._state(collection)
+        positions = self._index(state, method).search(query_tokens, k) if query_tokens else []
+        return [(state.corpus.chunks[p], score) for p, score in positions], query_tokens, state.corpus.version
+
+    def _hybrid(self, query: str, k: int, collection: str) -> tuple[list[tuple[Chunk, float]], list[str], str]:
+        """BM25 + semántica fusionados con Reciprocal Rank Fusion (DOC-15)."""
+        lexical, query_tokens, lexical_version = self._ranked(SearchMethod.BM25, query, CANDIDATE_DEPTH, collection)
+        semantic, _, semantic_version = self._ranked(SearchMethod.SEMANTIC, query, CANDIDATE_DEPTH, collection)
+        chunks = {chunk.chunk_id: chunk for chunk, _ in lexical + semantic}
+        fused = reciprocal_rank_fusion(
+            [[c.chunk_id for c, _ in lexical], [c.chunk_id for c, _ in semantic]], k=RRF_K, limit=k
+        )
+        version = hashlib.sha256(f"hybrid:{RRF_K}:{lexical_version}:{semantic_version}".encode()).hexdigest()[:16]
+        return [(chunks[chunk_id], score) for chunk_id, score in fused], query_tokens, version
 
     def _hits(self, ranked: list[tuple[Chunk, float]], method: SearchMethod) -> list[SearchHit]:
         documents: dict[str, Document] = {}
