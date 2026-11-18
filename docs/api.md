@@ -23,14 +23,14 @@ curl.exe -F "file=@C:\ruta\informe.pdf" http://127.0.0.1:8000/documents
 curl.exe http://127.0.0.1:8000/documents
 ```
 
-## Búsqueda (DOC-10)
+## Búsqueda (DOC-10, DOC-14)
 
 `GET /search?q=...&method=bm25&k=10&collection=user`
 
 | Parámetro | Valores | Por defecto |
 | --- | --- | --- |
 | `q` | texto, entre 1 y 500 caracteres, en UTF-8 | obligatorio |
-| `method` | `bm25`, `tfidf` | `bm25` |
+| `method` | `bm25`, `tfidf`, `semantic` | `bm25` |
 | `k` | entero entre 1 y 100 | `10` |
 | `collection` | `user` (documentos cargados), `wikipedia_es` (corpus) | `user` |
 
@@ -61,6 +61,18 @@ Respuesta:
   con `total: 0`.
 - `GET /search/index?collection=user` devuelve la `index_version`, el número
   de fragmentos y los parámetros de BM25, TF-IDF y del pipeline léxico.
+- **`method=semantic` (DOC-14)** busca por significado con embeddings y FAISS
+  (`docs/indice-semantico.md`). La respuesta tiene el mismo formato; la
+  puntuación es el coseno y `query_tokens` va vacío. Solo se devuelven
+  fragmentos con coseno mayor que 0, igual que los léxicos solo devuelven
+  puntuación positiva. Requiere el extra `semantic`; sin él responde 503
+  `semantic_unavailable` y los métodos léxicos siguen funcionando.
+- La primera búsqueda semántica sobre una colección carga el modelo (~9 s) y
+  codifica los fragmentos que aún no estén en el índice. Con un corpus grande
+  puede tardar minutos (`wikipedia_es`: 114 s); para evitarlo, construye el
+  índice antes con `python -m backend.app.cli semantic-index`. Los documentos
+  subidos después se añaden de forma incremental en la siguiente búsqueda
+  semántica.
 - La primera consulta de cada método tras arrancar el servidor tarda alrededor
   de 1,4 s, porque carga spaCy y scikit-learn y construye el índice. Las
   siguientes tardan unos milisegundos (medido en local con 3 documentos).
@@ -70,6 +82,7 @@ Ejemplos en PowerShell (`Invoke-RestMethod` envía UTF-8 correctamente):
 ```powershell
 Invoke-RestMethod "http://127.0.0.1:8000/search?q=enfermedad transmitida por mosquitos&collection=wikipedia_es"
 Invoke-RestMethod "http://127.0.0.1:8000/search?q=índice invertido&method=tfidf&k=5"
+Invoke-RestMethod "http://127.0.0.1:8000/search?q=infección que contagian los zancudos&method=semantic"
 ```
 
 > En Git Bash para Windows, `curl --data-urlencode` puede enviar las tildes en
@@ -80,6 +93,7 @@ Invoke-RestMethod "http://127.0.0.1:8000/search?q=índice invertido&method=tfidf
 ```powershell
 python -m backend.app.cli reindex                    # todas las colecciones
 python -m backend.app.cli reindex --collection user
+python -m backend.app.cli reindex --semantic          # también el índice FAISS
 ```
 
 Vuelve a extraer y fragmentar todos los documentos desde sus originales con la
@@ -112,6 +126,7 @@ Todos los errores propios usan el formato:
 | 415 | `unsupported_format`, `content_mismatch`, `macros_not_allowed` | Extensión no admitida, contenido que no corresponde a la extensión o DOCX con macros |
 | 422 | `corrupt_file`, `no_text` | Archivo dañado o sin texto extraíble |
 | 404 | `not_found`, `original_missing` | Documento inexistente o original ausente en disco |
+| 503 | `semantic_unavailable` | `method=semantic` sin el extra `semantic` o sin poder cargar el modelo |
 
 Los errores de validación de FastAPI (campo `file` ausente, `doc_id` con
 formato inválido, `limit` fuera de rango) mantienen el formato estándar

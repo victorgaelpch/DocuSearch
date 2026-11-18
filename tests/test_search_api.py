@@ -86,7 +86,7 @@ def test_order_is_deterministic_for_same_index_version(client: TestClient) -> No
         ({"q": "x", "k": 0}, None),
         ({"q": "x", "k": 101}, None),
         ({"q": "x", "k": "diez"}, None),
-        ({"q": "x", "method": "semantic"}, None),
+        ({"q": "x", "method": "vectorial"}, None),
         ({"q": "x", "collection": "privada"}, None),
         ({"q": "a" * 501}, None),
         ({"q": "�ndice"}, "invalid_encoding"),
@@ -128,7 +128,7 @@ def test_new_upload_is_searchable_and_changes_index_version(client: TestClient) 
 def test_index_info_exposes_parameters(client: TestClient) -> None:
     info = client.get("/search/index").json()
     assert info["chunks"] == 3
-    methods = {i["method"]: i["params"] for i in info["indexes"]}
+    methods = {i["method"]: i.get("params") for i in info["indexes"]}
     assert methods["bm25"]["k1"] == 1.5 and methods["tfidf"]["norm"] == "l2"
     assert info["lexical_pipeline"]["pipeline"] == "lexical"
 

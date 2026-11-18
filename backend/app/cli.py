@@ -5,7 +5,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli rechunk [--collection user]
     python -m backend.app.cli corpus freeze|build|import|stats
     python -m backend.app.cli evaluate [--output evaluation/results/x.json]
-    python -m backend.app.cli reindex [--collection user]
+    python -m backend.app.cli reindex [--collection user] [--semantic]
     python -m backend.app.cli benchmark [--repeats 5]
     python -m backend.app.cli embeddings [--collection wikipedia_es] [--limit 200]
     python -m backend.app.cli semantic-index [--collection wikipedia_es] [--rebuild]
@@ -120,11 +120,21 @@ def _cmd_reindex(args: argparse.Namespace) -> int:
     engine = _search_engine(settings)
     collections = [args.collection] if args.collection else ["user", WIKIPEDIA_COLLECTION]
     indexes = [engine.rebuild(c) for c in collections]
+    semantic = None
+    if args.semantic:
+        from backend.app.nlp.embeddings import EmbeddingUnavailableError
+
+        try:
+            semantic = [engine.rebuild_semantic(c) for c in collections]
+        except EmbeddingUnavailableError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
     print(
         json.dumps(
             {
                 "rechunk": {"documents": report.documents, "chunks": report.chunks, "failed": report.failed},
                 "indexes": indexes,
+                **({"semantic": semantic} if semantic is not None else {}),
             },
             ensure_ascii=False,
             indent=2,
@@ -240,6 +250,7 @@ def build_parser() -> argparse.ArgumentParser:
     corpus.set_defaults(func=_cmd_corpus)
     reindex = sub.add_parser("reindex", help="refragmentar y reconstruir los índices de búsqueda")
     reindex.add_argument("--collection", default=None, help="colección (por defecto, todas)")
+    reindex.add_argument("--semantic", action="store_true", help="reconstruir también el índice semántico FAISS")
     reindex.set_defaults(func=_cmd_reindex)
     evaluate = sub.add_parser("evaluate", help="evaluar métodos con consultas anotadas")
     evaluate.add_argument("--queries", default=str(REPO_ROOT / "evaluation" / "queries_wikipedia_es.json"))

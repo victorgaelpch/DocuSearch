@@ -1,10 +1,11 @@
-"""Endpoint de búsqueda léxica (DOC-10).
+"""Endpoint de búsqueda (DOC-10, DOC-14).
 
 ``GET /search?q=...&method=bm25&k=10&collection=user``
 
 Recupera fragmentos de documentos PDF, DOCX y TXT cargados (colección
 ``user``) o del corpus experimental (``wikipedia_es``) con BM25 (por
-defecto) o TF-IDF. El orden es determinista para la misma ``index_version``.
+defecto), TF-IDF o búsqueda semántica (``semantic``, requiere el extra
+``semantic``). El orden es determinista para la misma ``index_version``.
 """
 
 from __future__ import annotations
@@ -18,6 +19,7 @@ from pydantic import BaseModel
 from backend.app.api.documents import ErrorResponse, _error, get_document_service
 from backend.app.documents.models import DEFAULT_COLLECTION, WIKIPEDIA_COLLECTION
 from backend.app.documents.service import DocumentService
+from backend.app.nlp.embeddings import EmbeddingUnavailableError
 from backend.app.search.engine import SearchEngine
 from backend.app.search.ranking import DEFAULT_TOP_K, MAX_TOP_K
 
@@ -26,9 +28,10 @@ router = APIRouter(tags=["search"])
 MAX_QUERY_CHARS = 500
 
 
-class LexicalMethod(str, Enum):
+class Method(str, Enum):
     bm25 = "bm25"
     tfidf = "tfidf"
+    semantic = "semantic"
 
 
 class Collection(str, Enum):
@@ -72,6 +75,7 @@ def get_search_engine(
         engine = SearchEngine(
             service.repository,
             cache_path=service.settings.paths.indexes_dir / "lexical_tokens.json",
+            encoder_factory=getattr(request.app.state, "encoder_factory", None),
         )
         request.app.state.search_engine = engine
     return engine
@@ -80,8 +84,11 @@ def get_search_engine(
 @router.get(
     "/search",
     response_model=SearchOut,
-    responses={422: {"model": ErrorResponse, "description": "Consulta vacía o parámetros inválidos"}},
-    summary="Buscar fragmentos por texto libre (BM25 o TF-IDF)",
+    responses={
+        422: {"model": ErrorResponse, "description": "Consulta vacía o parámetros inválidos"},
+        503: {"model": ErrorResponse, "description": "Búsqueda semántica no disponible (falta el extra `semantic` o el modelo)"},
+    },
+    summary="Buscar fragmentos por texto libre (BM25, TF-IDF o semántica)",
 )
 def search(
     q: Annotated[
@@ -93,7 +100,9 @@ def search(
             examples=["enfermedad transmitida por mosquitos"],
         ),
     ],
-    method: Annotated[LexicalMethod, Query(description="Método de ranking")] = LexicalMethod.bm25,
+    method: Annotated[
+        Method, Query(description="`bm25` (por defecto), `tfidf` o `semantic` (por significado)")
+    ] = Method.bm25,
     k: Annotated[int, Query(ge=1, le=MAX_TOP_K, description="Número de resultados")] = DEFAULT_TOP_K,
     collection: Annotated[
         Collection, Query(description="`user` (documentos cargados) o `wikipedia_es` (corpus)")
@@ -106,7 +115,10 @@ def search(
         return _error(
             422, "invalid_encoding", "la consulta contiene caracteres inválidos; envíela en UTF-8"
         )
-    response = engine.search(q, method=method.value, k=k, collection=collection.value)
+    try:
+        response = engine.search(q, method=method.value, k=k, collection=collection.value)
+    except EmbeddingUnavailableError as exc:
+        return _error(503, "semantic_unavailable", str(exc))
     return SearchOut(
         query=response.query,
         query_tokens=response.query_tokens,
