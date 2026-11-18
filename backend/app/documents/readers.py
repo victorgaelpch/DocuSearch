@@ -158,10 +158,24 @@ class PdfReader:
                 raise CorruptFileError(f"error al leer páginas del PDF: {exc}") from exc
             info = document.metadata or {}
             page_count = document.page_count
+            ocr_metadata, ocr_warnings = None, []
+            if empty_pages:
+                from .ocr import get_ocr
+
+                ocr = get_ocr()
+                if ocr is not None:
+                    outcome = ocr.recognize(document, empty_pages)
+                    ocr_warnings = outcome.warnings
+                    recognized = {
+                        number: _normalize_newlines(text).strip() for number, text in outcome.texts.items()
+                    }
+                    sections = [(recognized.get(number) or text, number) for text, number in sections]
+                    empty_pages = [number for number in empty_pages if not recognized.get(number)]
+                    ocr_metadata = outcome.metadata(ocr.engine)
         finally:
             document.close()
 
-        warnings = []
+        warnings = list(ocr_warnings)
         if empty_pages and len(empty_pages) < page_count:
             warnings.append(
                 "páginas sin texto (posible imagen escaneada, requiere OCR): "
@@ -174,6 +188,8 @@ class PdfReader:
         }
         if empty_pages:
             metadata["pages_without_text"] = empty_pages
+        if ocr_metadata is not None and ocr_metadata["pages"]:
+            metadata["ocr"] = ocr_metadata
         return _ReadOutput(
             sections=sections,
             page_count=page_count,

@@ -46,8 +46,9 @@ archivo sin extensión.
 | --- | --- |
 | Extensión no admitida (`.doc`, `.exe`, sin extensión…) | excepción `UnsupportedFormatError` (no se lee el contenido) |
 | Archivo de 0 bytes, o sin texto (solo espacios, DOCX vacío) | `status = empty`, `error` con el motivo |
-| PDF sin capa de texto en ninguna página | `status = needs_ocr` |
-| PDF con algunas páginas sin texto | `status = extracted` + aviso con las páginas que requieren OCR |
+| PDF sin capa de texto, con OCR disponible y texto reconocido | `status = extracted`, `metadata.ocr` (DOC-23) |
+| PDF sin capa de texto en ninguna página, sin OCR o sin texto reconocible | `status = needs_ocr` |
+| PDF con algunas páginas sin texto | `status = extracted`; esas páginas se reconocen con OCR si está disponible y, si no, se avisa |
 | Cabecera inválida, archivo truncado, ZIP sin partes de Word, contenido de otro formato | `status = failed`, `error` con el motivo |
 | PDF protegido con contraseña | `status = failed` |
 
@@ -71,9 +72,66 @@ cambie sus bytes.
   (MIT), cambiando solo `PdfReader`.
 - **python-docx**: MIT.
 
+## OCR de PDF escaneados (DOC-23)
+
+Código: `backend/app/documents/ocr.py`. Pruebas: `tests/test_ocr.py`.
+
+Las páginas de un PDF que no tienen capa de texto se rasterizan a 300 ppp y
+se reconocen con **Tesseract** a través de PyMuPDF
+(`Page.get_textpage_ocr`). Las páginas con texto digital no se tocan. Cada
+página reconocida conserva su número, así que la búsqueda indica la página
+correcta.
+
+**Requisito:** Tesseract instalado en el sistema (licencia Apache-2.0). No es
+un paquete de Python. Si no se encuentra, el comportamiento es el de v0.1: el
+documento queda como `needs_ocr`.
+
+- Windows: instalador de [UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki).
+  Se detecta en `C:\Program Files\Tesseract-OCR`.
+- Linux: `sudo apt-get install tesseract-ocr tesseract-ocr-spa`. El CI lo
+  instala así.
+- Idioma español: hace falta `spa.traineddata` en la carpeta `tessdata`. El
+  instalador de Windows lo ofrece como componente opcional.
+
+| Variable | Por defecto | Uso |
+| --- | --- | --- |
+| `DOCUSEARCH_OCR` | `auto` | `auto` usa Tesseract si lo encuentra; `off` lo desactiva |
+| `DOCUSEARCH_OCR_LANG` | `spa+eng` | Idiomas. Se usan los instalados; si falta alguno, se avisa en `warnings` |
+| `DOCUSEARCH_OCR_DPI` | 300 | Resolución del rasterizado |
+| `DOCUSEARCH_OCR_MAX_PAGES` | 50 | Máximo de páginas reconocidas por documento, para acotar el tiempo de una carga |
+| `DOCUSEARCH_TESSDATA` / `TESSDATA_PREFIX` | detección automática | Carpeta `tessdata` |
+
+**Metadatos:** `metadata.ocr` guarda `engine`, `version`, `dpi`, `language`,
+las páginas reconocidas (`pages`) y el tiempo empleado (`seconds`).
+
+**Documentos ya cargados como `needs_ocr`:** los reconoce
+`python -m backend.app.cli ocr [--collection user]`. Pasan a `extracted` con
+sus fragmentos, y los índices léxicos y semánticos los incorporan en la
+siguiente búsqueda.
+
+**Precisión y tiempo medidos** (Windows, Tesseract 5.4.0; 3 páginas de
+español con tildes rasterizadas a 150 ppp; solo el idioma `eng`, el único
+instalado en el equipo de prueba):
+
+| Página | Similitud de caracteres | Palabras exactas |
+| --- | --- | --- |
+| 1 | 0,966 | 74 % |
+| 2 | 0,964 | 79 % |
+| 3 | 0,986 | 91 % |
+
+- Tiempo: **0,27 s por página**.
+- Casi todos los errores son tildes perdidas (`indice`, `inflacion`), que el
+  pipeline léxico ya ignora al buscar.
+- Quedan errores reales: `año` → `ano` (la `ñ` no se ignora) y `variación` →
+  `variaci6n`.
+- Con `spa.traineddata` instalado la precisión debería ser mayor, pero **no se
+  ha medido**.
+
 ## Limitaciones
 
-- No hay OCR: los PDF escaneados quedan como `needs_ocr` (DOC-23).
+- OCR: no reconoce escritura a mano. Con PDF de baja calidad, rotados o en
+  columnas, la precisión baja. Un PDF de muchas páginas escaneadas alarga la
+  carga (~0,3 s por página) hasta el máximo configurado.
 - `.doc` (Word 97-2003), `.odt`, `.rtf` y Google Docs nativos no se admiten
   (Google Docs requiere exportación autorizada, DOC-22).
 - DOCX: no se extraen encabezados, pies de página, notas al pie, comentarios ni

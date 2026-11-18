@@ -20,6 +20,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Tesseract OCR (DOC-23)
+        run: sudo apt-get update -q && sudo apt-get install -y -q tesseract-ocr tesseract-ocr-spa
       - name: Install project and tests
         run: |
           python -m pip install --upgrade pip

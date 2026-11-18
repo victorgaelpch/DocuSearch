@@ -316,3 +316,20 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   los metadatos instalados, el conflicto (PyMuPDF AGPL-3.0 y
   `es_core_news_sm` GPL-3.0) y cuatro opciones con su coste técnico. No se
   añade `LICENSE` ni se cambia ninguna dependencia.
+
+## DOC-23 — OCR para PDF escaneados
+
+- **Issue:** #31 · **Rama:** `feature/DOC-23-ocr` (apilada sobre DOC-18)
+- **Cambios:**
+  - `backend/app/documents/ocr.py` (Tesseract vía PyMuPDF, detección de
+    `tessdata`, idiomas disponibles con aviso, límite de páginas);
+  - `PdfReader` reconoce solo las páginas sin texto y conserva su número;
+  - `DocumentService.process_pending_ocr` y CLI `ocr`;
+  - Tesseract en el CI;
+  - `tests/test_ocr.py` (9 pruebas, 3 con Tesseract real).
+- **Entorno:** Tesseract 5.4.0 ya estaba instalado en el equipo, pero solo
+  con `eng`. No se descargó `spa.traineddata`: queda como paso del usuario.
+- **Medición real:** 0,27 s por página; similitud de caracteres de 0,96–0,99
+  y del 74–91 % de palabras exactas en español usando el modelo `eng`. Los
+  errores son sobre todo tildes, que el pipeline léxico ya ignora.
+- **Pruebas:** `python -m pytest -q` → `341 passed, 4 skipped`; cobertura del 97 % (`ocr.py` al 97 %).
