@@ -36,6 +36,9 @@ data/corpus/
 data/*.db
 data/*.db-*
 data/*.sqlite*
+# Cualquier otro contenido local de data/ (modelos OCR, conjuntos de evaluación…)
+data/*
+!data/README.md
 
 # Artefactos generados
 *.log

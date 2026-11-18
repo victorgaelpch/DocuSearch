@@ -333,3 +333,23 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   y del 74–91 % de palabras exactas en español usando el modelo `eng`. Los
   errores son sobre todo tildes, que el pipeline léxico ya ignora.
 - **Pruebas:** `python -m pytest -q` → `341 passed, 4 skipped`; cobertura del 97 % (`ocr.py` al 97 %).
+
+## DOC-23 (continuación) — Idioma español para el OCR
+
+- **Issue:** #31 (cerrado; mejora posterior) · **Rama:** `feature/DOC-23-spanish-ocr`
+- **Cambios:**
+  - `backend/app/documents/tessdata.py` y CLI `tessdata`: descargan
+    `spa`/`eng` de `tesseract-ocr/tessdata_{fast,best}` fijados a un commit,
+    con SHA-256 verificado, en `data/tessdata/`;
+  - `find_tessdata` prefiere esa carpeta;
+  - 5 pruebas nuevas.
+- **Medición real** (4 páginas en español, palabras exactas): `eng` del
+  sistema 73,9 %, `spa+eng` fast 98,1 % y best 98,9 %. Con escaneo difícil,
+  72,6 %, 96,2 % y 97,1 %. Fast tarda 0,32 s por página frente a 0,69 s de
+  best. Se eligió fast por defecto.
+- **Error real observado:** `montaña y` → `montañay` a final de línea.
+- **Incidente evitado:** al preparar el commit, Git incluía los modelos
+  descargados porque `.gitignore` no cubría `data/tessdata/`. Se retiraron
+  antes de confirmar nada y `.gitignore` pasa a ignorar todo `data/` salvo
+  `data/README.md`.
+- **Pruebas:** `python -m pytest -q` → `346 passed, 4 skipped`.

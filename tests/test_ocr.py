@@ -200,3 +200,97 @@ def test_upload_scanned_pdf_is_searchable_and_cli_processes_pending(tmp_path: Pa
     other = client.post("/documents", files={"file": ("otro.pdf", _scanned_pdf(["Los volcanes expulsan lava y ceniza."]))}).json()
     assert other["extraction_status"] == "extracted" and other["chunk_count"] >= 1
     assert cli_main(["ocr"]) == 0 and json.loads(capsys.readouterr().out)["pending"] == 0
+
+
+# --- idiomas instalados localmente (data/tessdata) ---------------------------
+
+
+def test_install_languages_verifies_hash_and_is_idempotent(tmp_path: Path, monkeypatch) -> None:
+    import hashlib
+
+    from backend.app.documents import tessdata
+    from backend.app.documents.tessdata import TessdataError, install_languages
+
+    payload = b"modelo falso"
+    fake = tessdata.TessdataSource("tessdata_fast", "c" * 40, {"spa": hashlib.sha256(payload).hexdigest()})
+    monkeypatch.setitem(tessdata.SOURCES, "fast", fake)
+    calls: list[str] = []
+    monkeypatch.setattr(tessdata, "_download", lambda url: calls.append(url) or payload)
+
+    report = install_languages(tmp_path / "td", ["spa"])
+    assert report["languages"]["spa"]["status"] == "installed"
+    assert calls == [f"https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/{'c' * 40}/spa.traineddata"]
+    assert (tmp_path / "td" / "spa.traineddata").read_bytes() == payload
+    assert install_languages(tmp_path / "td", ["spa"])["languages"]["spa"]["status"] == "already_installed"
+    assert len(calls) == 1
+
+    monkeypatch.setattr(tessdata, "_download", lambda url: b"otro contenido")
+    (tmp_path / "td" / "spa.traineddata").write_bytes(b"corrupto")
+    with pytest.raises(TessdataError, match="SHA-256"):
+        install_languages(tmp_path / "td", ["spa"])
+    assert not list((tmp_path / "td").glob(".tmp-*"))
+    with pytest.raises(TessdataError, match="sin hash"):
+        install_languages(tmp_path / "td", ["klingon"])
+    with pytest.raises(TessdataError, match="variante"):
+        install_languages(tmp_path / "td", ["spa"], variant="ultra")
+
+    def offline(url):
+        raise OSError("sin red")
+
+    monkeypatch.setattr(tessdata, "_download", offline)
+    with pytest.raises(TessdataError, match="sin red"):
+        install_languages(tmp_path / "td", ["spa"])
+
+
+def test_pinned_sources_are_complete() -> None:
+    from backend.app.documents.tessdata import SOURCES
+
+    for source in SOURCES.values():
+        assert len(source.commit) == 40 and set(source.sha256) == {"spa", "eng"}
+        assert all(len(h) == 64 for h in source.sha256.values())
+
+
+def test_find_tessdata_prefers_project_data_dir(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.delenv("DOCUSEARCH_TESSDATA", raising=False)
+    monkeypatch.delenv("TESSDATA_PREFIX", raising=False)
+    monkeypatch.setenv("DOCUSEARCH_DATA_DIR", str(tmp_path / "data"))
+    local = tmp_path / "data" / "tessdata"
+    local.mkdir(parents=True)
+    (local / "spa.traineddata").write_bytes(b"x")
+    assert find_tessdata() == local.resolve()
+
+
+def test_cli_tessdata(tmp_path: Path, monkeypatch, capsys) -> None:
+    from backend.app.cli import main as cli_main
+    from backend.app.documents import tessdata
+
+    monkeypatch.setenv("DOCUSEARCH_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setattr(tessdata, "install_languages", lambda dest, langs, variant: {"destination": str(dest), "languages": langs})
+    assert cli_main(["tessdata", "--languages", "spa"]) == 0
+    assert json.loads(capsys.readouterr().out)["languages"] == ["spa"]
+
+    def fail(dest, langs, variant):
+        raise tessdata.TessdataError("boom")
+
+    monkeypatch.setattr(tessdata, "install_languages", fail)
+    assert cli_main(["tessdata"]) == 1
+
+
+SPANISH = "El niño pequeño aprendió música en la montaña y la fotosíntesis convierte la energía solar."
+
+
+@pytest.mark.skipif(
+    TESSDATA is None or not (Path(TESSDATA) / "spa.traineddata").is_file(),
+    reason="requiere el idioma español de Tesseract (python -m backend.app.cli tessdata)",
+)
+def test_spanish_model_keeps_accents_and_enye(monkeypatch) -> None:
+    monkeypatch.setenv("DOCUSEARCH_TESSDATA", str(TESSDATA))
+    monkeypatch.setenv("DOCUSEARCH_OCR_LANG", "spa")
+    result = extract_document(_scanned_pdf([SPANISH]), "es.pdf")
+    words = result.text.split()
+    for expected in ("niño", "pequeño", "aprendió", "música", "fotosíntesis", "energía"):
+        assert expected in words, (expected, result.text)
+    # error real observado: a final de línea une "montaña" con la "y" siguiente
+    # ("montañay"); la ñ se reconoce igualmente
+    assert "montaña" in result.text
+    assert result.metadata["ocr"]["language"] == "spa"

@@ -90,8 +90,18 @@ documento queda como `needs_ocr`.
   Se detecta en `C:\Program Files\Tesseract-OCR`.
 - Linux: `sudo apt-get install tesseract-ocr tesseract-ocr-spa`. El CI lo
   instala así.
-- Idioma español: hace falta `spa.traineddata` en la carpeta `tessdata`. El
-  instalador de Windows lo ofrece como componente opcional.
+- **Idioma español, sin permisos de administrador:**
+
+  ```powershell
+  python -m backend.app.cli tessdata                  # spa + eng, variante fast (6,4 MB)
+  python -m backend.app.cli tessdata --variant best   # más lenta; 29 MB
+  ```
+
+  Descarga los modelos del repositorio oficial `tesseract-ocr/tessdata_fast`
+  (o `tessdata_best`), con licencia Apache-2.0. Los modelos están **fijados a
+  un commit** y se verifica su SHA-256. Se guardan en `data/tessdata/`, fuera
+  de Git; el OCR usa esa carpeta antes que la del sistema. Si ya están, no se
+  vuelven a descargar.
 
 | Variable | Por defecto | Uso |
 | --- | --- | --- |
@@ -109,23 +119,34 @@ las páginas reconocidas (`pages`) y el tiempo empleado (`seconds`).
 sus fragmentos, y los índices léxicos y semánticos los incorporan en la
 siguiente búsqueda.
 
-**Precisión y tiempo medidos** (Windows, Tesseract 5.4.0; 3 páginas de
-español con tildes rasterizadas a 150 ppp; solo el idioma `eng`, el único
-instalado en el equipo de prueba):
+**Precisión y tiempo medidos** (Windows, Tesseract 5.4.0; 4 páginas de
+español con tildes, `ñ` y signos `¿¡`; OCR a 300 ppp; media de las 4 páginas).
 
-| Página | Similitud de caracteres | Palabras exactas |
-| --- | --- | --- |
-| 1 | 0,966 | 74 % |
-| 2 | 0,964 | 79 % |
-| 3 | 0,986 | 91 % |
+Columnas:
+- *Palabras exactas*: palabras reconocidas sin ningún error.
+- *Palabras sin tildes*: palabras que coinciden tras quitar tildes, como hace
+  el buscador léxico.
 
-- Tiempo: **0,27 s por página**.
-- Casi todos los errores son tildes perdidas (`indice`, `inflacion`), que el
-  pipeline léxico ya ignora al buscar.
-- Quedan errores reales: `año` → `ano` (la `ñ` no se ignora) y `variación` →
-  `variaci6n`.
-- Con `spa.traineddata` instalado la precisión debería ser mayor, pero **no se
-  ha medido**.
+| Escaneo | Modelo | Similitud de caracteres | Palabras exactas | Palabras sin tildes | s/página |
+| --- | --- | --- | --- | --- | --- |
+| Limpio (150 ppp, 13 pt) | `eng` del sistema | 0,960 | 73,9 % | 87,7 % | 0,32 |
+| Limpio (150 ppp, 13 pt) | **`spa+eng` fast** | **0,999** | **98,1 %** | **98,1 %** | **0,32** |
+| Limpio (150 ppp, 13 pt) | `spa+eng` best | 0,998 | 98,9 % | 98,9 % | 0,69 |
+| Difícil (100 ppp, 9 pt) | `eng` del sistema | 0,950 | 72,6 % | 85,2 % | 0,26 |
+| Difícil (100 ppp, 9 pt) | **`spa+eng` fast** | **0,994** | **96,2 %** | **98,0 %** | **0,28** |
+| Difícil (100 ppp, 9 pt) | `spa+eng` best | 0,995 | 97,1 % | 100 % | 0,61 |
+
+- **Solo con el modelo inglés**, el OCR pierde tildes, `ñ` y signos
+  (`niho`, `pequeno`, `aprendié`, `¢Quién`). Parte de eso lo compensa el
+  buscador, que ignora tildes, pero no la `ñ` (`año` → `ano`).
+- **Con el modelo español**, el texto sale casi perfecto. Error real
+  observado: a final de línea unió `montaña` con la `y` siguiente
+  (`montañay`).
+- **Por qué fast es la predeterminada:** precisión casi igual que best, la
+  mitad de tiempo y 6,4 MB frente a 29 MB.
+- **Limitación de la medición:** el texto es sintético, rasterizado a partir
+  de un PDF. Un escaneo real (ruido, inclinación, papel) dará cifras más
+  bajas, que no se han medido.
 
 ## Limitaciones
 
