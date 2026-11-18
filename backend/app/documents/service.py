@@ -36,6 +36,16 @@ class RechunkReport:
     failed: dict[str, str]
 
 
+@dataclass(frozen=True)
+class OcrReport:
+    """Resultado de reprocesar con OCR los documentos ``needs_ocr`` (DOC-23)."""
+
+    pending: int
+    recognized: list[str]
+    still_pending: list[str]
+    failed: dict[str, str]
+
+
 class DocumentService:
     """Casos de uso de documentos del usuario."""
 
@@ -158,6 +168,41 @@ class DocumentService:
             processed += 1
             total_chunks += len(chunks)
         return RechunkReport(documents=processed, chunks=total_chunks, failed=failed)
+
+    def process_pending_ocr(self, collection: str | None = DEFAULT_COLLECTION) -> OcrReport:
+        """Vuelve a extraer los documentos ``needs_ocr``; los que el OCR reconoce pasan a ``extracted``.
+
+        Requiere Tesseract (ver ``documents/ocr.py``). Los que siguen sin texto
+        se quedan como estaban.
+        """
+        pending: list[Document] = []
+        offset = 0
+        while batch := self.repository.list_documents(collection, limit=200, offset=offset):
+            pending += [d for d in batch if d.extraction_status is ExtractionStatus.NEEDS_OCR]
+            offset += len(batch)
+        recognized: list[str] = []
+        still: list[str] = []
+        failed: dict[str, str] = {}
+        for document in pending:
+            try:
+                data = self.store.read(document.storage_path)
+            except (FileNotFoundError, OSError) as exc:
+                failed[document.doc_id] = f"original no disponible: {exc}"
+                continue
+            extraction = extract_document(data, document.original_filename)
+            if extraction.status is not ExtractionStatus.EXTRACTED:
+                still.append(document.doc_id)
+                continue
+            chunks = chunk_extraction(extraction, document.doc_id, self.chunking)
+            self.repository.replace_chunks(document.doc_id, chunks)
+            self.repository.update_extraction(
+                document.doc_id, ExtractionStatus.EXTRACTED, error=None, page_count=extraction.page_count
+            )
+            extra: dict[str, Any] = {**extraction.metadata, "chunking": self.chunking.as_dict()}
+            extra["warnings"] = list(extraction.warnings)
+            self.repository.update_extra(document.doc_id, extra)
+            recognized.append(document.doc_id)
+        return OcrReport(pending=len(pending), recognized=recognized, still_pending=still, failed=failed)
 
     def get_chunks(self, doc_id: str) -> list[Chunk]:
         self.repository.get_document(doc_id)

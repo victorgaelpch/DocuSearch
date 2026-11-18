@@ -9,6 +9,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli benchmark [--repeats 5]
     python -m backend.app.cli embeddings [--collection wikipedia_es] [--limit 200]
     python -m backend.app.cli semantic-index [--collection wikipedia_es] [--rebuild]
+    python -m backend.app.cli ocr [--collection user]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -275,6 +276,24 @@ def _cmd_semantic_index(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_ocr(args: argparse.Namespace) -> int:
+    """Reprocesa con OCR los documentos que quedaron como ``needs_ocr``."""
+    from backend.app.documents.ocr import get_ocr
+
+    ocr = get_ocr()
+    if ocr is None:
+        print("error: OCR no disponible (Tesseract no encontrado o DOCUSEARCH_OCR=off); ver docs/lectores.md",
+              file=sys.stderr)
+        return 1
+    report = DocumentService(Settings.from_env()).process_pending_ocr(args.collection)
+    language, warnings = ocr.resolve_language()
+    print(json.dumps({"ocr": {**ocr.engine, "language": language, "warnings": warnings},
+                      "pending": report.pending, "recognized": report.recognized,
+                      "still_pending": report.still_pending, "failed": report.failed},
+                     ensure_ascii=False, indent=2))
+    return 1 if report.failed else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -312,6 +331,9 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["bm25", "tfidf", "semantic", "hybrid"], help="métodos a medir",
     )
     benchmark.set_defaults(func=_cmd_benchmark)
+    ocr = sub.add_parser("ocr", help="reconocer con OCR los PDF escaneados pendientes (needs_ocr)")
+    ocr.add_argument("--collection", default="user", help="colección (por defecto, user)")
+    ocr.set_defaults(func=_cmd_ocr)
     embeddings = sub.add_parser("embeddings", help="cargar el modelo de embeddings y medir la codificación")
     embeddings.add_argument("--collection", default=None, help="codificar los fragmentos de esta colección")
     embeddings.add_argument("--limit", type=int, default=None, help="máximo de fragmentos a codificar")
