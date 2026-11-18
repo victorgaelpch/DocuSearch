@@ -5,7 +5,7 @@ Código: `backend/app/search/semantic_index.py`. Pruebas:
 `faiss-cpu` 1.x con licencia MIT (ver `docs/embeddings.md`).
 
 Guarda los embeddings de los fragmentos (DOC-12) para buscarlos por
-similitud. Todavía no está conectado a `GET /search`; eso es DOC-14.
+similitud. Desde DOC-14 lo usa `GET /search?method=semantic` (ver `docs/api.md`).
 
 ## Diseño
 
@@ -103,3 +103,16 @@ Tamaño en disco: `index.faiss` ocupa 3,0 MB (1978 × 384 × 4 bytes) y
 
 Casi todo el tiempo se va en el modelo (cargarlo y codificar), no en FAISS.
 La calidad de la recuperación se medirá en DOC-16.
+
+## Integración con la búsqueda (DOC-14)
+
+`SearchEngine` crea el gestor de índices la primera vez que se pide
+`method=semantic`, de modo que la API arranca sin cargar el modelo.
+
+| Medición (`wikipedia_es`, índice ya construido, 32 consultas × 5, k=10) | p50 | p95 | Máximo |
+| --- | --- | --- | --- |
+| `semantic` (codificar la consulta + FAISS + armar resultados) | 37,1 ms | 44,4 ms | 49,7 ms |
+| `bm25` (misma ejecución) | 13,5 ms | 16,7 ms | 20,2 ms |
+
+La primera búsqueda semántica tardó 9,1 s: carga del modelo e índice desde
+disco, sin codificar nada nuevo.

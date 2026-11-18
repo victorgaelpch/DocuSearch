@@ -224,3 +224,29 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   índice con el codificador simulado.
 - **Pruebas:** `python -m pytest -q` → `303 passed, 3 skipped` (las 3 omitidas
   usan el modelo real); cobertura total del 97 %, `semantic_index.py` al 97 %.
+
+## DOC-14 — Búsqueda semántica en el motor y en GET /search
+
+- **Issue:** #25 · **Rama:** `feature/DOC-14-semantic-search`
+- **Cambios:**
+  - `SearchEngine` admite `method=semantic` con el gestor FAISS creado al
+    primer uso (`encoder_factory` para inyectar el codificador).
+  - `GET /search` acepta `semantic`; responde 503 `semantic_unavailable` sin
+    el extra.
+  - `create_app(encoder_factory=...)` para las pruebas.
+  - `reindex --semantic`; `/search/index` informa del índice semántico sin
+    construirlo.
+  - `tests/test_semantic_search.py`.
+- **Decisiones:**
+  - Mismo formato de respuesta que BM25 (puntuación = coseno, `query_tokens`
+    vacío).
+  - Solo coseno > 0, como el criterio de los métodos léxicos; no se fijó un
+    umbral mayor para no ajustarlo con las consultas de evaluación.
+- **Mediciones reales (`wikipedia_es`):** semántica con p95 de 44,4 ms frente
+  a 16,7 ms de BM25; primera búsqueda tras arrancar en 9,1 s (carga del
+  modelo).
+- **Modelo real:** *"infección que contagian los zancudos"* recupera el
+  texto del dengue en primera posición, mientras que BM25 devuelve 0
+  resultados (prueba opcional `semantic_model`).
+- **Pruebas:** `python -m pytest -q` → `312 passed, 4 skipped` (las omitidas
+  usan el modelo real; con `DOCUSEARCH_TEST_SEMANTIC_MODEL=1` también pasan).
