@@ -40,6 +40,11 @@ semantic = [
   "faiss-cpu>=1.8,<2",
 ]
 
+# Evaluación con MIRACL (lectura de parquet, DOC-16).
+eval = [
+  "pyarrow>=14",
+]
+
 [tool.setuptools.packages.find]
 include = ["backend", "backend.*"]
 

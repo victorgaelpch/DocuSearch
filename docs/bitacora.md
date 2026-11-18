@@ -374,3 +374,25 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   - ID inexistente → 404 `not_found`.
 - **Sin credenciales:** no se usa ni se guarda ningún token.
 - **Pruebas:** `python -m pytest -q` → `375 passed, 5 skipped` (la omitida nueva necesita red).
+
+## DOC-16 (cierre) — Evaluación con anotación humana: MIRACL español
+
+- **Issue:** #27 · **Rama:** `feature/DOC-16-miracl-eval` (apilada sobre DOC-22)
+- **Decisión del usuario:** en vez de una revisión manual de las consultas
+  propias, el criterio de anotación humana se cumple con un conjunto público
+  anotado por personas.
+- **Cambios:**
+  - `backend/app/corpus/miracl.py` y CLI `miracl`: descargan el parquet de
+    MIRACL-es dev (2,6 MB, revisión y SHA-256 fijados) e importan los 6410
+    pasajes juzgados como colección `miracl_es`;
+  - extra `eval` (`pyarrow`);
+  - `tests/test_miracl.py`;
+  - resultados en `evaluation/results/miracl_es_dev.json`.
+- **Resultados (648 consultas, nDCG@10):** híbrida 0,752, BM25 0,709,
+  semántica 0,695, TF-IDF 0,660. La híbrida supera a BM25 en nDCG@10
+  (p<0,0001) y MRR@10 (+0,037, p=0,0018); la semántica sola empata.
+- **Recomendación:** `hybrid` con el extra `semantic`; `bm25` sigue por
+  defecto en la API.
+- **Tiempos:** importación 3,5 min; índice semántico 4,2 min; evaluación
+  total 14 min.
+- **Pruebas:** `python -m pytest -q` → `381 passed, 5 skipped`.
