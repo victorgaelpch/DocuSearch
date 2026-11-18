@@ -1,3 +1,65 @@
+# Pruebas (DOC-11, DOC-17)
+
+## v0.2: búsqueda semántica e híbrida (DOC-17)
+
+```powershell
+python -m pip install -e ".[dev,model,semantic]"
+python -m pytest -q                                    # suite completa (sin descargar el modelo)
+python -m pytest -q tests/test_v02_end_to_end.py       # extremo a extremo de v0.2
+$env:DOCUSEARCH_TEST_SEMANTIC_MODEL = "1"
+python -m pytest -q -m semantic_model                  # solo las del modelo real
+python -m backend.app.cli benchmark --queries evaluation/queries_wikipedia_es_v2.json --methods bm25 tfidf semantic hybrid
+```
+
+**Resultados (ejecución real, Windows, Python 3.12.10, CPU de 16 hilos):**
+
+- `python -m pytest -q` → **332 passed, 4 skipped**. Las 4 omitidas usan el
+  modelo real; con `DOCUSEARCH_TEST_SEMANTIC_MODEL=1` pasan las 4.
+- Cobertura de `backend/`: **97 %** (2503 sentencias, 80 sin cubrir).
+- **CI:**
+  - El job `tests` (Python 3.10–3.12) instala `faiss-cpu` sin PyTorch y
+    ejecuta todas las pruebas con el codificador simulado.
+  - El job `semantic-model` (Python 3.12) instala PyTorch para CPU y el extra
+    `semantic`, guarda el modelo en la caché de Actions y ejecuta
+    `-m semantic_model`.
+  - Es opcional (`continue-on-error`) para que un corte de Hugging Face no
+    bloquee los PR.
+
+**Qué cubre `tests/test_v02_end_to_end.py`:**
+
+- Flujo completo con `semantic` y `hybrid`: un término de la página 3 de un
+  PDF se atribuye a esa página y la descarga devuelve el PDF.
+- Al reiniciar, el índice FAISS se carga de disco: el codificador solo procesa
+  la consulta, y los resultados y la versión coinciden.
+- Sin el extra `semantic`, el flujo v0.1 sigue funcionando; `semantic` e
+  `hybrid` responden 503.
+- Latencia por debajo de 2 s con los tres métodos en un corpus sintético.
+- `benchmark --methods semantic hybrid`.
+
+**Rendimiento real** (`benchmark --repeats 5`, `wikipedia_es`: 275
+artículos, 1978 fragmentos; 48 consultas × 5 por método; k=10):
+
+| Método | p50 | p95 | Máximo |
+| --- | --- | --- | --- |
+| bm25 | 13,7 ms | 16,1 ms | 20,8 ms |
+| tfidf | 15,0 ms | 17,0 ms | 18,5 ms |
+| semantic | 31,6 ms | 35,7 ms | 39,9 ms |
+| hybrid | 41,7 ms | 50,3 ms | 64,3 ms |
+
+Todas las consultas quedan muy por debajo del requisito de 2 s.
+
+| Coste | Valor |
+| --- | --- |
+| Arranque léxico (spaCy + índices, con caché de tokens) | 5,2 s |
+| Arranque semántico (cargar el modelo e índice FAISS de disco) | 5,8 s |
+| Construir el índice FAISS desde cero (DOC-13) | 113,6 s |
+| Memoria residente, solo métodos léxicos | 430 MB |
+| Memoria residente, con semántica e híbrida | 1279 MB (+~850 MB por PyTorch y el modelo) |
+
+La memoria se mide con `psutil`, que forma parte del extra `dev`.
+
+---
+
 # Pruebas del MVP v0.1 (DOC-11)
 
 ## Comandos

@@ -292,3 +292,18 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   paráfrasis; la híbrida empata. BM25 sigue por defecto. Se documentan el
   análisis de errores y las hipótesis.
 - **Pruebas:** `python -m pytest -q` → `326 passed, 4 skipped`.
+
+## DOC-17 — Pruebas y rendimiento de v0.2
+
+- **Issue:** #28 · **Rama:** `feature/DOC-17-v02-tests` (apilada sobre DOC-16)
+- **Cambios:**
+  - `tests/test_v02_end_to_end.py`;
+  - `benchmark --methods` con carga semántica y memoria (`psutil` en `dev`);
+  - job de CI `semantic-model` (PyTorch CPU, caché del modelo, opcional);
+  - `.hf-cache/` en `.gitignore`;
+  - `docs/pruebas.md`.
+- **Rendimiento real (`wikipedia_es`, 48 consultas × 5):** p95 de 16,1 ms
+  (BM25), 17,0 ms (TF-IDF), 35,7 ms (semántica) y 50,3 ms (híbrida).
+  Memoria: 430 MB solo léxica y 1279 MB con semántica.
+- **Pruebas:** `python -m pytest -q` → `332 passed, 4 skipped`; las 4 del
+  modelo real pasan en local. Cobertura del 97 %.

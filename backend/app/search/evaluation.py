@@ -244,15 +244,22 @@ def benchmark_latency(
     """
     import time
 
+    memory_before = process_memory_mb()
     started = time.perf_counter()
     engine.describe(collection)  # construye corpus e índices (arranque)
     warmup_ms = (time.perf_counter() - started) * 1000
+    semantic_ms = None
+    if {"semantic", "hybrid"} & set(methods):
+        started = time.perf_counter()
+        engine.semantic.index(collection)  # carga el modelo y sincroniza FAISS
+        semantic_ms = round((time.perf_counter() - started) * 1000, 1)
     report: dict[str, Any] = {
         "collection": collection,
         "k": k,
         "repeats": repeats,
         "queries": len(queries),
         "build_ms": round(warmup_ms, 1),
+        "semantic_load_ms": semantic_ms,
         "methods": {},
     }
     for method in methods:
@@ -270,4 +277,17 @@ def benchmark_latency(
             "max_ms": round(samples[-1], 2),
             "under_2s": samples[-1] < 2000,
         }
+    memory_after = process_memory_mb()
+    report["memory_mb"] = (
+        None if memory_after is None else {"before": memory_before, "after": memory_after}
+    )
     return report
+
+
+def process_memory_mb() -> float | None:
+    """Memoria residente del proceso en MB (``None`` si ``psutil`` no está instalado)."""
+    try:
+        import psutil
+    except ImportError:
+        return None
+    return round(psutil.Process().memory_info().rss / 2**20, 1)
