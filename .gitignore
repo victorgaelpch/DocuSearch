@@ -39,3 +39,4 @@ data/*.sqlite*
 
 # Artefactos generados
 *.log
+.hf-cache/

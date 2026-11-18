@@ -196,12 +196,19 @@ def _cmd_benchmark(args: argparse.Namespace) -> int:
 
     settings = Settings.from_env()
     queries, _ = load_queries(Path(args.queries))
-    report = benchmark_latency(
-        _search_engine(settings),
-        [q.query for q in queries],
-        collection=args.collection,
-        repeats=args.repeats,
-    )
+    from backend.app.nlp.embeddings import EmbeddingUnavailableError
+
+    try:
+        report = benchmark_latency(
+            _search_engine(settings),
+            [q.query for q in queries],
+            methods=args.methods,
+            collection=args.collection,
+            repeats=args.repeats,
+        )
+    except EmbeddingUnavailableError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if all(m["under_2s"] for m in report["methods"].values()) else 1
 
@@ -300,6 +307,10 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--queries", default=str(REPO_ROOT / "evaluation" / "queries_wikipedia_es.json"))
     benchmark.add_argument("--collection", default=WIKIPEDIA_COLLECTION)
     benchmark.add_argument("--repeats", type=int, default=5)
+    benchmark.add_argument(
+        "--methods", nargs="+", default=["bm25", "tfidf"],
+        choices=["bm25", "tfidf", "semantic", "hybrid"], help="métodos a medir",
+    )
     benchmark.set_defaults(func=_cmd_benchmark)
     embeddings = sub.add_parser("embeddings", help="cargar el modelo de embeddings y medir la codificación")
     embeddings.add_argument("--collection", default=None, help="codificar los fragmentos de esta colección")
