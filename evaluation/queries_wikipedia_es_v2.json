@@ -1,0 +1,442 @@
+{
+  "name": "wikipedia_es_v2",
+  "description": "Consultas nuevas para la evaluación v0.2 (DOC-16). Redactadas y anotadas por título a partir de conocimiento general antes de ejecutar ningún método. Ninguna usa los artículos relevantes del conjunto v1. 'dev' sirve para decisiones de diseño; 'test' solo para el informe final.",
+  "annotator": "asistente de desarrollo (pendiente de revisión humana)",
+  "relevance": "binaria, por título exacto en la colección wikipedia_es",
+  "queries": [
+    {
+      "id": "D01",
+      "split": "dev",
+      "type": "lexical",
+      "query": "propiedades del cobalto en aleaciones",
+      "relevant": [
+        "Cobalto"
+      ]
+    },
+    {
+      "id": "D02",
+      "split": "dev",
+      "type": "lexical",
+      "query": "constelación Monoceros el unicornio",
+      "relevant": [
+        "Monoceros"
+      ]
+    },
+    {
+      "id": "D03",
+      "split": "dev",
+      "type": "lexical",
+      "query": "lenguaje ALGOL y su influencia",
+      "relevant": [
+        "ALGOL"
+      ]
+    },
+    {
+      "id": "D04",
+      "split": "dev",
+      "type": "lexical",
+      "query": "babesiosis transmitida por garrapatas",
+      "relevant": [
+        "Babesiosis"
+      ]
+    },
+    {
+      "id": "D05",
+      "split": "dev",
+      "type": "lexical",
+      "query": "cuatro instrumento musical venezolano",
+      "relevant": [
+        "Cuatro (instrumento musical)"
+      ]
+    },
+    {
+      "id": "D06",
+      "split": "dev",
+      "type": "lexical",
+      "query": "función del centrosoma en la división celular",
+      "relevant": [
+        "Centrosoma"
+      ]
+    },
+    {
+      "id": "D07",
+      "split": "dev",
+      "type": "lexical",
+      "query": "índice de Herfindahl concentración de mercado",
+      "relevant": [
+        "Índice de Herfindahl"
+      ]
+    },
+    {
+      "id": "D08",
+      "split": "dev",
+      "type": "lexical",
+      "query": "brecha de producción",
+      "relevant": [
+        "Brecha de producción"
+      ]
+    },
+    {
+      "id": "D09",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "elemento amarillo con olor a huevo podrido usado en la pólvora",
+      "relevant": [
+        "Azufre"
+      ]
+    },
+    {
+      "id": "D10",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "inflamación de las vegetaciones detrás de la nariz en niños",
+      "relevant": [
+        "Adenoiditis"
+      ]
+    },
+    {
+      "id": "D11",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "vesículas que reciben las sustancias que la célula captura del exterior",
+      "relevant": [
+        "Endosoma"
+      ]
+    },
+    {
+      "id": "D12",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "lenguaje orientado a objetos de Microsoft para la plataforma .NET",
+      "relevant": [
+        "C Sharp"
+      ]
+    },
+    {
+      "id": "D13",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "pieza de la guitarra pegada a la tapa donde se sujetan las cuerdas",
+      "relevant": [
+        "Puente (instrumento musical)"
+      ]
+    },
+    {
+      "id": "D14",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "proporción entre el salario mínimo y el salario medio",
+      "relevant": [
+        "Índice de Kaitz"
+      ]
+    },
+    {
+      "id": "D15",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "grupo de estrellas fácil de reconocer que no es una constelación oficial",
+      "relevant": [
+        "Asterismo"
+      ]
+    },
+    {
+      "id": "D16",
+      "split": "dev",
+      "type": "paraphrase",
+      "query": "infección intestinal con sangre en las heces y fiebre",
+      "relevant": [
+        "Disentería"
+      ]
+    },
+    {
+      "id": "T01",
+      "split": "test",
+      "type": "lexical",
+      "query": "tabla periódica de Charles Janet",
+      "relevant": [
+        "Charles Janet"
+      ]
+    },
+    {
+      "id": "T02",
+      "split": "test",
+      "type": "lexical",
+      "query": "elementos sintéticos creados en laboratorio",
+      "relevant": [
+        "Elemento sintético"
+      ]
+    },
+    {
+      "id": "T03",
+      "split": "test",
+      "type": "lexical",
+      "query": "constelación Lynx el lince",
+      "relevant": [
+        "Lynx (constelación)"
+      ]
+    },
+    {
+      "id": "T04",
+      "split": "test",
+      "type": "lexical",
+      "query": "galaxia NGC 4993 y la kilonova",
+      "relevant": [
+        "NGC 4993"
+      ]
+    },
+    {
+      "id": "T05",
+      "split": "test",
+      "type": "lexical",
+      "query": "Cilk programación paralela",
+      "relevant": [
+        "Cilk"
+      ]
+    },
+    {
+      "id": "T06",
+      "split": "test",
+      "type": "lexical",
+      "query": "bartonelosis o enfermedad de Carrión",
+      "relevant": [
+        "Bartonelosis",
+        "Bartonella"
+      ]
+    },
+    {
+      "id": "T07",
+      "split": "test",
+      "type": "lexical",
+      "query": "neumonía adquirida en la comunidad tratamiento",
+      "relevant": [
+        "Neumonía adquirida en la comunidad"
+      ]
+    },
+    {
+      "id": "T08",
+      "split": "test",
+      "type": "lexical",
+      "query": "guitarrón argentino",
+      "relevant": [
+        "Guitarrón argentino"
+      ]
+    },
+    {
+      "id": "T09",
+      "split": "test",
+      "type": "lexical",
+      "query": "kora instrumento de cuerdas africano",
+      "relevant": [
+        "Kora (instrumento)"
+      ]
+    },
+    {
+      "id": "T10",
+      "split": "test",
+      "type": "lexical",
+      "query": "magnetosoma en bacterias magnetotácticas",
+      "relevant": [
+        "Magnetosoma"
+      ]
+    },
+    {
+      "id": "T11",
+      "split": "test",
+      "type": "lexical",
+      "query": "índice de Atkinson de desigualdad",
+      "relevant": [
+        "Índice de Atkinson"
+      ]
+    },
+    {
+      "id": "T12",
+      "split": "test",
+      "type": "lexical",
+      "query": "lenguaje de programación D",
+      "relevant": [
+        "D (lenguaje de programación)"
+      ]
+    },
+    {
+      "id": "T13",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "gas noble que se usa en bombillas y en soldadura",
+      "relevant": [
+        "Argón"
+      ]
+    },
+    {
+      "id": "T14",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "metal tóxico de las pilas recargables de níquel",
+      "relevant": [
+        "Cadmio"
+      ]
+    },
+    {
+      "id": "T15",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "mineral esencial para los huesos y los dientes",
+      "relevant": [
+        "Calcio"
+      ]
+    },
+    {
+      "id": "T16",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "veneno clásico de los envenenamientos históricos, un metaloide",
+      "relevant": [
+        "Arsénico"
+      ]
+    },
+    {
+      "id": "T17",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "constelación austral que representa un pez espada",
+      "relevant": [
+        "Dorado (constelación)"
+      ]
+    },
+    {
+      "id": "T18",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "mapa de las estrellas del cielo",
+      "relevant": [
+        "Carta estelar",
+        "Cartografía celeste"
+      ]
+    },
+    {
+      "id": "T19",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "mansiones lunares de la astrología hindú",
+      "relevant": [
+        "Nakshatra"
+      ]
+    },
+    {
+      "id": "T20",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "lenguaje de marcado para crear chatbots",
+      "relevant": [
+        "AIML"
+      ]
+    },
+    {
+      "id": "T21",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "programas que se ejecutan en una máquina virtual con recolección de basura",
+      "relevant": [
+        "Código gestionado"
+      ]
+    },
+    {
+      "id": "T22",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "software que crece sin necesidad y consume demasiados recursos",
+      "relevant": [
+        "Código inflado"
+      ]
+    },
+    {
+      "id": "T23",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "archivo de texto con órdenes que ejecuta la consola de Windows",
+      "relevant": [
+        "Archivo batch"
+      ]
+    },
+    {
+      "id": "T24",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "bacteria que transmite el piojo y causa fiebre que va y viene",
+      "relevant": [
+        "Borrelia recurrentis"
+      ]
+    },
+    {
+      "id": "T25",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "prueba de laboratorio que mide la sensibilidad de una bacteria a los fármacos",
+      "relevant": [
+        "Antibiograma"
+      ]
+    },
+    {
+      "id": "T26",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "examen de heces para buscar parásitos",
+      "relevant": [
+        "Coproparasitología"
+      ]
+    },
+    {
+      "id": "T27",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "afinar las cuerdas de forma distinta a la habitual",
+      "relevant": [
+        "Scordatura"
+      ]
+    },
+    {
+      "id": "T28",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "violines fabricados a mano en una ciudad italiana",
+      "relevant": [
+        "Fabricación artesanal de violines en Cremona"
+      ]
+    },
+    {
+      "id": "T29",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "orgánulo que produce hidrógeno en organismos sin mitocondrias",
+      "relevant": [
+        "Hidrogenosoma"
+      ]
+    },
+    {
+      "id": "T30",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "estructura de la cabeza del espermatozoide que le permite entrar en el óvulo",
+      "relevant": [
+        "Acrosoma"
+      ]
+    },
+    {
+      "id": "T31",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "sobrecosto que pagan los países emergentes por endeudarse frente a Estados Unidos",
+      "relevant": [
+        "EMBI"
+      ]
+    },
+    {
+      "id": "T32",
+      "split": "test",
+      "type": "paraphrase",
+      "query": "diferencia entre lo que cobra el banco por prestar y lo que paga por los depósitos",
+      "relevant": [
+        "Diferencial bancario"
+      ]
+    }
+  ]
+}
