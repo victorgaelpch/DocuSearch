@@ -307,3 +307,12 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   Memoria: 430 MB solo léxica y 1279 MB con semántica.
 - **Pruebas:** `python -m pytest -q` → `332 passed, 4 skipped`; las 4 del
   modelo real pasan en local. Cobertura del 97 %.
+
+## DOC-18 — Análisis de licencias (decisión pendiente del equipo)
+
+- **Issue:** #29 (sigue abierto: la decisión es del equipo)
+  · **Rama:** `feature/DOC-18-license-analysis` (apilada sobre DOC-17)
+- **Cambios:** `docs/licencias.md` con el inventario de licencias tomado de
+  los metadatos instalados, el conflicto (PyMuPDF AGPL-3.0 y
+  `es_core_news_sm` GPL-3.0) y cuatro opciones con su coste técnico. No se
+  añade `LICENSE` ni se cambia ninguna dependencia.
