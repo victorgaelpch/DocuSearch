@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,8 @@ name = "docusearch-ai"
 version = "0.1.0"
 description = "Buscador de documentos en español: ingesta, PLN y recuperación"
 readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 requires-python = ">=3.10"
 dependencies = [
   "fastapi>=0.115,<1",
@@ -38,6 +40,11 @@ model = [
 semantic = [
   "sentence-transformers>=6.3,<7",
   "faiss-cpu>=1.8,<2",
+]
+
+# Evaluación con MIRACL (lectura de parquet, DOC-16).
+eval = [
+  "pyarrow>=14",
 ]
 
 [tool.setuptools.packages.find]

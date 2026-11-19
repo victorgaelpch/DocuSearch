@@ -16,6 +16,7 @@ from backend.app.config import Settings
 from backend.app.nlp.chunking import ChunkingConfig, chunk_extraction
 
 from .models import DEFAULT_COLLECTION, Chunk, Document, ExtractionStatus, SourceType
+from .google_docs import fetch_public_doc
 from .readers import ExtractionResult, build_document, extract_document
 from .repository import DocumentRepository, DuplicateDocumentError
 from .storage import OriginalStore
@@ -55,8 +56,18 @@ class DocumentService:
         self.repository = DocumentRepository(paths.metadata_db)
         self.store = OriginalStore(paths.originals_dir)
         self.chunking = ChunkingConfig(settings.chunk_size, settings.chunk_overlap)
+        # inyectable en pruebas: descarga de Google Docs públicos (DOC-22)
+        self.fetch_google_doc = fetch_public_doc
 
-    def ingest(self, filename: str | None, data: bytes) -> IngestResult:
+    def ingest(
+        self,
+        filename: str | None,
+        data: bytes,
+        *,
+        source_type: SourceType = SourceType.UPLOAD,
+        source_uri: str | None = None,
+        extra: dict[str, Any] | None = None,
+    ) -> IngestResult:
         """Valida, extrae y guarda un archivo de la colección ``user``.
 
         Lanza ``UploadValidationError`` si el archivo se rechaza y
@@ -79,8 +90,28 @@ class DocumentService:
                 "no_text", "el archivo no contiene texto extraíble"
             )
 
-        document = build_document(extraction, collection=DEFAULT_COLLECTION)
+        document = build_document(
+            extraction, collection=DEFAULT_COLLECTION, source_type=source_type, source_uri=source_uri
+        )
+        if extra:
+            document = document.model_copy(update={"extra": {**document.extra, **extra}})
         return self._store_new(document, extraction, upload.data)
+
+    def ingest_google_doc(self, url: str) -> IngestResult:
+        """Importa un Google Doc **público** por enlace (DOC-22).
+
+        Lanza ``RemoteImportError`` (subclase de ``UploadValidationError``) si
+        el enlace no es válido, el documento no es público o no se puede
+        descargar.
+        """
+        remote = self.fetch_google_doc(url, max_bytes=self.settings.max_upload_bytes)
+        return self.ingest(
+            remote.filename,
+            remote.data,
+            source_type=SourceType.GOOGLE_DOCS,
+            source_uri=remote.source_uri,
+            extra={"google_doc_id": remote.doc_id},
+        )
 
     def _store_new(
         self, document: Document, extraction: ExtractionResult, data: bytes

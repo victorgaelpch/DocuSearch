@@ -15,7 +15,9 @@ Configuración (variables de entorno):
 * ``DOCUSEARCH_OCR_DPI``: resolución de rasterizado, por defecto 300.
 * ``DOCUSEARCH_OCR_MAX_PAGES``: máximo de páginas a reconocer por documento
   (por defecto 50) para acotar el tiempo de una carga.
-* ``DOCUSEARCH_TESSDATA`` o ``TESSDATA_PREFIX``: carpeta ``tessdata``.
+* ``DOCUSEARCH_TESSDATA`` o ``TESSDATA_PREFIX``: carpeta ``tessdata``. Si no
+  se indica, se usa ``data/tessdata`` (ver ``tessdata.py``) y después la
+  instalación del sistema.
 """
 
 from __future__ import annotations
@@ -64,11 +66,15 @@ def _int_env(name: str, default: int) -> int:
 
 def find_tessdata() -> Path | None:
     """Carpeta ``tessdata`` con al menos un idioma, o ``None``."""
+    from backend.app.config import get_data_paths
+
     candidates: list[Path] = []
     for env in (TESSDATA_ENV, "TESSDATA_PREFIX"):
         if os.environ.get(env):
             base = Path(os.environ[env])
             candidates += [base, base / "tessdata"]
+    # idiomas instalados con `python -m backend.app.cli tessdata` (data/tessdata)
+    candidates.append(get_data_paths().root / "tessdata")
     executable = shutil.which("tesseract")
     if executable:
         candidates.append(Path(executable).resolve().parent / "tessdata")
@@ -201,7 +207,7 @@ def get_ocr() -> TesseractOcr | None:
     """Reconocedor configurado, o ``None`` si el OCR está desactivado o no hay Tesseract."""
     global _cached
     config = OcrConfig.from_env()
-    key = (config, os.environ.get(TESSDATA_ENV), os.environ.get("TESSDATA_PREFIX"))
+    key = (config, os.environ.get(TESSDATA_ENV), os.environ.get("TESSDATA_PREFIX"), os.environ.get("DOCUSEARCH_DATA_DIR"))
     with _lock:
         if _cached is not None and _cached[0] == key:
             return _cached[1]

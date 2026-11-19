@@ -1,6 +1,107 @@
 # Evaluación de la recuperación (DOC-09, DOC-16)
 
-## Evaluación v0.2: léxica vs semántica vs híbrida (DOC-16)
+## Evaluación con anotación humana: MIRACL español (DOC-16)
+
+Es la evaluación principal de v0.2. A diferencia de las demás, ni las
+consultas ni las relevancias las escribió el asistente.
+
+```powershell
+python -m pip install -e ".[dev,model,semantic,eval]"
+python -m backend.app.cli miracl                     # descarga 2,6 MB e importa la colección miracl_es
+python -m backend.app.cli semantic-index --collection miracl_es
+python -m backend.app.cli evaluate --queries data/miracl/queries_miracl_es_dev.json --collection miracl_es --methods tfidf bm25 semantic hybrid --output evaluation/results/miracl_es_dev.json
+```
+
+### Datos
+
+- **Origen:** [MIRACL](https://project-miracl.github.io/) v1.0 (Zhang et al.,
+  TACL 2023), licencia Apache-2.0, split `dev` en español. Contiene
+  **648 consultas escritas por hablantes nativos**, y personas juzgaron cada
+  pasaje de Wikipedia como relevante o no.
+  - Se descarga la conversión a parquet de Hugging Face (`miracl/miracl`,
+    revisión `ad2acf33…`), con el SHA-256 verificado. Ocupa 2,6 MB en lugar
+    del corpus completo de 1,5 GB.
+  - Se guarda en `data/miracl/` y no se versiona.
+- **Corpus `miracl_es`:** la unión de los **6410 pasajes juzgados** de las
+  648 consultas (*pooling*).
+  - Para cada consulta, los pasajes de las demás sirven de distractores y se
+    consideran no relevantes.
+  - Cada pasaje se indexa como título + texto, igual que en las líneas base
+    oficiales. Algunos pasajes superan las 200 palabras y se parten, así que
+    hay 6828 fragmentos.
+  - De media hay 4,6 pasajes relevantes y 5,3 no relevantes juzgados por
+    consulta. Los no relevantes son difíciles a propósito: los recuperaron
+    otros sistemas.
+- **Sin ajuste:** son los mismos parámetros que en el resto del documento
+  (BM25 `k1=1.5`, `b=0.75`; RRF `k=60`; ventanas promediadas).
+- **Significación:** prueba de aleatorización pareada, 10 000 permutaciones
+  frente a BM25.
+
+### Resultados (648 consultas)
+
+| Método | Recall@1 | Recall@5 | Recall@10 | MRR@10 | nDCG@10 |
+| --- | --- | --- | --- | --- | --- |
+| tfidf | 0.138 | 0.521 | 0.811 | 0.683 | 0.660 |
+| bm25 | 0.163 | 0.565 | 0.864 | 0.724 | 0.709 |
+| semantic | 0.167 | 0.564 | 0.827 | 0.733 | 0.695 |
+| **hybrid** | **0.167** | **0.602** | **0.913** | **0.761** | **0.752** |
+
+Recall@1 es bajo por construcción: con 4,6 relevantes de media, un solo
+resultado no puede cubrirlos todos.
+
+| Frente a BM25 | Δ MRR@10 | Gana / pierde | p | Δ nDCG@10 | Gana / pierde | p |
+| --- | --- | --- | --- | --- | --- | --- |
+| tfidf | −0,041 | 98 / 153 | **< 0,0001** | −0,049 | 189 / 343 | **< 0,0001** |
+| semantic | +0,009 | 182 / 169 | 0,587 | −0,014 | 292 / 318 | 0,289 |
+| hybrid | **+0,037** | 186 / 96 | **0,0018** | **+0,044** | 373 / 196 | **< 0,0001** |
+
+(`p < 0,0001` significa que ninguna de las 10 000 permutaciones fue tan
+extrema como la diferencia observada.)
+
+### Lectura
+
+- **La híbrida supera a BM25 de forma significativa** en todas las métricas
+  de ranking:
+  - nDCG@10 de 0,752 frente a 0,709 y MRR@10 de 0,761 frente a 0,724;
+  - Recall@10 de 0,913 frente a 0,864;
+  - gana en casi el doble de consultas de las que pierde.
+
+  Es el resultado más sólido de v0.2: 648 consultas con anotación humana.
+- **La semántica sola empata con BM25** (sin diferencia significativa). Esto
+  coincide con lo observado en `wikipedia_es`. Su valor está en combinarla:
+  acierta en consultas distintas de las de BM25.
+- **BM25 supera a TF-IDF** de forma significativa, como en los demás
+  conjuntos.
+- **Coste:** en este corpus (6828 fragmentos), con profundidad 100, la
+  consulta media tarda 148 ms con BM25, 209 ms con la semántica y 231 ms con
+  la híbrida. El máximo fue 729 ms, por debajo del requisito de 2 s.
+  Importar el corpus tardó 3,5 min y construir el índice semántico, 4,2 min.
+
+### Recomendación actualizada
+
+- Con el extra `semantic` instalado, **`hybrid` es el método recomendado**.
+- **`bm25` sigue siendo el valor por defecto de la API** porque funciona sin
+  dependencias opcionales y sin cargar el modelo (~850 MB de memoria).
+- Hacer `hybrid` el valor por defecto cuando el extra esté disponible es un
+  cambio de una línea; queda propuesto, no aplicado, porque cambia el
+  comportamiento visible de la API.
+
+### Limitaciones
+
+- El corpus es solo el conjunto de pasajes juzgados, no toda la Wikipedia en
+  español. Las cifras **no son comparables** con la clasificación oficial de
+  MIRACL. Los distractores son pasajes difíciles de otras consultas.
+- Un pasaje no juzgado para una consulta cuenta como no relevante aunque
+  pudiera serlo (suposición habitual del *pooling*).
+- Son pasajes de Wikipedia: no se ha medido con documentos del usuario
+  (PDF, DOCX).
+
+---
+
+## Evaluación v0.2 con consultas propias: léxica vs semántica vs híbrida (DOC-16)
+
+> Complementaria. Estas 48 consultas las redactó el asistente; la
+> evaluación con anotación humana es la de MIRACL (arriba).
 
 Consultas: `evaluation/queries_wikipedia_es_v2.json`. Resultados por
 consulta: `evaluation/results/wikipedia_es_v2_test.json` (prueba) y
@@ -22,8 +123,10 @@ python -m backend.app.cli evaluate --queries evaluation/queries_wikipedia_es_v2.
     una prueba automática).
 - **Anotación:** se redactaron y anotaron por título **antes** de ejecutar
   ningún método; el archivo se confirmó en un commit propio antes de evaluar.
-  Las redactó el asistente de desarrollo: **siguen pendientes de revisión
-  humana** y, hasta entonces, el Issue #27 no se da por cerrado.
+  Las redactó el asistente de desarrollo y **no tienen revisión humana**. Con
+  la aprobación del usuario, el criterio de anotación humana del Issue #27 se
+  cumple con la evaluación sobre MIRACL; estas consultas quedan como
+  complemento.
 - **Sin ajuste con el conjunto de prueba:**
   - BM25 usa `k1=1.5` y `b=0.75`.
   - RRF usa `k=60` (valor del artículo original).
@@ -141,9 +244,10 @@ referencia:
 
 ### Recomendación
 
-Mantener **BM25 como método por defecto**. Ofrecer `hybrid` como alternativa
-para consultas descriptivas. La búsqueda semántica sola no se recomienda
-como método principal con este modelo.
+Con estas consultas, **BM25 y la híbrida empatan**. La evaluación con
+anotación humana (MIRACL, arriba) muestra una ventaja significativa de la
+híbrida, y es la que determina la recomendación. La búsqueda semántica sola
+no se recomienda como método principal con este modelo.
 
 ### Limitaciones
 

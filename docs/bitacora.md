@@ -333,3 +333,84 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   y del 74–91 % de palabras exactas en español usando el modelo `eng`. Los
   errores son sobre todo tildes, que el pipeline léxico ya ignora.
 - **Pruebas:** `python -m pytest -q` → `341 passed, 4 skipped`; cobertura del 97 % (`ocr.py` al 97 %).
+
+## DOC-23 (continuación) — Idioma español para el OCR
+
+- **Issue:** #31 (cerrado; mejora posterior) · **Rama:** `feature/DOC-23-spanish-ocr`
+- **Cambios:**
+  - `backend/app/documents/tessdata.py` y CLI `tessdata`: descargan
+    `spa`/`eng` de `tesseract-ocr/tessdata_{fast,best}` fijados a un commit,
+    con SHA-256 verificado, en `data/tessdata/`;
+  - `find_tessdata` prefiere esa carpeta;
+  - 5 pruebas nuevas.
+- **Medición real** (4 páginas en español, palabras exactas): `eng` del
+  sistema 73,9 %, `spa+eng` fast 98,1 % y best 98,9 %. Con escaneo difícil,
+  72,6 %, 96,2 % y 97,1 %. Fast tarda 0,32 s por página frente a 0,69 s de
+  best. Se eligió fast por defecto.
+- **Error real observado:** `montaña y` → `montañay` a final de línea.
+- **Incidente evitado:** al preparar el commit, Git incluía los modelos
+  descargados porque `.gitignore` no cubría `data/tessdata/`. Se retiraron
+  antes de confirmar nada y `.gitignore` pasa a ignorar todo `data/` salvo
+  `data/README.md`.
+- **Pruebas:** `python -m pytest -q` → `346 passed, 4 skipped`.
+
+## DOC-22 — Importar Google Docs públicos por enlace
+
+- **Issue:** #30 (queda abierta la parte de documentos privados con OAuth)
+  · **Rama:** `feature/DOC-22-google-docs-import` (apilada sobre la mejora
+  del OCR en español)
+- **Cambios:**
+  - `backend/app/documents/google_docs.py`: validación de la URL, export a
+    DOCX, redirecciones seguras, límites, nombre del archivo;
+  - `SourceType.GOOGLE_DOCS`;
+  - `DocumentService.ingest_google_doc`;
+  - `POST /documents/import`;
+  - `source_type` y `source_uri` en las respuestas;
+  - `tests/test_google_docs_import.py` (30 pruebas, una con red opcional).
+- **Verificación real:**
+  - plantilla pública de Chromium → 201 en 1,15 s, 981 palabras, 6
+    fragmentos;
+  - documento restringido → 403 `not_public`;
+  - ID inexistente → 404 `not_found`.
+- **Sin credenciales:** no se usa ni se guarda ningún token.
+- **Pruebas:** `python -m pytest -q` → `375 passed, 5 skipped` (la omitida nueva necesita red).
+
+## DOC-16 (cierre) — Evaluación con anotación humana: MIRACL español
+
+- **Issue:** #27 · **Rama:** `feature/DOC-16-miracl-eval` (apilada sobre DOC-22)
+- **Decisión del usuario:** en vez de una revisión manual de las consultas
+  propias, el criterio de anotación humana se cumple con un conjunto público
+  anotado por personas.
+- **Cambios:**
+  - `backend/app/corpus/miracl.py` y CLI `miracl`: descargan el parquet de
+    MIRACL-es dev (2,6 MB, revisión y SHA-256 fijados) e importan los 6410
+    pasajes juzgados como colección `miracl_es`;
+  - extra `eval` (`pyarrow`);
+  - `tests/test_miracl.py`;
+  - resultados en `evaluation/results/miracl_es_dev.json`.
+- **Resultados (648 consultas, nDCG@10):** híbrida 0,752, BM25 0,709,
+  semántica 0,695, TF-IDF 0,660. La híbrida supera a BM25 en nDCG@10
+  (p<0,0001) y MRR@10 (+0,037, p=0,0018); la semántica sola empata.
+- **Recomendación:** `hybrid` con el extra `semantic`; `bm25` sigue por
+  defecto en la API.
+- **Tiempos:** importación 3,5 min; índice semántico 4,2 min; evaluación
+  total 14 min.
+- **Pruebas:** `python -m pytest -q` → `381 passed, 5 skipped`.
+
+## DOC-18 (cierre) — Licencia AGPL-3.0-or-later
+
+- **Issue:** #29 · **Rama:** `feature/DOC-18-license` (apilada sobre DOC-16 MIRACL)
+- **Decisión:** el usuario delegó la elección ("escoge la mejor a tu
+  criterio"). Se elige `AGPL-3.0-or-later`:
+  - es compatible con PyMuPDF (AGPL-3.0) y con `es_core_news_sm` (GPL-3.0);
+  - no requiere cambios técnicos ni empeora la calidad;
+  - no tiene coste;
+  - encaja con un proyecto académico público.
+- **Cambios:**
+  - `LICENSE` con el texto oficial de gnu.org (SHA-256 `0d96a4ff…abcb0`);
+  - `pyproject.toml`: `license`, `license-files`; `setuptools>=77` para el
+    formato SPDX de PEP 639;
+  - `THIRD_PARTY_NOTICES.md`;
+  - sección de licencia en el README;
+  - `docs/licencias.md` con la decisión y su motivo.
+- **Verificación:** el paquete instalado declara `License-Expression: AGPL-3.0-or-later` y los dos archivos de licencia; `python -m pytest -q` → `381 passed, 5 skipped`.
