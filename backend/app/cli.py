@@ -11,6 +11,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli semantic-index [--collection wikipedia_es] [--rebuild]
     python -m backend.app.cli ocr [--collection user]
     python -m backend.app.cli tessdata [--variant fast] [--languages spa eng]
+    python -m backend.app.cli miracl
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -309,6 +310,25 @@ def _cmd_tessdata(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_miracl(args: argparse.Namespace) -> int:
+    """Descarga MIRACL-es (dev) y lo importa como colección ``miracl_es`` (DOC-16)."""
+    from backend.app.corpus import miracl
+
+    settings = Settings.from_env()
+    base = settings.paths.root / "miracl"
+    try:
+        rows = miracl.read_parquet(miracl.ensure_parquet(base / "miracl-es-dev.parquet"))
+    except miracl.MiraclError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    queries, passages = miracl.parse_rows(rows)
+    queries_path = base / "queries_miracl_es_dev.json"
+    miracl.write_queries(queries_path, miracl.queries_file_payload(queries, passages))
+    report = miracl.import_miracl(DocumentService(settings), queries, passages)
+    print(json.dumps({**report, "queries_file": str(queries_path)}, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -353,6 +373,8 @@ def build_parser() -> argparse.ArgumentParser:
     tessdata.add_argument("--languages", nargs="+", default=["spa", "eng"])
     tessdata.add_argument("--variant", choices=["fast", "best"], default="fast")
     tessdata.set_defaults(func=_cmd_tessdata)
+    miracl = sub.add_parser("miracl", help="importar MIRACL español (dev, anotado por personas) para evaluar")
+    miracl.set_defaults(func=_cmd_miracl)
     embeddings = sub.add_parser("embeddings", help="cargar el modelo de embeddings y medir la codificación")
     embeddings.add_argument("--collection", default=None, help="codificar los fragmentos de esta colección")
     embeddings.add_argument("--limit", type=int, default=None, help="máximo de fragmentos a codificar")

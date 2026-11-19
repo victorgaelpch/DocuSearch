@@ -153,8 +153,9 @@ Columnas:
 - OCR: no reconoce escritura a mano. Con PDF de baja calidad, rotados o en
   columnas, la precisión baja. Un PDF de muchas páginas escaneadas alarga la
   carga (~0,3 s por página) hasta el máximo configurado.
-- `.doc` (Word 97-2003), `.odt`, `.rtf` y Google Docs nativos no se admiten
-  (Google Docs requiere exportación autorizada, DOC-22).
+- `.doc` (Word 97-2003), `.odt` y `.rtf` no se admiten. Los Google Docs
+  **públicos** se importan por enlace (`POST /documents/import`, DOC-22); los
+  privados requieren OAuth y no están implementados.
 - DOCX: no se extraen encabezados, pies de página, notas al pie, comentarios ni
   cuadros de texto; tampoco hay números de página (Word los calcula al mostrar).
 - PDF: el orden de lectura depende de cómo se generó el archivo (columnas o

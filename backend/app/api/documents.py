@@ -54,6 +54,8 @@ class DocumentOut(BaseModel):
     language: str
     metadata: dict[str, Any]
     download_url: str
+    source_type: str = "upload"
+    source_uri: Optional[str] = None
 
     @classmethod
     def from_document(cls, document: Document) -> "DocumentOut":
@@ -70,6 +72,8 @@ class DocumentOut(BaseModel):
             extraction_error=document.extraction_error,
             page_count=document.page_count,
             language=document.language,
+            source_type=document.source_type.value,
+            source_uri=document.source_uri,
             metadata=document.extra,
             download_url=f"/documents/{document.doc_id}/download",
         )
@@ -167,6 +171,43 @@ async def upload_document(
             409, "duplicate_document", "el documento ya fue cargado", exc.existing.doc_id
         )
 
+    base = DocumentOut.from_document(result.document).model_dump()
+    return UploadOut(
+        **base,
+        word_count=result.extraction.word_count,
+        chunk_count=len(result.chunks),
+        warnings=result.extraction.warnings,
+    )
+
+
+class GoogleDocImportIn(BaseModel):
+    url: str
+
+
+@router.post(
+    "/import",
+    status_code=status.HTTP_201_CREATED,
+    response_model=UploadOut,
+    responses={
+        **_ERRORS,
+        403: {"model": ErrorResponse, "description": "El Google Doc no es público"},
+        404: {"model": ErrorResponse, "description": "Google Docs no encontró el documento"},
+        502: {"model": ErrorResponse, "description": "Error al contactar con Google Docs"},
+        504: {"model": ErrorResponse, "description": "Google Docs no respondió a tiempo"},
+    },
+    summary="Importar un Google Doc público por enlace (DOC-22)",
+)
+async def import_google_doc(
+    body: GoogleDocImportIn,
+    service: DocumentService = Depends(get_document_service),
+):
+    """Descarga como DOCX un Google Doc compartido como "cualquier persona con el enlace"."""
+    try:
+        result = await run_in_threadpool(service.ingest_google_doc, body.url)
+    except UploadValidationError as exc:
+        return _error(exc.status_code, exc.code, exc.message)
+    except DuplicateDocumentError as exc:
+        return _error(409, "duplicate_document", "el documento ya fue cargado", exc.existing.doc_id)
     base = DocumentOut.from_document(result.document).model_dump()
     return UploadOut(
         **base,

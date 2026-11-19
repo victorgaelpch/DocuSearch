@@ -9,9 +9,10 @@ Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 | Método | Ruta | Descripción | Respuestas |
 | --- | --- | --- | --- |
 | `POST` | `/documents` | Carga multipart (campo `file`) de un `.pdf`, `.docx` o `.txt` | 201, 400, 409, 413, 415, 422 |
+| `POST` | `/documents/import` | Importa un Google Doc **público** por enlace (JSON `{"url": "…"}`, DOC-22) | 201, 403, 404, 409, 413, 415, 422, 502, 504 |
 | `GET` | `/documents?limit=50&offset=0` | Lista paginada (`limit` 1–200) | 200, 422 |
 | `GET` | `/documents/{doc_id}` | Metadatos de un documento | 200, 404, 422 |
-| `GET` | `/search` | Búsqueda BM25/TF-IDF (DOC-10) | 200, 422 |
+| `GET` | `/search` | Búsqueda BM25, TF-IDF, semántica o híbrida (DOC-10, DOC-14, DOC-15) | 200, 422, 503 |
 | `GET` | `/search/index` | Versión y parámetros de los índices | 200, 422 |
 | `GET` | `/documents/{doc_id}/chunks` | Fragmentos con offsets, páginas y configuración (DOC-07) | 200, 404, 422 |
 | `GET` | `/documents/{doc_id}/download` | Original como adjunto (`Content-Disposition: attachment`, `X-Content-Type-Options: nosniff`) | 200, 404, 422 |
@@ -22,6 +23,46 @@ Ejemplo con PowerShell:
 curl.exe -F "file=@C:\ruta\informe.pdf" http://127.0.0.1:8000/documents
 curl.exe http://127.0.0.1:8000/documents
 ```
+
+## Importar Google Docs públicos (DOC-22)
+
+```powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:8000/documents/import `
+  -ContentType "application/json" -Body '{"url": "https://docs.google.com/document/d/<ID>/edit"}'
+```
+
+- Funciona con documentos compartidos como **"cualquier persona con el
+  enlace"**. Se exportan a DOCX (`/export?format=docx`) sin credenciales y se
+  procesan con el lector DOCX.
+- La respuesta es la misma que la de `POST /documents`, con
+  `source_type: "google_docs"`, `source_uri` (enlace canónico) y
+  `metadata.google_doc_id`.
+- Volver a importar el mismo contenido devuelve 409; si el documento cambió,
+  se crea uno nuevo (el contenido tiene otro hash).
+- **Errores:**
+
+| HTTP | `code` | Causa |
+| --- | --- | --- |
+| 422 | `invalid_url` | No es `https://docs.google.com/document/d/<ID>…` |
+| 403 | `not_public` | Documento privado: Google redirige al inicio de sesión o no devuelve un DOCX |
+| 404 | `not_found` | El documento no existe |
+| 413 | `file_too_large` | El DOCX exportado supera `DOCUSEARCH_MAX_UPLOAD_MB` |
+| 502 / 504 | `remote_error` / `remote_timeout` | Fallo de red o Google no responde (30 s) |
+
+- **Seguridad:**
+  - La URL de descarga se construye a partir del ID validado; nunca se usa la
+    URL del usuario.
+  - Solo se siguen redirecciones HTTPS a `docs.google.com` o
+    `*.googleusercontent.com`.
+  - El tamaño se limita mientras se lee.
+- **Verificado con Google real:**
+  - La plantilla pública de documentos de diseño de Chromium se importó en
+    1,15 s (981 palabras, 6 fragmentos).
+  - Un documento restringido devolvió 403 `not_public`.
+  - Un ID inexistente devolvió 404 `not_found`.
+- **Documentos privados:** requieren OAuth con la cuenta del usuario y no
+  están implementados. Mientras tanto, se pueden descargar como `.docx` y
+  subir con `POST /documents`.
 
 ## Búsqueda (DOC-10, DOC-14)
 

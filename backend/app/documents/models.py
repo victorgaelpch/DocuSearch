@@ -40,6 +40,7 @@ class SourceType(str, Enum):
 
     UPLOAD = "upload"
     CORPUS = "corpus"
+    GOOGLE_DOCS = "google_docs"
 
 
 class ExtractionStatus(str, Enum):
