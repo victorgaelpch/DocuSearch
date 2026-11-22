@@ -54,7 +54,9 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 | DOC-33 | [#53](https://github.com/victorgaelpch/DocuSearch/issues/53) | E2E y CI bloqueante | [#72](https://github.com/victorgaelpch/DocuSearch/pull/72) | RF01–RF08, RNF04, RNF06, RNF07 |
 | DOC-34 | [#54](https://github.com/victorgaelpch/DocuSearch/issues/54) | Instalación en Windows y demostración | [#73](https://github.com/victorgaelpch/DocuSearch/pull/73) | RNF04–RNF07 |
 | DOC-35 | [#55](https://github.com/victorgaelpch/DocuSearch/issues/55) | Entrega final v1.0 | [#74](https://github.com/victorgaelpch/DocuSearch/pull/74) | RF01–RF08, RNF01–RNF07 |
-| DOC-36 (P1) | [#56](https://github.com/victorgaelpch/DocuSearch/issues/56) | Panel de evaluación | este PR | RNF02, RNF04, RNF07 |
+| DOC-36 (P1) | [#56](https://github.com/victorgaelpch/DocuSearch/issues/56) | Panel de evaluación | [#76](https://github.com/victorgaelpch/DocuSearch/pull/76) | RNF02, RNF04, RNF07 |
+| DOC-37 (P1) | [#57](https://github.com/victorgaelpch/DocuSearch/issues/57) | Google Docs privados (OAuth) | — **bloqueado**: requiere un proyecto OAuth del propietario | RF06, RF07 |
+| DOC-38 (P1) | [#58](https://github.com/victorgaelpch/DocuSearch/issues/58) | RAG local opcional | este PR | RF05, RF06, RNF03 |
 
 Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–#43; ver `docs/bitacora.md`.
 
@@ -68,6 +70,8 @@ Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–
   exponerse fuera de `127.0.0.1` sin HTTPS y el endurecimiento de DOC-32.
 - **Google Docs privados** requieren OAuth con un proyecto del propietario
   (DOC-37); hoy solo se importan documentos públicos.
-- **RAG** no existe (DOC-38/39, P1). No hay evaluación RAG.
+- **RAG** (v1.1, DOC-38) es opcional, local y está desactivado por defecto. Se
+  probó con un proveedor simulado; **no hay evaluación de la calidad de las
+  respuestas**.
 - **Fuente de los requisitos:** sin `documentacion.pdf`, la redacción de
   RF/RNF es inferida (ver la nota inicial).

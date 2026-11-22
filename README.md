@@ -19,8 +19,9 @@ Proyecto académico (UAEM, 2026-B) · Licencia AGPL-3.0-or-later.
 | Seguridad | Cuentas locales Administrador/Usuario, sesión `HttpOnly`, CSRF, CSP, pruebas adversariales |
 | Calidad medida | MIRACL-es (648 consultas con juicios humanos): nDCG@10 híbrida **0,752** frente a BM25 **0,709** (p < 0,0001), en el subconjunto de pasajes juzgados ([informe](docs/informe-academico.md)) |
 
-**No incluido en v1.0:** Google Docs privados (OAuth), respuestas generadas
-(RAG) y uso multiusuario. Es un **modo local monousuario**: no debe exponerse
+**No incluido en v1.0:** Google Docs privados (OAuth) y uso multiusuario.
+En la v1.1 hay **preguntas con respuestas citadas (RAG) opcionales**, con un
+modelo local Ollama y desactivadas por defecto ([`docs/rag.md`](docs/rag.md)). Es un **modo local monousuario**: no debe exponerse
 a una red sin HTTPS ([seguridad](docs/seguridad.md)).
 
 ![Resultados de búsqueda](docs/capturas/captura-04-resultados-bm25.png)
@@ -67,6 +68,7 @@ python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 | [`docs/guion-demostracion.md`](docs/guion-demostracion.md) | Guion de 8–12 minutos y lista de comprobación |
 | [`docs/instalacion-windows.md`](docs/instalacion-windows.md) | Instalación, modos, problemas frecuentes, plataformas verificadas |
 | [`docs/seguridad.md`](docs/seguridad.md) / [`docs/autenticacion.md`](docs/autenticacion.md) | Modelo de amenazas, cuentas y sesión |
+| [`docs/rag.md`](docs/rag.md) | Preguntas con respuestas citadas (RAG local opcional, v1.1) |
 | [`docs/evaluacion.md`](docs/evaluacion.md) / [`docs/pruebas.md`](docs/pruebas.md) | Evaluación reproducible, pruebas y checks de CI |
 | [`docs/arquitectura.md`](docs/arquitectura.md), [`docs/adr/`](docs/adr/) | Diseño y decisiones |
 | [`docs/bitacora.md`](docs/bitacora.md), [`CHANGELOG.md`](CHANGELOG.md) | Registro por Issue y cambios por versión |

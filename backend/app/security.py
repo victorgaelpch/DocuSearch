@@ -29,9 +29,9 @@ from backend.app.auth.dependencies import SESSION_COOKIE, get_session_store
 
 UNSAFE = {"POST", "PUT", "PATCH", "DELETE"}
 JSON_BODY_LIMIT = 1024 * 1024
-PRIVATE_PREFIXES = ("/documents", "/admin", "/auth/logout")
+PRIVATE_PREFIXES = ("/documents", "/admin", "/auth/logout", "/ask")
 ADMIN_PREFIXES = ("/documents", "/admin")
-NO_STORE_PREFIXES = ("/documents", "/search", "/auth", "/admin")
+NO_STORE_PREFIXES = ("/documents", "/search", "/auth", "/admin", "/ask")
 DOCS_PATHS = ("/docs", "/redoc")
 
 CSP = (

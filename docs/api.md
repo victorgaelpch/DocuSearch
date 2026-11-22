@@ -242,3 +242,13 @@ formato inválido, `limit` fuera de rango) mantienen el formato estándar
   codificación en lugar de ver un índice a medias.
 - Las tareas viven en memoria: reiniciar el servidor las olvida. Respaldo por
   CLI: `reindex`, `semantic-index`, `ocr`.
+
+
+## Preguntas con respuestas citadas (DOC-38, opcional)
+
+| Método | Ruta | Descripción | Respuestas |
+| --- | --- | --- | --- |
+| `GET` | `/ask/status` | Estado del proveedor local (configurado, Ollama accesible, modelo descargado) | 200, 401 |
+| `POST` | `/ask` | Sesión + CSRF. Recupera fragmentos y, con un modelo local, devuelve una respuesta **solo si cita fragmentos recuperados** | 200, 401, 403, 422, 429, 502, 503 |
+
+Detalle, estados y privacidad en `docs/rag.md`.

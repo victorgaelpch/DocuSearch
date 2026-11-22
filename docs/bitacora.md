@@ -814,3 +814,40 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   archivos, MIRACL primero y humano, lecturas de significación, archivos
   rotos o ausentes, ids inválidos. E2E (1): cifras de la tabla iguales al
   archivo, lecturas, barras con ancho real, conjuntos secundarios.
+
+## DOC-37 — Google Drive privado mediante OAuth: bloqueado externamente
+
+- **Issue:** #57 (abierto). Sin un proyecto OAuth de Google Cloud y el
+  consentimiento del propietario no se puede implementar ni probar la ruta
+  privada. No se inventaron credenciales. En el Issue se dejaron los pasos
+  que debe seguir el propietario y el diseño previsto. La importación pública
+  (DOC-22) sigue disponible y la interfaz indica la limitación.
+
+## DOC-38 — RAG opcional local con respuestas respaldadas por fragmentos
+
+- **Issue:** #58 · **Rama:** `feature/DOC-38-rag-local`
+- **Cambios:**
+  - `backend/app/rag/`:
+    - `providers.py`: Ollama por `/api/chat`, sin herramientas, sin proxy,
+      `temperature=0`, máximo 512 tokens, tiempo límite configurable; la URL
+      **debe ser loopback**;
+    - `service.py`: recuperación híbrida (o BM25 si falta el extra), fuentes
+      `[S#]` delimitadas como datos con delimitadores neutralizados, reglas del
+      sistema, citas validadas, una generación a la vez.
+  - `POST /ask` (sesión + CSRF) y `GET /ask/status`. Sin proveedor → 503
+    `rag_unavailable`, y la búsqueda sigue funcionando.
+  - Estados `answered`, `insufficient_evidence`, `unsupported` (respuesta sin
+    citas válidas: no se muestra) y `no_evidence` (sin fragmentos: no se llama
+    al modelo).
+  - `.env.example`, `docs/rag.md`, `docs/api.md`, modelo de amenazas.
+- **Pruebas:** `tests/test_rag.py` (24, proveedor simulado): sin proveedor,
+  cita válida apuntando a un fragmento real, citas inventadas eliminadas y
+  contadas, respuesta sin citas retenida, falta de evidencia, no se llama al
+  modelo sin fragmentos, alternativa BM25, documento con inyección y
+  delimitadores falsos, 503 sin conexión, una generación a la vez (429),
+  permisos, CSRF, validación, URL local frente a remota (7 casos), proxy
+  ignorado. `test_real_local_ollama` se activa con `DOCUSEARCH_TEST_RAG=1` en
+  un equipo con Ollama (no se ejecutó aquí).
+- **Límites:** sin evaluación de calidad de las respuestas; la generación en
+  CPU no está sujeta al requisito de 2 s.
+- **Totales:** `python -m pytest -q` → `556 passed, 9 skipped`.
