@@ -1,5 +1,11 @@
 # Evaluación de la recuperación (DOC-09, DOC-16)
 
+> **Panel web (DOC-36):** `#/evaluacion` y `GET /evaluation` muestran, sin
+> recalcular, los archivos de `evaluation/results/` con el contexto de
+> `evaluation/results/catalogo.json` (corpus, anotación, fecha, límites). Las
+> métricas se muestran con los 4 decimales guardados; las lecturas de
+> significación se derivan de los p-valores del archivo (α = 0,05).
+
 ## Evaluación con anotación humana: MIRACL español (DOC-16)
 
 Es la evaluación principal de v0.2. A diferencia de las demás, ni las

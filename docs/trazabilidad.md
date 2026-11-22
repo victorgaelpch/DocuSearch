@@ -30,7 +30,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 | ID | Descripción (inferida) | Estado | Evidencia | Falta |
 | --- | --- | --- | --- | --- |
 | RNF01 | Búsqueda sobre índice caliente en menos de 2 s | Cumple (API) | `docs/pruebas.md`: p95 BM25 26,9 ms, híbrida 50,3 ms (corpus de prueba, CPU) | Medición desde la web (DOC-40). No aplica a generación RAG |
-| RNF02 | Calidad medida con Recall@k, MRR@10 y nDCG@10 | Cumple | `backend/app/search/evaluation.py`, `docs/evaluacion.md` | Panel de evaluación (DOC-36) |
+| RNF02 | Calidad medida con Recall@k, MRR@10 y nDCG@10 | Cumple | `backend/app/search/evaluation.py`, `docs/evaluacion.md`; panel web `#/evaluacion` con los resultados versionados (DOC-36, `tests/test_evaluation_panel.py`) | — |
 | RNF03 | Arquitectura modular y mantenible; índices reconstruibles | Cumple | Capas `api/ → documents/service → repository/storage`, `search/` independiente; índices regenerables desde originales | — (borrado con compensación y purga de índices, DOC-30) |
 | RNF04 | Usabilidad: interfaz en español, accesible y clara | Cumple | Interfaz web en `/` con navegación por teclado, enlace de salto, foco gestionado, contraste AA y diseño responsive, verificada en Chrome real (`tests/e2e/test_web_shell.py`, DOC-26); vistas de documentos, visor, buscador e índices (DOC-27 a DOC-31); flujo completo con teclado y check bloqueante `web-e2e` (DOC-33) | Sin evaluación con usuarios reales ni lector de pantalla físico |
 | RNF05 | Ejecución en CPU, Python ≥ 3.10, sin GPU (Windows) | Cumple | CI 3.10–3.12; extra `semantic` con PyTorch CPU; scripts PowerShell e instalación limpia verificada en `windows-latest` (DOC-34, `docs/instalacion-windows.md`) | Sin verificación en un Windows de escritorio; OCR y semántica no verificados en Windows |
@@ -49,11 +49,12 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 | DOC-28 | [#48](https://github.com/victorgaelpch/DocuSearch/issues/48) | Visor con fragmento y página | [#67](https://github.com/victorgaelpch/DocuSearch/pull/67) | RF05, RF06, RNF04 |
 | DOC-29 | [#49](https://github.com/victorgaelpch/DocuSearch/issues/49) | Buscador web con 4 métodos | [#68](https://github.com/victorgaelpch/DocuSearch/pull/68) | RF01–RF05, RF08, RNF01, RNF04 |
 | DOC-30 | [#50](https://github.com/victorgaelpch/DocuSearch/issues/50) | Editar y eliminar con índices coherentes | [#69](https://github.com/victorgaelpch/DocuSearch/pull/69) | RF06, RF07, RNF03 |
-| DOC-31 | [#51](https://github.com/victorgaelpch/DocuSearch/issues/51) | Panel de índices y tareas | [#70](https://github.com/victorgaelpch/DocuSearch/pull/70) | RF07, RNF01, RNF03, RNF05 |
+| DOC-31 | [#51](https://github.com/victorgaelpch/DocuSearch/issues/51) | Panel de índices y tareas | [#70](https://github.com/victorgaelpch/DocuSearch/pull/70), [#75](https://github.com/victorgaelpch/DocuSearch/pull/75) | RF07, RNF01, RNF03, RNF05 |
 | DOC-32 | [#52](https://github.com/victorgaelpch/DocuSearch/issues/52) | Endurecimiento de seguridad | [#71](https://github.com/victorgaelpch/DocuSearch/pull/71) | RNF04, RNF06 |
 | DOC-33 | [#53](https://github.com/victorgaelpch/DocuSearch/issues/53) | E2E y CI bloqueante | [#72](https://github.com/victorgaelpch/DocuSearch/pull/72) | RF01–RF08, RNF04, RNF06, RNF07 |
 | DOC-34 | [#54](https://github.com/victorgaelpch/DocuSearch/issues/54) | Instalación en Windows y demostración | [#73](https://github.com/victorgaelpch/DocuSearch/pull/73) | RNF04–RNF07 |
-| DOC-35 | [#55](https://github.com/victorgaelpch/DocuSearch/issues/55) | Entrega final v1.0 | este PR | RF01–RF08, RNF01–RNF07 |
+| DOC-35 | [#55](https://github.com/victorgaelpch/DocuSearch/issues/55) | Entrega final v1.0 | [#74](https://github.com/victorgaelpch/DocuSearch/pull/74) | RF01–RF08, RNF01–RNF07 |
+| DOC-36 (P1) | [#56](https://github.com/victorgaelpch/DocuSearch/issues/56) | Panel de evaluación | este PR | RNF02, RNF04, RNF07 |
 
 Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–#43; ver `docs/bitacora.md`.
 
