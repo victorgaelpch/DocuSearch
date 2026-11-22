@@ -15,6 +15,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli hash-password [--stdin] [--env-file .env]
     python -m backend.app.cli doctor
     python -m backend.app.cli demo [--queries]
+    python -m backend.app.cli report [--repeats 5] [--output informe.json]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -474,6 +475,18 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_report(args: argparse.Namespace) -> int:
+    """Informe de rendimiento reproducible sobre la demostración (DOC-40)."""
+    from backend.app.perf import format_report, run_report
+
+    report = run_report(repeats=args.repeats, methods=args.methods)
+    print(format_report(report))
+    if args.output:
+        Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"\nInforme JSON: {args.output}")
+    return 0 if report["within_2s"] else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -539,6 +552,11 @@ def build_parser() -> argparse.ArgumentParser:
     demo = sub.add_parser("demo", help="cargar los documentos sintéticos de demo/documentos")
     demo.add_argument("--queries", action="store_true", help="mostrar solo las consultas de ejemplo")
     demo.set_defaults(func=_cmd_demo)
+    report = sub.add_parser("report", help="informe de rendimiento reproducible (ingesta, frío y caliente, memoria)")
+    report.add_argument("--repeats", type=int, default=5)
+    report.add_argument("--methods", nargs="+", choices=["bm25", "tfidf", "semantic", "hybrid"], default=None)
+    report.add_argument("--output", default=None)
+    report.set_defaults(func=_cmd_report)
     return parser
 
 

@@ -65,11 +65,12 @@ export default {
     let timer = null;
     const tracked = new Set();
     const panel = h("section", { "aria-labelledby": "collections-title" });
+    const perf = h("section", { "aria-labelledby": "perf-title" });
     const jobsArea = h("section", { "aria-labelledby": "jobs-title", "aria-live": "polite" });
     main.append(
       h("header", { class: "page-head" }, h("h1", {}, "Índices"),
         h("p", {}, "Estado de cada colección y tareas de reindexación. Las búsquedas siguen respondiendo con el índice anterior mientras se reconstruye uno nuevo.")),
-      panel, jobsArea,
+      panel, jobsArea, perf,
       h("section", { "aria-labelledby": "cli-title" },
         h("h2", { id: "cli-title" }, "Respaldo por terminal"),
         h("p", {}, "Si el panel no responde o falta un componente opcional, las mismas tareas se pueden ejecutar con el servidor detenido:"),
@@ -135,8 +136,33 @@ export default {
       }
     }
 
+    async function refreshMetrics() {
+      let data;
+      try {
+        data = await api.get("/admin/metrics");
+      } catch (error) {
+        clear(perf).append(notice("error", error.message));
+        return;
+      }
+      const rows = Object.entries(data.search);
+      const names = { bm25: "BM25", tfidf: "TF-IDF", semantic: "Semántica", hybrid: "Híbrida" };
+      const ms = (v) => (v == null ? "—" : `${v.toLocaleString("es-MX")} ms`);
+      append(clear(perf), [
+        h("h2", { id: "perf-title" }, "Rendimiento desde que se inició el servidor"),
+        h("p", { class: "hint" }, `Tiempo del motor por búsqueda. La primera consulta después de construir un índice (en frío) se muestra aparte. Memoria del proceso: ${data.memory_mb == null ? "no disponible" : `${data.memory_mb} MB`}. Informe reproducible: python -m backend.app.cli report.`),
+        rows.some(([, r]) => r.over_budget) ? notice("warn", "El p95 de algún método supera 2 s sobre el índice caliente: revise la memoria disponible o use BM25.") : null,
+        rows.length ? h("div", { class: "table-wrap" }, h("table", {},
+          h("caption", { class: "visually-hidden" }, "Latencias de búsqueda por método"),
+          h("thead", {}, h("tr", {}, ["Método", "Consultas en caliente", "p50", "p95", "Máximo", "Primera (frío)"].map((t) => h("th", { scope: "col" }, t)))),
+          h("tbody", {}, rows.map(([method, r]) => h("tr", {},
+            h("th", { scope: "row" }, names[method] || method), h("td", { class: "num" }, String(r.warm.count)),
+            h("td", { class: "num" }, ms(r.warm.p50_ms)), h("td", { class: "num" }, ms(r.warm.p95_ms)), h("td", { class: "num" }, ms(r.warm.max_ms)),
+            h("td", { class: "num" }, r.cold.length ? ms(r.cold[r.cold.length - 1].ms) : "—")))))) : h("p", { class: "hint" }, "Aún no se ha hecho ninguna búsqueda desde que se inició el servidor."),
+      ]);
+    }
+
     panel.append(loading("Consultando el estado de los índices…"));
-    await refresh();
+    await Promise.all([refresh(), refreshMetrics()]);
     return () => window.clearTimeout(timer);
   },
 };

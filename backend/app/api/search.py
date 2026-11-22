@@ -10,6 +10,7 @@ las dos últimas requieren el extra ``semantic``. El orden es determinista para 
 
 from __future__ import annotations
 
+import logging
 from enum import Enum
 from typing import Annotated, Any, Optional
 
@@ -17,6 +18,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel
 
 from backend.app.api.documents import ErrorResponse, _error, get_document_service
+from backend.app.observability import log
 from backend.app.auth.dependencies import optional_session
 from backend.app.auth.sessions import Session
 from backend.app.documents.models import DEFAULT_COLLECTION, WIKIPEDIA_COLLECTION
@@ -95,6 +97,7 @@ def get_search_engine(
     summary="Buscar fragmentos por texto libre (BM25, TF-IDF, semántica o híbrida)",
 )
 def search(
+    request: Request,
     q: Annotated[
         str,
         Query(
@@ -126,6 +129,11 @@ def search(
         response = engine.search(q, method=method.value, k=k, collection=collection.value)
     except EmbeddingUnavailableError as exc:
         return _error(503, "semantic_unavailable", str(exc))
+    metrics = getattr(request.app.state, "metrics", None)
+    cold = metrics.record_search(response.method.value, response.collection, response.index_version, response.took_ms) if metrics else None
+    # sin el texto de la consulta: solo método, colección, tamaño y tiempo (DOC-40)
+    log(logging.INFO, "search", method=response.method.value, collection=response.collection, k=response.k,
+        results=len(response.hits), took_ms=response.took_ms, cold=cold)
     return SearchOut(
         query=response.query,
         query_tokens=response.query_tokens,

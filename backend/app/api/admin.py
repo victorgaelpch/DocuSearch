@@ -172,3 +172,14 @@ def get_job(job_id: str = Path(pattern=r"^[0-9a-f]{32}$"), jobs: JobManager = De
     if snapshot is None:
         return _error(404, "job_not_found", "la tarea no existe (las tareas se olvidan al reiniciar el servidor)")
     return snapshot
+
+
+@router.get("/metrics", summary="Latencias, memoria y duración de tareas desde el arranque (DOC-40)")
+def metrics(request: Request, jobs: JobManager = Depends(get_job_manager)) -> dict[str, Any]:
+    snapshot = request.app.state.metrics.snapshot()
+    durations: dict[str, list[float]] = {}
+    for job in jobs.recent(50):
+        if job["status"] in ("succeeded", "failed") and job["duration_s"] is not None:
+            durations.setdefault(job["kind"], []).append(job["duration_s"])
+    snapshot["jobs"] = {kind: {"count": len(values), "last_s": values[0], "max_s": max(values)} for kind, values in durations.items()}
+    return snapshot
