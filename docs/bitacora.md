@@ -740,3 +740,24 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   personales), OCR y semántica en Windows.
 - **Pruebas:** `python -m pytest -q` → `521 passed, 8 skipped`
   (`tests/test_demo_install.py`: 17); `windows-install` en CI.
+
+## DOC-35 — Entrega final v1.0: trazabilidad, informe, evidencias y versión
+
+- **Issue:** #55 · **Rama:** `feature/DOC-35-entrega-v1`
+- **Cambios:**
+  - README reorganizado: estado v1.0.0, qué funciona y qué no, inicio
+    rápido, documentación, pruebas, módulos.
+  - `docs/manual.md` (Usuario y Administrador, con capturas),
+    `docs/informe-academico.md` (arquitectura, metodología, MIRACL con la
+    limitación del subconjunto juzgado, rendimiento, lo no evaluado,
+    limitaciones, referencias), `docs/guion-demostracion.md` (8–12 min, lista
+    de comprobación, plan B sin semántica).
+  - `docs/capturas/`: 6 capturas reales generadas por
+    `tests/e2e/test_web_capturas.py` con la demostración sintética (solo
+    BM25: no se capturan resultados híbridos del codificador de prueba).
+  - `docs/trazabilidad.md`: tabla de Issues y PR de la entrega.
+  - Versión 1.0.0 en `pyproject.toml`, leída por la API (`GET /version`,
+    OpenAPI); `CHANGELOG.md`; `THIRD_PARTY_NOTICES.md` con Playwright (solo
+    pruebas) y Swagger UI.
+- **Versión y etiqueta:** `v1.0.0` se publica solo después de fusionar este PR
+  con todos los P0 cerrados y el CI de `main` en verde.

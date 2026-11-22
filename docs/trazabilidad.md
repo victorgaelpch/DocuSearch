@@ -10,7 +10,7 @@
 Estados: **Cumple** (probado y reproducible), **Parcial** (existe pero falta
 una parte), **Pendiente** (no implementado), **Fuera de alcance**.
 
-Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-34.
+Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entrega v1.0.0).
 
 ## Requisitos funcionales
 
@@ -37,6 +37,26 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-34.
 | RNF06 | Seguridad y privacidad de los documentos | Cumple (uso local) | Validación de cargas, path traversal y SSRF en importación (DOC-04/22); sesión `HttpOnly`, CSRF, roles y límite de intentos (DOC-25); CSP y cabeceras, rechazo previo al cuerpo, purga al borrar, pruebas adversariales (DOC-32, `docs/seguridad.md`, `tests/test_security.py`) | Exposición en red: HTTPS y pasos de `docs/seguridad.md`; sin auditoría externa |
 | RNF07 | Reproducibilidad: pruebas automatizadas, CI y resultados versionados | Cumple | CI GitHub Actions (Python 3.10–3.12 y `web-e2e` en Chromium, DOC-33), `evaluation/results/`, revisiones de corpus fijadas | — (instalación limpia en Windows en CI, DOC-34) |
 
+
+## Issues y Pull Requests de la entrega v1.0
+
+| ID | Issue | Alcance | PR | Requisitos |
+| --- | --- | --- | --- | --- |
+| DOC-24 | [#44](https://github.com/victorgaelpch/DocuSearch/issues/44) | Auditoría y contratos (ADR, esta matriz) | [#62](https://github.com/victorgaelpch/DocuSearch/pull/62) | RF01–RF08, RNF03, RNF06 |
+| DOC-25 | [#45](https://github.com/victorgaelpch/DocuSearch/issues/45) | Autenticación local y roles | [#63](https://github.com/victorgaelpch/DocuSearch/pull/63), [#64](https://github.com/victorgaelpch/DocuSearch/pull/64) | RF06, RNF04, RNF05 |
+| DOC-26 | [#46](https://github.com/victorgaelpch/DocuSearch/issues/46) | Frontend accesible en el mismo origen | [#65](https://github.com/victorgaelpch/DocuSearch/pull/65) | RNF04, RNF05, RNF06 |
+| DOC-27 | [#47](https://github.com/victorgaelpch/DocuSearch/issues/47) | Carga, listado y filtros | [#66](https://github.com/victorgaelpch/DocuSearch/pull/66) | RF06, RF07, RNF04 |
+| DOC-28 | [#48](https://github.com/victorgaelpch/DocuSearch/issues/48) | Visor con fragmento y página | [#67](https://github.com/victorgaelpch/DocuSearch/pull/67) | RF05, RF06, RNF04 |
+| DOC-29 | [#49](https://github.com/victorgaelpch/DocuSearch/issues/49) | Buscador web con 4 métodos | [#68](https://github.com/victorgaelpch/DocuSearch/pull/68) | RF01–RF05, RF08, RNF01, RNF04 |
+| DOC-30 | [#50](https://github.com/victorgaelpch/DocuSearch/issues/50) | Editar y eliminar con índices coherentes | [#69](https://github.com/victorgaelpch/DocuSearch/pull/69) | RF06, RF07, RNF03 |
+| DOC-31 | [#51](https://github.com/victorgaelpch/DocuSearch/issues/51) | Panel de índices y tareas | [#70](https://github.com/victorgaelpch/DocuSearch/pull/70) | RF07, RNF01, RNF03, RNF05 |
+| DOC-32 | [#52](https://github.com/victorgaelpch/DocuSearch/issues/52) | Endurecimiento de seguridad | [#71](https://github.com/victorgaelpch/DocuSearch/pull/71) | RNF04, RNF06 |
+| DOC-33 | [#53](https://github.com/victorgaelpch/DocuSearch/issues/53) | E2E y CI bloqueante | [#72](https://github.com/victorgaelpch/DocuSearch/pull/72) | RF01–RF08, RNF04, RNF06, RNF07 |
+| DOC-34 | [#54](https://github.com/victorgaelpch/DocuSearch/issues/54) | Instalación en Windows y demostración | [#73](https://github.com/victorgaelpch/DocuSearch/pull/73) | RNF04–RNF07 |
+| DOC-35 | [#55](https://github.com/victorgaelpch/DocuSearch/issues/55) | Entrega final v1.0 | este PR | RF01–RF08, RNF01–RNF07 |
+
+Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–#43; ver `docs/bitacora.md`.
+
 ## Limitaciones declaradas
 
 - **MIRACL:** las cifras (nDCG@10 híbrida 0,752 frente a BM25 0,709) se
@@ -48,3 +68,5 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-34.
 - **Google Docs privados** requieren OAuth con un proyecto del propietario
   (DOC-37); hoy solo se importan documentos públicos.
 - **RAG** no existe (DOC-38/39, P1). No hay evaluación RAG.
+- **Fuente de los requisitos:** sin `documentacion.pdf`, la redacción de
+  RF/RNF es inferida (ver la nota inicial).

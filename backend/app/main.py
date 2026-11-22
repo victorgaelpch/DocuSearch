@@ -11,6 +11,7 @@ from backend.app.api.auth import router as auth_router
 from backend.app.api.documents import router as documents_router
 from backend.app.api.errors import ApiError, api_error_handler
 from backend.app.api.search import router as search_router
+from backend.app import __version__
 from backend.app.config import Settings
 from backend.app.security import SecurityMiddleware
 from backend.app.web import mount_frontend
@@ -24,7 +25,7 @@ def create_app(settings: Settings | None = None, *, encoder_factory: Callable | 
     application = FastAPI(
         title="DocuSearch AI",
         description="API base del buscador y gestor de documentos.",
-        version="0.1.0",
+        version=__version__,
     )
     application.state.settings = settings or Settings.from_env()
     application.state.encoder_factory = encoder_factory
@@ -33,6 +34,11 @@ def create_app(settings: Settings | None = None, *, encoder_factory: Callable | 
     def health() -> dict[str, str]:
         """Basic health check without external services or GPU."""
         return {"status": "ok"}
+
+    @application.get("/version", tags=["system"])
+    def version() -> dict[str, str]:
+        """Versión instalada (DOC-35)."""
+        return {"name": "DocuSearch AI", "version": __version__}
 
     application.add_exception_handler(ApiError, api_error_handler)
     application.include_router(auth_router)

@@ -16,6 +16,11 @@ conjuntos de datos (noviembre de 2026).
 | python-multipart, sentence-transformers, transformers, huggingface-hub, tokenizers, safetensors, pyarrow | Apache-2.0 | cargas, embeddings, evaluación |
 | PyTorch | BSD-3-Clause y otras permisivas | embeddings (extra `semantic`) |
 | **PyMuPDF** | **AGPL-3.0** (o licencia comercial de Artifex) | lectura de PDF y OCR |
+| Playwright para Python y navegador Chromium que descarga | Apache-2.0 (Chromium: BSD-3-Clause y otras) | solo pruebas E2E (extra `e2e`); no forma parte de la aplicación |
+
+La interfaz web (`frontend/`) no incluye bibliotecas de terceros: HTML, CSS y
+JavaScript propios, con las fuentes del sistema operativo. La página `/docs`
+de FastAPI carga Swagger UI (Apache-2.0) desde jsDelivr en el navegador.
 
 ## Modelos
 
