@@ -641,3 +641,32 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   `append` nativo, estado semántico sin separación y "TFIDF".
 - **Pruebas:** `tests/test_index_jobs.py` (11) y E2E (3). Totales:
   `python -m pytest -q` → `472 passed, 8 skipped`; E2E → `30 passed, 1 skipped`.
+
+## DOC-32 — Endurecimiento de seguridad y pruebas adversariales
+
+- **Issue:** #52 · **Rama:** `feature/DOC-32-endurecimiento-seguridad`
+- **Cambios:**
+  - `backend/app/security.py` (middleware ASGI):
+    - rechaza mutaciones a `/documents`, `/admin` y `/auth/logout` sin sesión
+      (401) o sin rol (403) **antes de leer el cuerpo** (pendiente anotado en
+      DOC-25: FastAPI leía el multipart completo antes de comprobar la sesión);
+    - `Content-Length` obligatorio en mutaciones (411) y máximo (413);
+    - CSP sin `unsafe-inline`, `nosniff`, `Referrer-Policy`, `X-Frame-Options`,
+      `Permissions-Policy`, COOP/CORP y `no-store` en respuestas privadas.
+      La vista previa PDF conserva su política de marco; `/docs` queda sin
+      CSP porque Swagger carga de jsDelivr.
+  - `docs/seguridad.md`: modelo de amenazas con control y prueba por fila,
+    riesgos conocidos y pasos para exponerlo en una red (TLS, cookie
+    `Secure`, un worker, proxy).
+- **Pruebas:** `tests/test_security.py` (32): cabeceras en todas las rutas,
+  `no-store`, política de la vista PDF, cuerpo no leído en peticiones
+  anónimas o de Usuario, 413/411, HTML en títulos devuelto como dato,
+  traversal en `/documents` y `/assets`, nombres maliciosos, errores sin
+  rutas del sistema, contraseña ausente de registros y respuestas, ningún
+  secreto ni dato privado versionado. E2E (3): la aplicación completa
+  funciona bajo la CSP sin violaciones, título malicioso mostrado como texto
+  en listado, visor y búsqueda, y un formulario de otro sitio no puede cargar
+  archivos con la sesión del Administrador.
+- **Limitación:** sin auditoría externa; HTTP sin cifrar solo es aceptable en
+  `127.0.0.1`.
+- **Totales:** `python -m pytest -q` → `504 passed, 8 skipped, 1 warning`; E2E → `33 passed, 1 skipped`.

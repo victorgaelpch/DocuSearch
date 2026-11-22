@@ -53,7 +53,7 @@ Decididos en [`docs/adr/0001-entrega-web-v1.md`](adr/0001-entrega-web-v1.md):
   del propietario (DOC-37); hoy solo se importan documentos públicos.
 - RAG no implementado (DOC-38/39, opcional).
 
-Trazabilidad de requisitos: [`docs/trazabilidad.md`](trazabilidad.md).
+Trazabilidad de requisitos: [`docs/trazabilidad.md`](trazabilidad.md). Seguridad: [`docs/seguridad.md`](seguridad.md) (`backend/app/security.py`: cabeceras y filtros previos al cuerpo).
 
 
 ### Prioridades
