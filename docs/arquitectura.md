@@ -36,7 +36,24 @@ Usuario -> Frontend -> FastAPI -> Documentos / Búsqueda
 - BM25 (k1=1.5, b=0.75) como método por defecto y evaluación con Recall@k/MRR/nDCG@10 (DOC-09). Detalle en `docs/evaluacion.md`.
 - `GET /search` y `GET /search/index` sobre `SearchEngine`; reindexación con `python -m backend.app.cli reindex` (DOC-10). Detalle en `docs/api.md`. Capas: `api/documents.py` (HTTP) → `documents/service.py` (casos de uso) → `validation.py`, `readers.py`, `storage.py`, `repository.py`.
 
-### Contratos planeados (no implementados)
+### Contratos de la entrega web v1.0 (DOC-24)
+
+Decididos en [`docs/adr/0001-entrega-web-v1.md`](adr/0001-entrega-web-v1.md):
+
+- **Estado real en el commit de partida `840eaaa`:** la API **no tiene
+  autenticación**; cualquier cliente con acceso al puerto puede listar,
+  descargar, buscar y cargar documentos. Solo debe usarse en `127.0.0.1`.
+- Modo local monousuario con roles Administrador y Usuario, sesión por cookie
+  `HttpOnly` y CSRF por cabecera (DOC-25).
+- Frontend HTML/CSS/JS servido por FastAPI en el mismo origen (DOC-26).
+- Colección `user` privada; corpus `wikipedia_es` y `miracl_es` públicos.
+- Edición/eliminación de documentos y tareas de reindexación con estado
+  real (DOC-30, DOC-31).
+- **Google Docs privados requieren OAuth** con un proyecto y consentimiento
+  del propietario (DOC-37); hoy solo se importan documentos públicos.
+- RAG no implementado (DOC-38/39, opcional).
+
+Trazabilidad de requisitos: [`docs/trazabilidad.md`](trazabilidad.md).
 
 
 ### Prioridades

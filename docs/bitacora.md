@@ -414,3 +414,27 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   - sección de licencia en el README;
   - `docs/licencias.md` con la decisión y su motivo.
 - **Verificación:** el paquete instalado declara `License-Expression: AGPL-3.0-or-later` y los dos archivos de licencia; `python -m pytest -q` → `381 passed, 5 skipped`.
+
+## DOC-24 — Auditoría de integración y contratos para la entrega v1.0
+
+- **Issue:** #44 · **Rama:** `feature/DOC-24-auditoria-contratos`
+- **Punto de partida:** `main` en `840eaaa` (merge del PR #40), CI verde;
+  `python -m pytest -q` → `379 passed, 7 skipped` (Linux, Python 3.13).
+  Los 18 Issues del backlog v1.0 ya existían en GitHub: DOC-24…DOC-41 son
+  los Issues #44…#61 (no se volvieron a crear).
+- **Auditoría:** la API cubre ingesta, OCR, Google Docs públicos, TF-IDF,
+  BM25, semántica, híbrida y evaluación. Faltan autenticación, interfaz web,
+  edición/eliminación, panel de índices, OAuth para Google Docs privados y
+  RAG.
+- **Cambios:**
+  - `docs/adr/0001-entrega-web-v1.md`: modo local monousuario, roles,
+    sesión/CSRF, colecciones públicas y privadas, contrato HTTP v1.0, tareas
+    de reindexación.
+  - `docs/trazabilidad.md`: matriz RF01–RF08 / RNF01–RNF07 con evidencia y
+    pendientes.
+  - `docs/arquitectura.md` y README: estado exacto (sin autenticación; OAuth
+    pendiente).
+  - `tests/test_traceability.py`: la matriz cubre los 15 requisitos.
+- **Fuentes:** `documentacion.pdf` no estuvo disponible; las descripciones de
+  RF/RNF se infieren del backlog y están marcadas para verificar.
+- **Pruebas:** ver PR.
