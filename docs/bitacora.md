@@ -587,3 +587,34 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   el navegador se omite sin `DOCUSEARCH_TEST_SEMANTIC_MODEL=1`; se activará
   en CI en DOC-33). La paráfrasis con el modelo real ya se verifica por API
   en el job `semantic-model`.
+
+## DOC-30 — Administración documental: renombrar, eliminar y consistencia de índices
+
+- **Issue:** #50 · **Rama:** `feature/DOC-30-administracion-documental`
+- **Cambios:**
+  - `PATCH /documents/{id}`: título, descripción y etiquetas. Modelo con
+    `extra="forbid"`: no se pueden tocar `chunking`, OCR, avisos ni el hash.
+    El original, su SHA-256 y los `chunk_id` no cambian; las búsquedas
+    muestran el título nuevo.
+  - `DELETE /documents/{id}?confirm={id}`: confirmación explícita en la API.
+    Borrado compensado: el original se aparta (renombrado), se borran
+    metadatos y fragmentos en una transacción y, si falla, el original vuelve
+    a su sitio; si se confirma, se borra el apartado. Si el archivo no se
+    puede borrar, la respuesta lo dice (`original_removed: false`).
+  - **Hallazgo de privacidad corregido:** antes, los tokens del documento
+    seguían en `lexical_tokens.json` y sus vectores en el índice FAISS en
+    disco hasta la siguiente sincronización. `search/maintenance.py` los
+    purga al eliminar, sin cargar el modelo de embeddings; un índice que no
+    se puede purgar con seguridad (checksum, sin faiss) se borra para
+    reconstruirse. El estado en memoria del motor se invalida.
+  - Solo documentos de la colección `user`; los corpus devuelven 404.
+  - Web: "Editar datos" (formulario en el visor) y "Eliminar" (diálogo modal
+    con el número de fragmentos y aviso de que no se puede deshacer; el foco
+    empieza en "Cancelar"). Sin borrado masivo. El rol Usuario no ve las
+    acciones y el servidor las rechaza (403).
+- **Pruebas:** `tests/test_document_admin.py` (17): renombrar sin alterar
+  hash/original/fragmentos, ediciones inválidas, permisos y CSRF, borrado en
+  BM25/TF-IDF/semántica/híbrida, archivo y cachés purgados, confirmación,
+  corpus, compensación ante fallo, original no borrable, índice corrupto.
+  E2E (3): editar, eliminar con confirmación y cancelación, rol Usuario.
+  Totales: `python -m pytest -q` → `460 passed, 8 skipped, 1 warning`; E2E → `27 passed, 1 skipped`.

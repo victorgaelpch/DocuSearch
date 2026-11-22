@@ -18,7 +18,7 @@ from backend.app.nlp.chunking import ChunkingConfig, chunk_extraction
 from .models import DEFAULT_COLLECTION, Chunk, Document, ExtractionStatus, SourceType
 from .google_docs import fetch_public_doc
 from .readers import ExtractionResult, build_document, extract_document
-from .repository import DocumentRepository, DuplicateDocumentError
+from .repository import DocumentNotFoundError, DocumentRepository, DuplicateDocumentError
 from .storage import OriginalStore
 from .validation import UploadValidationError, validate_upload
 
@@ -28,6 +28,21 @@ class IngestResult:
     document: Document
     extraction: ExtractionResult
     chunks: list[Chunk]
+
+
+@dataclass(frozen=True)
+class DeleteResult:
+    """Resultado de eliminar un documento (DOC-30)."""
+
+    document: Document
+    chunk_ids: list[str]
+    original_removed: bool
+
+
+EDITABLE_METADATA = ("description", "tags")
+MAX_DESCRIPTION = 2000
+MAX_TAGS = 20
+MAX_TAG_CHARS = 40
 
 
 @dataclass(frozen=True)
@@ -255,6 +270,67 @@ class DocumentService:
                 parts.append(chunk.text[cursor - chunk.char_start :])
                 cursor = chunk.char_end
         return "".join(parts), chunks
+
+    def get_user_document(self, doc_id: str) -> Document:
+        """Documento de la colección ``user``; los corpus no se editan ni borran aquí."""
+        document = self.repository.get_document(doc_id)
+        if document.collection != DEFAULT_COLLECTION:
+            raise DocumentNotFoundError(f"documento no encontrado: {doc_id}")
+        return document
+
+    def update_document(
+        self,
+        doc_id: str,
+        *,
+        title: str | None = None,
+        description: str | None = None,
+        tags: list[str] | None = None,
+    ) -> Document:
+        """Edita título, descripción y etiquetas sin modificar el original (DOC-30).
+
+        Solo se aceptan esas claves: los metadatos del sistema (fragmentación,
+        OCR, avisos) no se pueden sobrescribir.
+        """
+        self.get_user_document(doc_id)
+        if title is not None:
+            clean = " ".join(title.split())
+            if not clean or len(clean) > 500:
+                raise UploadValidationError("invalid_title", "el título debe tener entre 1 y 500 caracteres")
+            self.repository.update_title(doc_id, clean)
+        updates: dict[str, Any] = {}
+        if description is not None:
+            text = description.strip()
+            if len(text) > MAX_DESCRIPTION:
+                raise UploadValidationError("invalid_metadata", f"la descripción admite hasta {MAX_DESCRIPTION} caracteres")
+            updates["description"] = text
+        if tags is not None:
+            clean_tags = list(dict.fromkeys(" ".join(t.split()) for t in tags if t and t.strip()))
+            if len(clean_tags) > MAX_TAGS or any(len(t) > MAX_TAG_CHARS for t in clean_tags):
+                raise UploadValidationError(
+                    "invalid_metadata", f"hasta {MAX_TAGS} etiquetas de {MAX_TAG_CHARS} caracteres como máximo"
+                )
+            updates["tags"] = clean_tags
+        if updates:
+            self.repository.update_extra(doc_id, updates)
+        return self.repository.get_document(doc_id)
+
+    def delete_document(self, doc_id: str) -> DeleteResult:
+        """Elimina original, metadatos y fragmentos de forma compensada (DOC-30).
+
+        1. El original se aparta (renombrado) para poder restaurarlo.
+        2. Se borran metadatos y fragmentos en una transacción SQLite.
+        3. Si el paso 2 falla, el original vuelve a su sitio y nada cambia.
+        4. Si el paso 2 se confirma, se borra el original apartado.
+        """
+        document = self.get_user_document(doc_id)
+        chunk_ids = [chunk.chunk_id for chunk in self.repository.get_chunks(doc_id)]
+        staged = self.store.stage_delete(document.storage_path)
+        try:
+            self.repository.delete_document(doc_id)
+        except BaseException:
+            self.store.restore(staged, document.storage_path)
+            raise
+        return DeleteResult(document=document, chunk_ids=chunk_ids, original_removed=self.store.discard(staged))
 
     def get_chunks(self, doc_id: str) -> list[Chunk]:
         self.repository.get_document(doc_id)

@@ -9,6 +9,7 @@ La validación de tipo real y tamaño de carga corresponde a DOC-04.
 from __future__ import annotations
 
 import os
+import secrets
 import re
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -75,6 +76,30 @@ class OriginalStore:
 
     def read(self, storage_path: str) -> bytes:
         return self.resolve(storage_path).read_bytes()
+
+    def stage_delete(self, storage_path: str) -> Path | None:
+        """Aparta el original (renombrado) para poder restaurarlo si algo falla (DOC-30)."""
+        target = self.resolve(storage_path)
+        if not target.is_file():
+            return None
+        staged = target.with_name(f".deleting-{secrets.token_hex(6)}-{target.name}")
+        os.replace(target, staged)
+        return staged
+
+    def restore(self, staged: Path | None, storage_path: str) -> None:
+        if staged is not None and staged.is_file():
+            os.replace(staged, self.resolve(storage_path))
+
+    @staticmethod
+    def discard(staged: Path | None) -> bool:
+        """Borra definitivamente un original apartado; ``False`` si no se pudo."""
+        if staged is None:
+            return True
+        try:
+            staged.unlink(missing_ok=True)
+            return True
+        except OSError:
+            return False
 
     def delete(self, storage_path: str) -> bool:
         target = self.resolve(storage_path)

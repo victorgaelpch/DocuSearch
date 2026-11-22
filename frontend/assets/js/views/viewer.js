@@ -1,8 +1,10 @@
 // Visor de documentos: metadatos, texto extraído con el fragmento resaltado y
 // vista previa del PDF (DOC-28). El texto se inserta siempre como nodos de
 // texto, de modo que el contenido del documento nunca se interpreta como HTML.
-import { h, clear, announce, formatBytes, formatDate, loading, notice } from "../dom.js";
-import { api } from "../api.js";
+import { h, clear, announce, formatBytes, formatDate, loading, notice, takeFlash } from "../dom.js";
+import { api, isAdmin } from "../api.js";
+import { navigate } from "../router.js";
+import { setFlash } from "../dom.js";
 import { SOURCE_LABELS, formatLabel, statusInfo } from "../format.js";
 
 function pagesLabel(chunk) {
@@ -29,11 +31,110 @@ function metadataList(doc) {
     ["Cargado", formatDate(doc.created_at)],
     ["SHA-256", h("code", { class: "wrap" }, doc.sha256)],
   ];
+  const description = doc.metadata && doc.metadata.description;
+  const tags = (doc.metadata && doc.metadata.tags) || [];
+  if (description) rows.splice(1, 0, ["Descripción", description]);
+  if (tags.length) rows.splice(description ? 2 : 1, 0, ["Etiquetas", tags.join(", ")]);
   if (warnings.length) rows.push(["Avisos", warnings.join("; ")]);
   if (doc.extraction_error) rows.push(["Error de extracción", doc.extraction_error]);
   return h("details", { class: "meta-details" },
     h("summary", {}, "Metadatos del documento"),
     h("dl", { class: "meta-grid" }, rows.map(([k, v]) => [h("dt", {}, k), h("dd", {}, v)])));
+}
+
+function editForm(doc, onDone) {
+  const meta = doc.metadata || {};
+  const title = h("input", { id: "edit-title", type: "text", value: doc.title, maxlength: 500, required: true });
+  const description = h("textarea", { id: "edit-description", rows: 3, maxlength: 2000 }, meta.description || "");
+  const tags = h("input", { id: "edit-tags", type: "text", value: (meta.tags || []).join(", "), "aria-describedby": "edit-tags-hint" });
+  const error = h("div", { class: "notice notice-error", role: "alert", hidden: true });
+  const save = h("button", { class: "btn", type: "submit" }, "Guardar cambios");
+  const form = h("form", { class: "sheet stack edit-form", "aria-labelledby": "edit-heading", novalidate: true },
+    h("h2", { id: "edit-heading" }, "Editar datos del documento"),
+    h("p", { class: "hint" }, "El archivo original, su huella SHA-256 y sus fragmentos no cambian."),
+    h("div", { class: "field" }, h("label", { for: "edit-title" }, "Título"), title),
+    h("div", { class: "field" }, h("label", { for: "edit-description" }, "Descripción"), description),
+    h("div", { class: "field" }, h("label", { for: "edit-tags" }, "Etiquetas"), tags, h("p", { id: "edit-tags-hint", class: "hint" }, "Separadas por comas.")),
+    error,
+    h("p", { class: "actions" }, save, h("button", { class: "btn btn-quiet", type: "button", onclick: () => onDone(false) }, "Cancelar")));
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    error.hidden = true;
+    if (!title.value.trim()) {
+      error.textContent = "El título no puede quedar vacío.";
+      error.hidden = false;
+      title.focus();
+      return;
+    }
+    save.disabled = true;
+    try {
+      await api.patch(`/documents/${encodeURIComponent(doc.doc_id)}`, { json: {
+        title: title.value, description: description.value,
+        tags: tags.value.split(",").map((t) => t.trim()).filter(Boolean),
+      } });
+      setFlash("ok", "Cambios guardados.");
+      onDone(true);
+    } catch (err) {
+      error.textContent = err.message;
+      error.hidden = false;
+    } finally {
+      save.disabled = false;
+    }
+  });
+  return form;
+}
+
+function deleteDialog(doc, chunkCount) {
+  const status = h("div", { "aria-live": "assertive" });
+  const confirm = h("button", { class: "btn btn-danger", type: "button" }, "Eliminar definitivamente");
+  const cancel = h("button", { class: "btn btn-quiet", type: "button", autofocus: true }, "Cancelar");
+  const dialog = h("dialog", { class: "confirm-dialog", "aria-labelledby": "delete-title", "aria-describedby": "delete-desc" },
+    h("h2", { id: "delete-title" }, "¿Eliminar este documento?"),
+    h("p", { id: "delete-desc" }, "Se borrarán el archivo original de «", h("strong", {}, doc.title), `», sus ${chunkCount} fragmento(s) y sus datos en los índices de búsqueda. No se puede deshacer.`),
+    status,
+    h("p", { class: "actions" }, confirm, cancel));
+  cancel.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("close", () => dialog.remove());
+  confirm.addEventListener("click", async () => {
+    confirm.disabled = true;
+    cancel.disabled = true;
+    clear(status).append(loading("Eliminando…"));
+    try {
+      const result = await api.delete(`/documents/${encodeURIComponent(doc.doc_id)}`, { query: { confirm: doc.doc_id } });
+      setFlash(result.original_removed ? "ok" : "warn", result.original_removed
+        ? `Se eliminó «${result.title}» y sus ${result.chunks_removed} fragmento(s).`
+        : `Se eliminó «${result.title}» de la base de datos, pero el archivo original no se pudo borrar del disco. Revise la carpeta de datos.`);
+      dialog.close();
+      navigate("/documentos");
+    } catch (err) {
+      clear(status).append(notice("error", err.message));
+      confirm.disabled = false;
+      cancel.disabled = false;
+    }
+  });
+  return dialog;
+}
+
+function adminActions(doc, chunkCount, main) {
+  const edit = h("button", { class: "btn btn-quiet btn-small", type: "button", "aria-expanded": "false" }, "Editar datos");
+  const remove = h("button", { class: "btn btn-danger btn-small", type: "button" }, "Eliminar");
+  edit.addEventListener("click", () => {
+    const existing = main.querySelector(".edit-form");
+    if (existing) { existing.remove(); edit.setAttribute("aria-expanded", "false"); return; }
+    const form = editForm(doc, (saved) => {
+      if (saved) navigate(`/documentos/${doc.doc_id}`);
+      else { form.remove(); edit.setAttribute("aria-expanded", "false"); edit.focus(); }
+    });
+    main.querySelector(".viewer-head").after(form);
+    edit.setAttribute("aria-expanded", "true");
+    form.querySelector("#edit-title").focus();
+  });
+  remove.addEventListener("click", () => {
+    const dialog = deleteDialog(doc, chunkCount);
+    document.body.append(dialog);
+    dialog.showModal();
+  });
+  return [edit, remove];
 }
 
 export default {
@@ -66,8 +167,11 @@ export default {
       h("header", { class: "page-head viewer-head" },
         h("h1", {}, doc.title),
         h("p", {}, `${doc.original_filename}, ${formatLabel(doc.mime_type)}, ${formatBytes(doc.size_bytes)}`, doc.page_count ? `, ${doc.page_count} página(s)` : ""),
-        h("p", { class: "actions" }, h("a", { class: "btn btn-quiet btn-small", href: `/documents/${encodeURIComponent(doc.doc_id)}/download` }, "Descargar original"))),
+        h("p", { class: "actions" }, h("a", { class: "btn btn-quiet btn-small", href: `/documents/${encodeURIComponent(doc.doc_id)}/download` }, "Descargar original"),
+          isAdmin() ? adminActions(doc, chunks.length, main) : null)),
     );
+    const flash = takeFlash();
+    if (flash) main.append(notice(flash.kind, flash.text));
     if (requested && index === -1) {
       main.append(notice("warn", "El fragmento indicado ya no existe en este documento (puede que se haya reindexado). Se muestra el texto completo."));
       index = 0;

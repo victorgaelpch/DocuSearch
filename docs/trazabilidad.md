@@ -10,7 +10,7 @@
 Estados: **Cumple** (probado y reproducible), **Parcial** (existe pero falta
 una parte), **Pendiente** (no implementado), **Fuera de alcance**.
 
-Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-29.
+Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-30.
 
 ## Requisitos funcionales
 
@@ -21,7 +21,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-29.
 | RF03 | Recuperación por similitud: FAISS con producto interno sobre vectores normalizados, BM25/TF-IDF léxicos e híbrida | Cumple (API) | `IndexFlatIP` (`docs/indice-semantico.md`), `tests/test_semantic_index.py`, `tests/test_hybrid_search.py` | — (selector de método en la web, DOC-29) |
 | RF04 | Top-k configurable, 10 por defecto | Cumple | `DEFAULT_TOP_K = 10` en `search/ranking.py`; `k` 1–100 en `/search` y en la web (predeterminado 10, DOC-29) | — |
 | RF05 | Cada resultado muestra título, fragmento, puntuación y origen (documento/página) | Cumple | `SearchHit` con `title`, `snippet`, `score`, `doc_id`, `chunk_id`, `page`; el visor abre `#/documentos/{doc_id}?chunk={chunk_id}` con el fragmento resaltado y la página (DOC-28, `tests/e2e/test_web_viewer.py`) | — |
-| RF06 | Vista completa del documento y gestión del documento por el usuario | Parcial | Metadatos, fragmentos y descarga por API (DOC-04/07), protegidos por sesión y rol (DOC-25, `tests/test_auth.py`); visor web con metadatos, texto completo y PDF (DOC-28) | Edición/eliminación (DOC-30) |
+| RF06 | Vista completa del documento y gestión del documento por el usuario | Cumple | Metadatos, fragmentos y descarga por API (DOC-04/07), protegidos por sesión y rol (DOC-25, `tests/test_auth.py`); visor web con metadatos, texto completo y PDF (DOC-28); edición y eliminación consistentes (DOC-30, `tests/test_document_admin.py`) | — |
 | RF07 | Carga e indexación de documentos (PDF, DOCX, TXT, OCR, Google Docs públicos) | Parcial | `POST /documents`, `POST /documents/import`, CLI `reindex`/`semantic-index`/`ocr`; carga, importación y listado desde la web con resultado real de extracción (DOC-27, `tests/e2e/test_web_documents.py`) | Panel de reindexación (DOC-31), Google Docs privados (DOC-37, OAuth) |
 | RF08 | Comparación de la búsqueda semántica/híbrida con la línea base BM25 | Cumple (evaluación) | `docs/evaluacion.md`, `evaluation/results/miracl_es_dev.json` (648 consultas MIRACL-es dev, subconjunto de pasajes juzgados) | Comparación lado a lado con BM25 en la web (DOC-29); panel de métricas (DOC-36) |
 
@@ -31,7 +31,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-29.
 | --- | --- | --- | --- | --- |
 | RNF01 | Búsqueda sobre índice caliente en menos de 2 s | Cumple (API) | `docs/pruebas.md`: p95 BM25 26,9 ms, híbrida 50,3 ms (corpus de prueba, CPU) | Medición desde la web (DOC-40). No aplica a generación RAG |
 | RNF02 | Calidad medida con Recall@k, MRR@10 y nDCG@10 | Cumple | `backend/app/search/evaluation.py`, `docs/evaluacion.md` | Panel de evaluación (DOC-36) |
-| RNF03 | Arquitectura modular y mantenible; índices reconstruibles | Cumple | Capas `api/ → documents/service → repository/storage`, `search/` independiente; índices regenerables desde originales | Consistencia al borrar (DOC-30) |
+| RNF03 | Arquitectura modular y mantenible; índices reconstruibles | Cumple | Capas `api/ → documents/service → repository/storage`, `search/` independiente; índices regenerables desde originales | — (borrado con compensación y purga de índices, DOC-30) |
 | RNF04 | Usabilidad: interfaz en español, accesible y clara | Parcial | Interfaz web en `/` con navegación por teclado, enlace de salto, foco gestionado, contraste AA y diseño responsive, verificada en Chrome real (`tests/e2e/test_web_shell.py`, DOC-26) | Vistas de documentos, visor y buscador (DOC-27 a DOC-29); E2E bloqueante en CI (DOC-33) |
 | RNF05 | Ejecución en CPU, Python ≥ 3.10, sin GPU (Windows) | Cumple (backend) | CI 3.10–3.12; extra `semantic` con PyTorch CPU; README | Guía y scripts Windows (DOC-34) |
 | RNF06 | Seguridad y privacidad de los documentos | Parcial | Validación de cargas, path traversal y SSRF en importación (DOC-04/22); sesión `HttpOnly`, CSRF, roles y límite de intentos (DOC-25) | Endurecimiento, cabeceras y pruebas adversariales (DOC-32) |

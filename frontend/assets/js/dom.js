@@ -63,3 +63,8 @@ export function loading(text = "Cargando…") {
 export function emptyState(title, body, action) {
   return h("div", { class: "empty" }, h("h2", {}, title), h("p", {}, body), action || null);
 }
+
+// Mensaje de una sola lectura para la siguiente vista (solo en memoria).
+let flashMessage = null;
+export function setFlash(kind, text) { flashMessage = { kind, text }; }
+export function takeFlash() { const message = flashMessage; flashMessage = null; return message; }

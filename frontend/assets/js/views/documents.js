@@ -1,5 +1,5 @@
 // Carga, importación, listado y filtrado de documentos (DOC-27).
-import { h, clear, announce, emptyState, formatBytes, formatDate, loading, notice } from "../dom.js";
+import { h, clear, announce, emptyState, formatBytes, formatDate, loading, notice, takeFlash } from "../dom.js";
 import { ApiError, api, isAdmin } from "../api.js";
 import { navigate } from "../router.js";
 import { SOURCE_LABELS, formatLabel, statusInfo } from "../format.js";
@@ -237,6 +237,8 @@ export default {
     main.append(h("header", { class: "page-head" },
       h("h1", {}, "Documentos"),
       h("p", {}, isAdmin() ? "Cargue archivos, revise el resultado de la extracción y abra cada documento." : "Documentos disponibles para consulta. Solo el Administrador puede cargarlos.")));
+    const flash = takeFlash();
+    if (flash) main.append(notice(flash.kind, flash.text));
     if (isAdmin()) main.append(h("div", { class: "grid-2 uploads" }, uploadSection(refresh), importSection(refresh)));
     main.append(listArea);
 

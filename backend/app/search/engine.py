@@ -166,6 +166,17 @@ class SearchEngine:
                 state.indexes[method] = index
             return index
 
+    def forget(self, collection: str) -> None:
+        """Descarta el estado en memoria de ``collection`` (tras borrar documentos, DOC-30).
+
+        Los índices léxicos se reconstruyen en la próxima búsqueda y el índice
+        semántico se recarga del disco (ya purgado) en su próximo uso.
+        """
+        with self._lock:
+            self._states.pop(collection, None)
+            if self._semantic is not None:
+                self._semantic.forget(collection)
+
     def rebuild(self, collection: str = DEFAULT_COLLECTION) -> dict[str, Any]:
         """Fuerza la reconstrucción de todos los índices de una colección."""
         with self._lock:
