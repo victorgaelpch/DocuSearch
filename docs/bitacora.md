@@ -670,3 +670,28 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Limitación:** sin auditoría externa; HTTP sin cifrar solo es aceptable en
   `127.0.0.1`.
 - **Totales:** `python -m pytest -q` → `504 passed, 8 skipped, 1 warning`; E2E → `33 passed, 1 skipped`.
+
+## DOC-33 — Pruebas E2E reales de la web, accesibilidad y CI bloqueante
+
+- **Issue:** #53 · **Rama:** `feature/DOC-33-e2e-ci-bloqueante`
+- **Cambios:**
+  - `.github/workflows/ci.yml`: job **`web-e2e`** (nombre estable) con
+    Python 3.12, Tesseract español, Chromium de Playwright y capturas como
+    artefacto `web-e2e-evidencias`. `semantic-model` instala también el
+    navegador y ejecuta la paráfrasis desde la web con el modelo real; sigue
+    sin bloquear porque depende de Hugging Face (decisión documentada en
+    `docs/pruebas.md`).
+  - `tests/e2e/test_web_journey.py`: recorrido completo PDF/DOCX/TXT →
+    BM25 e híbrida → fragmento de origen (con página en el PDF) → edición →
+    reindexación → eliminación → cierre de sesión, sin errores de JS.
+  - `tests/e2e/test_web_keyboard.py`: sesión, búsqueda y apertura de un
+    resultado solo con teclado; foco visible; diálogo con foco inicial en
+    "Cancelar" y cierre con Escape.
+  - `docs/pruebas.md`: tabla de cobertura E2E y de checks.
+- **Protección de rama:** la cuenta de automatización no es administradora
+  del repositorio (`permissions.admin: false`), así que no puede exigir los
+  checks en `main`. Se documenta la configuración recomendada; el script de
+  fusión exige `tests (3.10–3.12)`, `web-e2e` y GitGuardian desde este PR.
+- **Pruebas:** `python -m pytest -q` → `504 passed, 8 skipped`; E2E local
+  (Chrome) → `37 passed, 1 skipped` (38 recolectadas; la omitida requiere el
+  modelo real y se ejecuta en `semantic-model`).

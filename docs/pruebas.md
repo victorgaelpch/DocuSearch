@@ -162,3 +162,37 @@ python -m pytest -q tests/e2e                  # capturas en e2e-artifacts/
 `tests/test_web.py` comprueba sin navegador que la interfaz se sirve en el
 mismo origen con los tipos MIME correctos, que no hay recursos externos ni
 `innerHTML`, y la estructura accesible de `index.html`.
+
+
+## Batería E2E y CI bloqueante (DOC-33)
+
+| Archivo | Cubre |
+| --- | --- |
+| `tests/e2e/test_web_shell.py` | Carga sin errores de JS, enlace de salto, login con errores, cookie inaccesible desde JS, logout, ruta inexistente, servidor caído, menú móvil, contraste ≥ 4.5:1, etiquetas |
+| `tests/e2e/test_web_documents.py` | Carga PDF/DOCX/TXT, duplicado, inválidos, PDF escaneado, filtros, rol Usuario, redirección anónima |
+| `tests/e2e/test_web_viewer.py` | Fragmento resaltado y navegación, XSS en el texto, vista PDF en su página, DOCX sin vista PDF, escaneado sin OCR, documento inexistente |
+| `tests/e2e/test_web_search.py` | BM25 con posición, puntuación y página, híbrida comparada con BM25, 503, consulta vacía, corpus público; paráfrasis con el modelo real (solo en `semantic-model`) |
+| `tests/e2e/test_web_admin_documents.py` | Editar, eliminar con confirmación, rol Usuario sin acciones |
+| `tests/e2e/test_web_indexes.py` | Reindexar y sincronizar desde el panel, acciones semánticas sin modelo, acceso solo Administrador |
+| `tests/e2e/test_web_security.py` | Todas las vistas bajo la CSP sin violaciones, título malicioso como texto, CSRF real desde otro origen |
+| `tests/e2e/test_web_journey.py` | Recorrido completo PDF/DOCX/TXT → búsqueda BM25 e híbrida → fragmento de origen → edición → reindexación → eliminación → cierre de sesión |
+| `tests/e2e/test_web_keyboard.py` | Sesión, búsqueda y apertura del resultado solo con teclado; foco visible; diálogo con foco en Cancelar y Escape |
+
+Todos los datos son sintéticos (`tests/fixtures/`, `tests/synthetic.py`) y las
+contraseñas de prueba se generan al azar en cada ejecución.
+
+### Checks de GitHub Actions
+
+| Check | Qué ejecuta | ¿Bloquea? |
+| --- | --- | --- |
+| `tests (3.10)`, `tests (3.11)`, `tests (3.12)` | `python -m pytest -q` (Tesseract español incluido) | Sí |
+| `web-e2e` | `python -m pytest -q tests/e2e` en Chromium de Playwright, con capturas como artefacto `web-e2e-evidencias` | Sí |
+| `GitGuardian Security Checks` | Detección de secretos | Sí |
+| `semantic-model` | Pruebas con el modelo real (API y paráfrasis en el navegador) | No (`continue-on-error`): depende de Hugging Face; se exige cuando un PR cambia el motor semántico |
+
+**Protección de rama:** la cuenta con la que se automatizó esta entrega no
+tiene permisos de administración del repositorio, así que no puede activar la
+protección de `main`. Se recomienda que el propietario la active en
+*Settings → Branches* exigiendo los checks bloqueantes de la tabla. Mientras
+tanto, el script de fusión usado en la entrega comprueba esos checks antes de
+cada merge.
