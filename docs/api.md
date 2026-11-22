@@ -249,6 +249,7 @@ formato inválido, `limit` fuera de rango) mantienen el formato estándar
 | Método | Ruta | Descripción | Respuestas |
 | --- | --- | --- | --- |
 | `GET` | `/ask/status` | Estado del proveedor local (configurado, Ollama accesible, modelo descargado) | 200, 401 |
+| `POST` | `/ask/feedback` | Sesión + CSRF. `{"rating": "util"|"no_util", "status", "citations"}`; no admite la pregunta ni la respuesta (DOC-39) | 204, 401, 403, 422 |
 | `POST` | `/ask` | Sesión + CSRF. Recupera fragmentos y, con un modelo local, devuelve una respuesta **solo si cita fragmentos recuperados** | 200, 401, 403, 422, 429, 502, 503 |
 
 Detalle, estados y privacidad en `docs/rag.md`.

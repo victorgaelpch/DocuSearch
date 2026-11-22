@@ -61,6 +61,14 @@ resaltado y su página. Desde ahí puede:
 Un PDF escaneado sin OCR se muestra con un aviso: se puede ver y descargar,
 pero no aparece en las búsquedas hasta que se reconozca su texto.
 
+### Preguntar (opcional, v1.1)
+
+Si el Administrador configuró un modelo local (ver [`rag.md`](rag.md)),
+**Preguntar** responde con citas `[S1]`, `[S2]`… que llevan al fragmento de
+origen. La respuesta la genera un modelo y puede equivocarse: compruebe cada
+cita. Si el modelo no cita ninguna fuente, la respuesta no se muestra. Sin
+modelo configurado, la página ofrece el buscador.
+
 ## Para el Administrador
 
 ### Crear la cuenta
