@@ -10,6 +10,7 @@ from backend.app.api.admin import router as admin_router
 from backend.app.api.auth import router as auth_router
 from backend.app.api.documents import router as documents_router
 from backend.app.api.errors import ApiError, api_error_handler
+from backend.app.api.evaluation import router as evaluation_router
 from backend.app.api.search import router as search_router
 from backend.app import __version__
 from backend.app.config import Settings
@@ -45,6 +46,7 @@ def create_app(settings: Settings | None = None, *, encoder_factory: Callable | 
     application.include_router(documents_router)
     application.include_router(search_router)
     application.include_router(admin_router)
+    application.include_router(evaluation_router)
     mount_frontend(application)
     application.add_middleware(SecurityMiddleware)
     return application

@@ -777,3 +777,40 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   sigue consultando mientras alguna tarjeta indique tarea activa. Prueba
   `test_panel_uses_one_consistent_job_snapshot`; las E2E del panel y del
   recorrido se repitieron 5 veces sin fallos.
+
+## Versión v1.0.0 — estado de la publicación
+
+- Todos los P0 (DOC-24 a DOC-35, #44–#55) están fusionados y cerrados por sus
+  PR, y el CI completo de `main` pasó en `c39ec3e` (`tests` 3.10–3.12,
+  `web-e2e`, `windows-install`, `semantic-model`).
+- **La etiqueta y la release no se publicaron:** la sesión automatizada no
+  tiene permiso para crear releases (HTTP 403 de la plataforma) ni para subir
+  etiquetas (HTTP 403 en `git push origin v1.0.0`). No se intentaron otras
+  vías. El propietario puede publicarlas con:
+  `git tag -a v1.0.0 c39ec3e -m "DocuSearch AI v1.0.0"` +
+  `git push origin v1.0.0` y crear la release desde esa etiqueta con las
+  notas de `CHANGELOG.md`.
+
+## DOC-36 — Panel comparativo de evaluación y métricas del buscador
+
+- **Issue:** #56 · **Rama:** `feature/DOC-36-panel-evaluacion`
+- **Cambios:**
+  - `GET /evaluation` y `GET /evaluation/{id}`: solo lectura de
+    `evaluation/results/*.json` (sin el detalle por consulta), con el contexto
+    de `evaluation/results/catalogo.json` (corpus, anotación humana o propia,
+    fecha del primer commit, límites). Archivos ilegibles o sin `summary` se
+    omiten sin fallar. Son agregados públicos: no requieren sesión.
+  - Vista `#/evaluacion`: MIRACL primero; ficha del conjunto, barras de
+    nDCG@10 con el valor real, tabla accesible de Recall@1/5/10, MRR@10 y
+    nDCG@10, subconjuntos (léxicas/paráfrasis) y lecturas de significación
+    calculadas con los p-valores del archivo. Los conjuntos propios se marcan
+    como secundarios.
+- **Fallos encontrados:**
+  - redondeo distinto entre lenguajes: el archivo guarda 0,7525, Python lo
+    redondea a 0,752 y JavaScript a 0,753. El panel muestra los 4 decimales
+    guardados;
+  - `Element.append` con una lista imprimía "[object HTMLDetailsElement]".
+- **Pruebas:** `tests/test_evaluation_panel.py` (6): cifras idénticas a los
+  archivos, MIRACL primero y humano, lecturas de significación, archivos
+  rotos o ausentes, ids inválidos. E2E (1): cifras de la tabla iguales al
+  archivo, lecturas, barras con ancho real, conjuntos secundarios.

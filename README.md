@@ -52,7 +52,7 @@ python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 
 ## Uso
 
-- **Web:** [manual de usuario y de administrador](docs/manual.md).
+- **Web:** [manual de usuario y de administrador](docs/manual.md). La sección **Evaluación** (`#/evaluacion`, v1.1) muestra los resultados versionados de `evaluation/results/`.
 - **API:** http://127.0.0.1:8000/docs y [`docs/api.md`](docs/api.md).
 - **Terminal:** `python -m backend.app.cli --help` (`reindex`,
   `semantic-index`, `ocr`, `evaluate`, `benchmark`, `miracl`, `doctor`, `demo`, …).

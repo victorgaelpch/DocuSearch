@@ -1,0 +1,75 @@
+{
+  "descripcion": "Contexto de cada archivo de resultados (DOC-36). Las métricas se leen de los propios archivos; aquí solo se describe el corpus, la anotación, la fecha (primer commit del archivo) y los límites.",
+  "conjuntos": [
+    {
+      "archivo": "miracl_es_dev.json",
+      "titulo": "MIRACL español (dev): 648 consultas con juicios humanos",
+      "principal": true,
+      "anotacion": "humana",
+      "fecha": "2026-11-17",
+      "corpus": "Subconjunto de 6410 pasajes de Wikipedia juzgados para las 648 consultas (6828 fragmentos); no es el corpus MIRACL completo.",
+      "limites": "Las cifras no son comparables con las tablas oficiales de MIRACL, que usan el corpus completo. Los pasajes no relevantes juzgados son difíciles a propósito.",
+      "documentacion": "docs/evaluacion.md#evaluación-con-anotación-humana-miracl-español-doc-16"
+    },
+    {
+      "archivo": "wikipedia_es_v2_test.json",
+      "titulo": "Consultas propias v2 (prueba) sobre wikipedia_es",
+      "principal": false,
+      "anotacion": "propia",
+      "fecha": "2026-11-17",
+      "corpus": "Corpus wikipedia_es: 275 artículos con revisiones fijadas.",
+      "limites": "Consultas y relevancias escritas por el equipo, sin revisión humana independiente; pocas consultas.",
+      "documentacion": "docs/evaluacion.md"
+    },
+    {
+      "archivo": "wikipedia_es_v1_queries_v02_methods.json",
+      "titulo": "Consultas propias v1 con los métodos de v0.2",
+      "principal": false,
+      "anotacion": "propia",
+      "fecha": "2026-11-17",
+      "corpus": "Corpus wikipedia_es: 275 artículos con revisiones fijadas.",
+      "limites": "Consultas y relevancias escritas por el equipo, sin revisión humana independiente; 32 consultas.",
+      "documentacion": "docs/evaluacion.md"
+    },
+    {
+      "archivo": "v2_dev_semantic_mean.json",
+      "titulo": "Desarrollo: semántica con textos largos promediados",
+      "principal": false,
+      "anotacion": "propia",
+      "fecha": "2026-11-17",
+      "corpus": "Corpus wikipedia_es, consultas v2 de desarrollo.",
+      "limites": "Experimento para elegir la estrategia de textos largos (16 consultas de desarrollo).",
+      "documentacion": "docs/evaluacion.md"
+    },
+    {
+      "archivo": "v2_dev_semantic_truncate.json",
+      "titulo": "Desarrollo: semántica con textos largos truncados",
+      "principal": false,
+      "anotacion": "propia",
+      "fecha": "2026-11-17",
+      "corpus": "Corpus wikipedia_es, consultas v2 de desarrollo.",
+      "limites": "Experimento para elegir la estrategia de textos largos (16 consultas de desarrollo).",
+      "documentacion": "docs/evaluacion.md"
+    },
+    {
+      "archivo": "wikipedia_es_tfidf_bm25_v2.json",
+      "titulo": "v0.1: TF-IDF frente a BM25 (pipeline léxico v2)",
+      "principal": false,
+      "anotacion": "propia",
+      "fecha": "2026-11-16",
+      "corpus": "Corpus wikipedia_es: 275 artículos con revisiones fijadas.",
+      "limites": "Consultas propias v1, sin revisión humana independiente.",
+      "documentacion": "docs/evaluacion.md"
+    },
+    {
+      "archivo": "wikipedia_es_tfidf_bm25.json",
+      "titulo": "v0.1: TF-IDF frente a BM25 (primera versión)",
+      "principal": false,
+      "anotacion": "propia",
+      "fecha": "2026-11-16",
+      "corpus": "Corpus wikipedia_es: 275 artículos con revisiones fijadas.",
+      "limites": "Consultas propias v1, sin revisión humana independiente; resultado histórico.",
+      "documentacion": "docs/evaluacion.md"
+    }
+  ]
+}
