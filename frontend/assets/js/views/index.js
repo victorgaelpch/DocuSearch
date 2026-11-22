@@ -8,5 +8,6 @@ import viewer from "./viewer.js";
 import search from "./search.js";
 import indexes from "./indexes.js";
 import evaluation from "./evaluation.js";
+import ask from "./ask.js";
 
-export default [home, login, help, documents, viewer, search, indexes, evaluation];
+export default [home, login, help, documents, viewer, search, indexes, evaluation, ask];

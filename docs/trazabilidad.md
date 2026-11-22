@@ -56,7 +56,8 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 | DOC-35 | [#55](https://github.com/victorgaelpch/DocuSearch/issues/55) | Entrega final v1.0 | [#74](https://github.com/victorgaelpch/DocuSearch/pull/74) | RF01–RF08, RNF01–RNF07 |
 | DOC-36 (P1) | [#56](https://github.com/victorgaelpch/DocuSearch/issues/56) | Panel de evaluación | [#76](https://github.com/victorgaelpch/DocuSearch/pull/76) | RNF02, RNF04, RNF07 |
 | DOC-37 (P1) | [#57](https://github.com/victorgaelpch/DocuSearch/issues/57) | Google Docs privados (OAuth) | — **bloqueado**: requiere un proyecto OAuth del propietario | RF06, RF07 |
-| DOC-38 (P1) | [#58](https://github.com/victorgaelpch/DocuSearch/issues/58) | RAG local opcional | este PR | RF05, RF06, RNF03 |
+| DOC-38 (P1) | [#58](https://github.com/victorgaelpch/DocuSearch/issues/58) | RAG local opcional | [#77](https://github.com/victorgaelpch/DocuSearch/pull/77) | RF05, RF06, RNF03 |
+| DOC-39 (P1) | [#59](https://github.com/victorgaelpch/DocuSearch/issues/59) | Interfaz de preguntas con citas | este PR | RF05, RF06, RNF04 |
 
 Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–#43; ver `docs/bitacora.md`.
 

@@ -851,3 +851,29 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Límites:** sin evaluación de calidad de las respuestas; la generación en
   CPU no está sujeta al requisito de 2 s.
 - **Totales:** `python -m pytest -q` → `556 passed, 9 skipped`.
+
+## DOC-39 — Interfaz de preguntas RAG con citas y verificación de fuentes
+
+- **Issue:** #59 · **Rama:** `feature/DOC-39-interfaz-preguntas`
+- **Cambios:**
+  - Vista `#/preguntar` (con sesión): pregunta, colección y método; estado
+    real del proveedor (`/ask/status`), con el botón desactivado y "Buscar en
+    su lugar" (BM25) si no hay modelo.
+  - La respuesta se inserta como texto. Solo las citas `[S#]` validadas por
+    el servidor se convierten en enlaces al fragmento en el visor. Incluye el
+    aviso de contenido generado, las fuentes citadas, los fragmentos
+    recuperados, el número de citas eliminadas y los tiempos de recuperación
+    y generación.
+  - `POST /ask/feedback`: valoración limitada **sin texto** (ni pregunta ni
+    respuesta) en `indexes/rag_feedback.jsonl`.
+  - Limpieza: ya no queda espacio colgante donde se eliminó una cita
+    inventada.
+- **Pruebas:** E2E (4) con proveedor simulado: sin modelo (botón desactivado
+  y búsqueda alternativa), respuesta con HTML malicioso mostrado como texto,
+  cita inventada eliminada, cita navegable al fragmento real, opinión;
+  respuesta sin citas no mostrada; rol Usuario puede preguntar y una persona
+  anónima es enviada al inicio de sesión. Unitarias: opinión sin texto,
+  validación y permisos.
+- **Fallo encontrado por E2E:** "Buscar en su lugar" abría la búsqueda
+  híbrida, que falla sin el extra semántico; ahora usa BM25.
+- **Totales:** `python -m pytest -q` → `558 passed, 9 skipped`; E2E → `43 passed, 1 skipped`.

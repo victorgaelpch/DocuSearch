@@ -101,6 +101,7 @@ def test_invented_citations_are_removed_and_counted(settings: Settings, lexical_
     body = _ask(client, "¿Dónde se llevan las pilas usadas?", method="bm25").json()
     assert body["status"] == "answered" and body["invalid_citations"] == 2
     assert "[S7]" not in body["answer"] and "S12" not in body["answer"]
+    assert body["answer"].endswith("oficial.")  # sin espacio colgante
     assert [c["marker"] for c in body["citations"]] == ["S1"]
 
 
@@ -255,3 +256,16 @@ def test_real_local_ollama(settings: Settings, lexical_pipeline, monkeypatch) ->
     assert body["status"] in ("answered", "insufficient_evidence", "unsupported"), body
     retrieved = {s["chunk_id"] for s in body["sources"]}
     assert all(c["chunk_id"] in retrieved for c in body["citations"])
+
+
+# -- opinión limitada (DOC-39) ----------------------------------------------------------
+
+def test_feedback_stores_no_question_or_answer(settings: Settings, lexical_pipeline) -> None:
+    client = _client(settings, FakeGenerator("Acuíferos [S1]."))
+    _ask(client, "pregunta privada sobre acuíferos agua", method="bm25")
+    assert client.post("/ask/feedback", json={"rating": "util", "status": "answered", "citations": 1}).status_code == 204
+    stored = (settings.paths.indexes_dir / "rag_feedback.jsonl").read_text(encoding="utf-8")
+    assert "privada" not in stored and "Acuíferos" not in stored and '"rating": "util"' in stored
+    assert client.post("/ask/feedback", json={"rating": "util", "status": "answered", "citations": 1, "question": "x"}).status_code == 422
+    assert client.post("/ask/feedback", json={"rating": "<script>", "status": "answered", "citations": 1}).status_code == 422
+    assert anonymous_client(settings).post("/ask/feedback", json={"rating": "util", "status": "answered", "citations": 1}).status_code == 401

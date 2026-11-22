@@ -119,7 +119,8 @@ def extract_citations(answer: str, sources: list[Source]) -> tuple[str, list[Sou
         return f"[{marker}]"
 
     clean = _CITATION.sub(replace, answer)
-    clean = re.sub(r"[ \t]{2,}", " ", clean).strip()
+    clean = re.sub(r"[ \t]{2,}", " ", clean)
+    clean = re.sub(r"[ \t]+([.,;:!?)])", r"\1", clean).strip()  # sin espacio donde se quitó una cita
     return clean, cited, invalid
 
 

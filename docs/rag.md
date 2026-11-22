@@ -55,6 +55,25 @@ privados nunca salen del equipo.
 4. Prueba manual con el modelo real:
    `$env:DOCUSEARCH_TEST_RAG = "1"; python -m pytest -q tests/test_rag.py -k real_local_ollama`.
 
+## Interfaz web (DOC-39)
+
+La sección **Preguntar** (`#/preguntar`, requiere sesión) permite elegir la
+colección y el método de recuperación y muestra:
+
+- el aviso de que la respuesta es generada y debe verificarse;
+- la respuesta como **texto plano**, donde solo las citas `[S#]` que el
+  servidor validó se convierten en enlaces al fragmento exacto en el visor;
+- las fuentes citadas, con título, archivo y páginas, y los fragmentos
+  recuperados;
+- avisos para `insufficient_evidence`, `unsupported` (no se muestra el texto
+  del modelo) y `no_evidence`, y las citas eliminadas;
+- "¿Le resultó útil?": guarda en `indexes/rag_feedback.jsonl` solo la
+  valoración, el estado, el número de citas y el modelo, **sin la pregunta ni
+  la respuesta**.
+
+Si no hay un modelo configurado, Ollama no responde o el modelo no está
+descargado, la página lo explica y ofrece **Buscar en su lugar**.
+
 ## API
 
 ```http

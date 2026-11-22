@@ -104,3 +104,29 @@ def ask(
         raise ApiError(502, "rag_provider_error", str(exc)) from exc
     result["disclaimer"] = DISCLAIMER
     return result
+
+
+class FeedbackIn(BaseModel):
+    """Opinión sobre una respuesta (DOC-39). No incluye la pregunta ni la respuesta."""
+
+    model_config = {"extra": "forbid"}
+
+    rating: str = Field(pattern="^(util|no_util)$")
+    status: str = Field(pattern="^(answered|insufficient_evidence|unsupported|no_evidence)$")
+    citations: int = Field(ge=0, le=10)
+
+
+@router.post("/feedback", status_code=204, summary="Registrar si una respuesta fue útil (sin texto)")
+def feedback(body: FeedbackIn, request: Request, _: Any = Depends(require_user_mutation)) -> None:
+    """Agrega una línea a ``indexes/rag_feedback.jsonl`` sin la pregunta ni la respuesta."""
+    import json
+    import time
+
+    settings = request.app.state.settings
+    path = settings.paths.indexes_dir / "rag_feedback.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    generator = getattr(getattr(request.app.state, "rag_service", None), "generator", None)
+    record = {"ts": int(time.time()), "rating": body.rating, "status": body.status, "citations": body.citations,
+              "model": getattr(generator, "model", None)}
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
