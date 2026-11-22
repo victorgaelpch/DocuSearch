@@ -189,6 +189,8 @@ contraseñas de prueba se generan al azar en cada ejecución.
 | `tests (3.10)`, `tests (3.11)`, `tests (3.12)` | `python -m pytest -q` (Tesseract español incluido) | Sí |
 | `web-e2e` | `python -m pytest -q tests/e2e` en Chromium de Playwright, con capturas como artefacto `web-e2e-evidencias` | Sí |
 | `GitGuardian Security Checks` | Detección de secretos | Sí |
+| `windows-install` | Instalación limpia con los scripts de PowerShell, demostración y recorrido HTTP en Windows (DOC-34) | Exigido por el script de fusión |
+| `docker-local` | Imagen y Compose: healthcheck, solo `127.0.0.1`, recorrido HTTP y persistencia en el volumen (DOC-41) | Exigido por el script de fusión |
 | `semantic-model` | Pruebas con el modelo real (API y paráfrasis en el navegador) | No (`continue-on-error`): depende de Hugging Face; se exige cuando un PR cambia el motor semántico |
 
 **Protección de rama:** la cuenta con la que se automatizó esta entrega no

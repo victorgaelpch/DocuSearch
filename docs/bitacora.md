@@ -908,3 +908,41 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   percentiles, preparación, informe reproducible. E2E del panel con la
   tabla de rendimiento.
 - **Totales:** `python -m pytest -q` → `566 passed, 9 skipped`; E2E → `43 passed, 1 skipped`.
+
+## DOC-41 — Paquete opcional Docker Compose y comprobación de despliegue local
+
+- **Issue:** #61 · **Rama:** `feature/DOC-41-docker-compose`
+- **Cambios:**
+  - `Dockerfile` (Python 3.12 slim, solo CPU): Tesseract español opcional
+    (`WITH_OCR`), semántica opcional (`WITH_SEMANTIC`); usuario sin
+    privilegios; datos en `/data` (volumen); `HEALTHCHECK` sobre
+    `/health/ready`; un worker.
+  - `compose.yaml`: puerto **solo en `127.0.0.1:8000`**, volumen con nombre,
+    `.env` opcional, `restart: unless-stopped`, solo lectura, `tmpfs /tmp`,
+    `cap_drop: ALL`, `no-new-privileges`. `.dockerignore` excluye `data/`,
+    `.env`, `.git` y las pruebas.
+  - **Riesgo encontrado y corregido:** Docker Compose interpreta `$` en los
+    archivos `.env` y los hashes scrypt contienen `$`. `hash-password
+    --env-file` escribe ahora el valor entre comillas simples, literal para
+    Compose y para el cargador propio.
+  - CI `docker-local`: construcción sin publicar, `healthy`, puerto solo en
+    loopback, inicio de sesión, carga, búsqueda, OCR disponible, persistencia
+    tras reiniciar y recrear, imagen sin datos.
+  - `docs/docker.md` con las diferencias frente a la instalación nativa
+    (OCR incluido, rutas, modelo en el volumen, Docker Desktop/WSL 2, RAG con
+    Ollama no disponible desde el contenedor por la regla de loopback).
+  - PyYAML como dependencia de desarrollo para las pruebas de configuración.
+- **Verificación:** no había demonio de Docker en el entorno de trabajo; la
+  ejecución real es la del check `docker-local`. `tests/test_docker.py` (5)
+  valida la configuración.
+- **Totales:** `python -m pytest -q` → `571 passed, 9 skipped`.
+- **GitGuardian (falso positivo):** el primer push de este PR incluía en
+  `ci.yml` el JSON de inicio de sesión de la prueba Docker
+  (`{"username": "admin", "password": pw}`, con `pw` aleatorio por ejecución)
+  y GitGuardian lo marcó como "Generic Password" (incidente 40855761). La
+  comprobación se trasladó a `scripts/ci/docker_smoke.py`. Como el check
+  analiza todos los commits del PR y no se reescribe historial con
+  `--force`, se abrió un PR nuevo desde `main` con un único commit (rama
+  `feature/DOC-41-docker-compose-limpio`) y se cerró el PR #80 sin fusionar.
+  No hay credencial real que revocar; el propietario debe marcar el incidente
+  como falso positivo.

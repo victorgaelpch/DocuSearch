@@ -65,6 +65,13 @@ Excepciones documentadas:
   no confiables; manténgalos actualizados.
 - No se ha hecho una auditoría externa ni pruebas de penetración.
 
+## Docker (v1.1)
+
+`compose.yaml` publica el puerto solo en `127.0.0.1`, ejecuta como usuario sin
+privilegios con el sistema de archivos de solo lectura, `cap_drop: ALL` y
+`no-new-privileges`, y guarda los datos en un volumen, nunca en la imagen. Ver
+`docs/docker.md`.
+
 ## Exponer en una red (no recomendado para la entrega)
 
 Si alguna vez se necesita acceso desde otra máquina:

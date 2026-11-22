@@ -58,7 +58,8 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 | DOC-37 (P1) | [#57](https://github.com/victorgaelpch/DocuSearch/issues/57) | Google Docs privados (OAuth) | — **bloqueado**: requiere un proyecto OAuth del propietario | RF06, RF07 |
 | DOC-38 (P1) | [#58](https://github.com/victorgaelpch/DocuSearch/issues/58) | RAG local opcional | [#77](https://github.com/victorgaelpch/DocuSearch/pull/77) | RF05, RF06, RNF03 |
 | DOC-39 (P1) | [#59](https://github.com/victorgaelpch/DocuSearch/issues/59) | Interfaz de preguntas con citas | [#78](https://github.com/victorgaelpch/DocuSearch/pull/78) | RF05, RF06, RNF04 |
-| DOC-40 (P1) | [#60](https://github.com/victorgaelpch/DocuSearch/issues/60) | Observabilidad y rendimiento | este PR | RNF01, RNF05, RNF06, RNF07 |
+| DOC-40 (P1) | [#60](https://github.com/victorgaelpch/DocuSearch/issues/60) | Observabilidad y rendimiento | [#79](https://github.com/victorgaelpch/DocuSearch/pull/79) | RNF01, RNF05, RNF06, RNF07 |
+| DOC-41 (P1) | [#61](https://github.com/victorgaelpch/DocuSearch/issues/61) | Docker Compose local | este PR | RNF03, RNF05, RNF06 |
 
 Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–#43; ver `docs/bitacora.md`.
 

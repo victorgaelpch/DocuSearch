@@ -385,7 +385,9 @@ def _write_env_value(path: Path, key: str, value: str) -> None:
     """Escribe o reemplaza ``KEY=valor`` en un .env local sin tocar otras líneas."""
     lines = path.read_text(encoding="utf-8").splitlines() if path.is_file() else []
     lines = [line for line in lines if not line.strip().startswith(f"{key}=")]
-    lines.append(f"{key}={value}")
+    # Comillas simples: valor literal para este cargador y para Docker Compose,
+    # que de otro modo interpretaría los "$" del hash como variables (DOC-41).
+    lines.append(f"{key}='{value}'")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
