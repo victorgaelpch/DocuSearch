@@ -761,3 +761,19 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
     pruebas) y Swagger UI.
 - **Versión y etiqueta:** `v1.0.0` se publica solo después de fusionar este PR
   con todos los P0 cerrados y el CI de `main` en verde.
+
+## DOC-31 (corrección) — Condición de carrera en el panel de índices
+
+- **Issue:** #51 (cerrado) · **Rama:** `feature/DOC-31-carrera-panel`
+- **Hallazgo:** el check `web-e2e` de `main` falló tras el merge de DOC-34
+  (`test_admin_reindexes_and_syncs_semantic_from_panel`): el botón
+  "Sincronizar índice semántico" quedó desactivado indefinidamente.
+- **Causa:** `GET /admin/indexes` obtenía la tarea activa de cada colección
+  y la lista de tareas recientes en dos momentos distintos. Si la tarea
+  terminaba entre ambos, la tarjeta quedaba "ocupada" mientras la lista ya
+  decía "Terminada" y la página dejaba de consultar: los botones quedaban
+  desactivados hasta recargar.
+- **Corrección:** una sola instantánea de tareas por petición; la interfaz
+  sigue consultando mientras alguna tarjeta indique tarea activa. Prueba
+  `test_panel_uses_one_consistent_job_snapshot`; las E2E del panel y del
+  recorrido se repitieron 5 veces sin fallos.
