@@ -877,3 +877,34 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Fallo encontrado por E2E:** "Buscar en su lugar" abría la búsqueda
   híbrida, que falla sin el extra semántico; ahora usa BM25.
 - **Totales:** `python -m pytest -q` → `558 passed, 9 skipped`; E2E → `43 passed, 1 skipped`.
+
+## DOC-40 — Observabilidad, errores y medición real de rendimiento web
+
+- **Issue:** #60 · **Rama:** `feature/DOC-40-observabilidad`
+- **Cambios:**
+  - `backend/app/observability.py`:
+    - registros JSON por petición y por búsqueda, sin consultas, cuerpos,
+      contenido, títulos ni credenciales, con las rutas como plantilla;
+    - `X-Request-ID` en todas las respuestas;
+    - 500 controlado con identificador;
+    - métricas en memoria por método, en frío y en caliente;
+    - memoria residente sin dependencias.
+  - `GET /health/ready` (preparación con componentes esenciales y opcionales)
+    y `GET /admin/metrics`.
+  - Panel Índices: tabla de rendimiento desde el arranque y aviso si el p95
+    supera 2 s.
+  - `python -m backend.app.cli report`: informe reproducible con ingesta,
+    frío y caliente por la pila HTTP, memoria y datos de la máquina.
+  - `docs/observabilidad.md` con los resultados medidos.
+- **Fallo encontrado en la propia medición:** la primera versión del informe
+  daba 8 ms "en frío" porque `GET /search/index` (para contar el corpus)
+  construía el índice antes. Ahora se cuenta después: frío 628 ms frente a
+  7,6 ms p50 en caliente.
+- **Cambio de comportamiento:** un error no controlado ya no se propaga como
+  excepción; responde 500 con `request_id`. Se actualizó la prueba de
+  compensación de DOC-30.
+- **Pruebas:** `tests/test_observability.py` (8): identificador, registros
+  sin datos privados, rutas como plantilla, 500 registrado, frío y caliente,
+  percentiles, preparación, informe reproducible. E2E del panel con la
+  tabla de rendimiento.
+- **Totales:** `python -m pytest -q` → `566 passed, 9 skipped`; E2E → `43 passed, 1 skipped`.

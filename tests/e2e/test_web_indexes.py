@@ -37,6 +37,12 @@ def test_admin_reindexes_and_syncs_semantic_from_panel(page, live_server) -> Non
     page.locator("article.collection").first.get_by_role("button", name="Sincronizar índice semántico").click()
     page.locator(".job").first.get_by_text("vector(es);").wait_for()
     page.locator("article.collection").first.get_by_text("Sincronizado").wait_for()
+    page.goto(live_server.url + "/#/buscar?q=%C3%ADndice&method=bm25&k=10&collection=user")
+    page.locator(".hit").first.wait_for()
+    page.goto(live_server.url + "/#/indices")
+    perf = page.locator("section", has=page.get_by_role("heading", name="Rendimiento desde que se inició el servidor"))
+    perf.locator("tbody tr").first.wait_for()
+    assert "BM25" in perf.text_content() and "ms" in perf.text_content()
     main_text = page.locator("main").text_content()
     assert "null" not in main_text and "undefined" not in main_text and "BM25 y TF-IDF" in main_text
     save_evidence(page, "doc31-panel-indices")

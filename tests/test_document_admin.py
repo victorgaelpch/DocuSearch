@@ -151,8 +151,11 @@ def test_failed_metadata_delete_restores_original(client, settings: Settings, mo
         raise RuntimeError("disco lleno")
 
     monkeypatch.setattr(service.repository, "delete_document", broken)
-    with pytest.raises(RuntimeError):
-        _delete(client, doc["doc_id"])
+    response = _delete(client, doc["doc_id"])
+    # DOC-40: error controlado con identificador, sin detalles internos
+    assert response.status_code == 500 and response.json()["error"]["code"] == "internal_error"
+    assert response.json()["error"]["request_id"] == response.headers["x-request-id"]
+    assert "disco lleno" not in response.text
     monkeypatch.undo()
     assert client.get(f"/documents/{doc['doc_id']}").status_code == 200
     assert client.get(f"/documents/{doc['doc_id']}/download").status_code == 200

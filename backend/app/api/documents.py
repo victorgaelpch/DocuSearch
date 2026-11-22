@@ -111,13 +111,17 @@ class DocumentListOut(BaseModel):
 _error = error_response
 
 
+def get_document_service_for_app(app) -> DocumentService:
+    service = getattr(app.state, "document_service", None)
+    if service is None:
+        service = DocumentService(app.state.settings)
+        app.state.document_service = service
+    return service
+
+
 def get_document_service(request: Request) -> DocumentService:
     """Servicio único por aplicación, creado en la primera petición."""
-    service = getattr(request.app.state, "document_service", None)
-    if service is None:
-        service = DocumentService(request.app.state.settings)
-        request.app.state.document_service = service
-    return service
+    return get_document_service_for_app(request.app)
 
 
 _ERRORS = {

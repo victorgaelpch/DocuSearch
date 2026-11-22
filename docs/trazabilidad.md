@@ -29,7 +29,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 
 | ID | Descripción (inferida) | Estado | Evidencia | Falta |
 | --- | --- | --- | --- | --- |
-| RNF01 | Búsqueda sobre índice caliente en menos de 2 s | Cumple (API) | `docs/pruebas.md`: p95 BM25 26,9 ms, híbrida 50,3 ms (corpus de prueba, CPU) | Medición desde la web (DOC-40). No aplica a generación RAG |
+| RNF01 | Búsqueda sobre índice caliente en menos de 2 s | Cumple | `docs/pruebas.md` (motor, `wikipedia_es`: p95 BM25 16 ms, híbrida 50 ms); `docs/observabilidad.md` (pila HTTP, frío frente a caliente, `cli report`, métricas en el panel, DOC-40) | No aplica a la generación RAG |
 | RNF02 | Calidad medida con Recall@k, MRR@10 y nDCG@10 | Cumple | `backend/app/search/evaluation.py`, `docs/evaluacion.md`; panel web `#/evaluacion` con los resultados versionados (DOC-36, `tests/test_evaluation_panel.py`) | — |
 | RNF03 | Arquitectura modular y mantenible; índices reconstruibles | Cumple | Capas `api/ → documents/service → repository/storage`, `search/` independiente; índices regenerables desde originales | — (borrado con compensación y purga de índices, DOC-30) |
 | RNF04 | Usabilidad: interfaz en español, accesible y clara | Cumple | Interfaz web en `/` con navegación por teclado, enlace de salto, foco gestionado, contraste AA y diseño responsive, verificada en Chrome real (`tests/e2e/test_web_shell.py`, DOC-26); vistas de documentos, visor, buscador e índices (DOC-27 a DOC-31); flujo completo con teclado y check bloqueante `web-e2e` (DOC-33) | Sin evaluación con usuarios reales ni lector de pantalla físico |
@@ -57,7 +57,8 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-35 (entreg
 | DOC-36 (P1) | [#56](https://github.com/victorgaelpch/DocuSearch/issues/56) | Panel de evaluación | [#76](https://github.com/victorgaelpch/DocuSearch/pull/76) | RNF02, RNF04, RNF07 |
 | DOC-37 (P1) | [#57](https://github.com/victorgaelpch/DocuSearch/issues/57) | Google Docs privados (OAuth) | — **bloqueado**: requiere un proyecto OAuth del propietario | RF06, RF07 |
 | DOC-38 (P1) | [#58](https://github.com/victorgaelpch/DocuSearch/issues/58) | RAG local opcional | [#77](https://github.com/victorgaelpch/DocuSearch/pull/77) | RF05, RF06, RNF03 |
-| DOC-39 (P1) | [#59](https://github.com/victorgaelpch/DocuSearch/issues/59) | Interfaz de preguntas con citas | este PR | RF05, RF06, RNF04 |
+| DOC-39 (P1) | [#59](https://github.com/victorgaelpch/DocuSearch/issues/59) | Interfaz de preguntas con citas | [#78](https://github.com/victorgaelpch/DocuSearch/pull/78) | RF05, RF06, RNF04 |
+| DOC-40 (P1) | [#60](https://github.com/victorgaelpch/DocuSearch/issues/60) | Observabilidad y rendimiento | este PR | RNF01, RNF05, RNF06, RNF07 |
 
 Versiones anteriores (v0.1–v0.2, DOC-01 a DOC-23): Issues #1–#31 y PR #12–#43; ver `docs/bitacora.md`.
 

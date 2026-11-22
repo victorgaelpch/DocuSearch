@@ -49,7 +49,8 @@ python -m backend.app.cli demo
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
-`python -m backend.app.cli doctor` revisa la instalación y dice qué falta.
+`python -m backend.app.cli doctor` revisa la instalación y dice qué falta;
+`python -m backend.app.cli report` mide el rendimiento en su máquina.
 
 ## Uso
 
@@ -69,6 +70,7 @@ python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 | [`docs/instalacion-windows.md`](docs/instalacion-windows.md) | Instalación, modos, problemas frecuentes, plataformas verificadas |
 | [`docs/seguridad.md`](docs/seguridad.md) / [`docs/autenticacion.md`](docs/autenticacion.md) | Modelo de amenazas, cuentas y sesión |
 | [`docs/rag.md`](docs/rag.md) | Preguntas con respuestas citadas (RAG local opcional, v1.1) |
+| [`docs/observabilidad.md`](docs/observabilidad.md) | Registros, salud y preparación, métricas e informe de rendimiento (v1.1) |
 | [`docs/evaluacion.md`](docs/evaluacion.md) / [`docs/pruebas.md`](docs/pruebas.md) | Evaluación reproducible, pruebas y checks de CI |
 | [`docs/arquitectura.md`](docs/arquitectura.md), [`docs/adr/`](docs/adr/) | Diseño y decisiones |
 | [`docs/bitacora.md`](docs/bitacora.md), [`CHANGELOG.md`](CHANGELOG.md) | Registro por Issue y cambios por versión |
