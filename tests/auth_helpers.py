@@ -19,8 +19,15 @@ from backend.app.main import create_app
 
 ADMIN_USER = "admin"
 READER_USER = "lector"
-ADMIN_PASSWORD = "adm-" + secrets.token_urlsafe(18)
-READER_PASSWORD = "usr-" + secrets.token_urlsafe(18)
+
+
+def _random_credential() -> str:
+    """Credencial aleatoria de un solo uso: cambia en cada ejecución de pytest."""
+    return secrets.token_urlsafe(24)
+
+
+ADMIN_PASSWORD = _random_credential()
+READER_PASSWORD = _random_credential()
 
 
 @lru_cache(maxsize=None)

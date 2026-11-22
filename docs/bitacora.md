@@ -467,3 +467,19 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Pendiente para DOC-32:** el cuerpo multipart se lee antes de comprobar la
   sesión (FastAPI resuelve el formulario junto con las dependencias); se
   añadirá un límite previo para peticiones anónimas.
+
+## DOC-25 (corrección) — Falso positivo de GitGuardian
+
+- **Issue:** #45 (ya cerrado) · **Rama:** `feature/DOC-25-gitguardian-falso-positivo`
+- **Hallazgo:** el check *GitGuardian Security Checks* del PR #63 marcó
+  "Generic Password" en `tests/auth_helpers.py` (líneas con
+  `ADMIN_PASSWORD = "adm-" + secrets.token_urlsafe(18)`). Ese check no estaba
+  entre las puertas obligatorias del ayudante de merge y el PR se fusionó.
+- **Análisis:** falso positivo; los valores se generan al azar en cada
+  ejecución de pytest y no existen fuera de ella. No hay credencial que
+  revocar ni historial que reescribir.
+- **Cambios:** la credencial de prueba se genera en una función sin literal
+  de cadena; desde ahora el merge exige también *GitGuardian Security
+  Checks* en verde.
+- **Acción del propietario:** marcar los incidentes 40852052 y 40852053 como
+  falso positivo en el panel de GitGuardian (no hay acceso desde esta sesión).
