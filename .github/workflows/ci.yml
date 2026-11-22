@@ -105,7 +105,8 @@ jobs:
           if ($web.Content -notmatch "DocuSearch") { throw "la página principal no se sirvió" }
           $js = Invoke-WebRequest http://127.0.0.1:8000/assets/js/app.js -UseBasicParsing
           if ($js.Headers["Content-Type"] -notmatch "javascript") { throw "app.js sin tipo JavaScript: $($js.Headers['Content-Type'])" }
-          $pw = Get-Content "$env:RUNNER_TEMP\pw.txt" -Raw
+          # ReadAllText: en PowerShell 5.1, Get-Content añade propiedades que ConvertTo-Json serializa
+          $pw = [System.IO.File]::ReadAllText("$env:RUNNER_TEMP\pw.txt")
           $s = New-Object Microsoft.PowerShell.Commands.WebRequestSession
           $login = Invoke-RestMethod -Method Post http://127.0.0.1:8000/auth/login -WebSession $s -ContentType "application/json" -Body (@{username="admin"; password=$pw} | ConvertTo-Json)
           $docs = Invoke-RestMethod http://127.0.0.1:8000/documents -WebSession $s

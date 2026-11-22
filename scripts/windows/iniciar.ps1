@@ -12,6 +12,9 @@ param([int]$Puerto = 8000, [switch]$NoAbrir)
 # "Continue": en Windows PowerShell 5.1 la salida de error de pip/py no debe
 # abortar el script; cada comando externo se comprueba con $LASTEXITCODE.
 $ErrorActionPreference = "Continue"
+# Acentos correctos en la salida de Python (consola y redirecciones)
+$env:PYTHONIOENCODING = "utf-8"
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false
 $Raiz = Resolve-Path (Join-Path $PSScriptRoot "..\..") -ErrorAction Stop
 Set-Location $Raiz -ErrorAction Stop
 $venvPython = Join-Path $Raiz ".venv\Scripts\python.exe"
