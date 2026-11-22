@@ -131,6 +131,86 @@ jobs:
           Write-Host "Windows: install, account, demo and BM25 search verified ($($r.took_ms) ms)"
           Stop-Job $job; Remove-Job $job -Force
 
+  # Docker Compose local (DOC-41): construye la imagen sin publicarla, arranca
+  # con compose, espera el healthcheck, recorre el flujo por HTTP y comprueba
+  # que los datos persisten en el volumen tras reiniciar y recrear el servicio.
+  docker-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python (para generar el hash)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Crear .env con una contraseña aleatoria
+        run: |
+          python -m pip install -q -e .
+          PW=$(python -c "import secrets; print(secrets.token_urlsafe(18))")
+          echo "::add-mask::$PW"
+          echo "$PW" > "$RUNNER_TEMP/pw.txt"
+          printf '%s\n' "$PW" | python -m backend.app.cli hash-password --stdin --env-file .env
+      - name: Construir y arrancar
+        run: docker compose up -d --build
+      - name: Esperar healthcheck
+        run: |
+          for i in $(seq 1 60); do
+            state=$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose ps -q docusearch)")
+            [ "$state" = "healthy" ] && break
+            sleep 3
+          done
+          docker compose ps
+          [ "$state" = "healthy" ] || { docker compose logs; exit 1; }
+      - name: Solo 127.0.0.1 y recorrido HTTP
+        run: |
+          docker compose port docusearch 8000 | grep -q '^127.0.0.1:8000$'
+          python - <<'PY'
+          import json, os, pathlib, urllib.request, http.cookiejar
+          base = "http://127.0.0.1:8000"
+          jar = http.cookiejar.CookieJar()
+          opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+          pw = pathlib.Path(os.environ["RUNNER_TEMP"], "pw.txt").read_text().strip()
+          def call(method, path, data=None, headers=None):
+              req = urllib.request.Request(base + path, data=data, method=method, headers=headers or {})
+              with opener.open(req, timeout=60) as r:
+                  return json.loads(r.read() or b"null")
+          login = call("POST", "/auth/login", json.dumps({"username": "admin", "password": pw}).encode(), {"Content-Type": "application/json"})
+          csrf = login["csrf_token"]
+          boundary = "dsboundary"
+          text = "Los acuiferos subterraneos abastecen de agua potable a las ciudades.".encode()
+          body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"agua.txt\"\r\n"
+                  f"Content-Type: text/plain\r\n\r\n").encode() + text + f"\r\n--{boundary}--\r\n".encode()
+          call("POST", "/documents", body, {"Content-Type": f"multipart/form-data; boundary={boundary}", "X-CSRF-Token": csrf})
+          hits = call("GET", "/search?q=acuiferos")["results"]
+          assert hits and hits[0]["original_filename"] == "agua.txt", hits
+          ready = call("GET", "/health/ready")
+          assert ready["status"] == "ready" and ready["optional"]["ocr"] is True, ready
+          print("Docker: login, carga, búsqueda y preparación verificadas")
+          PY
+      - name: Persistencia tras reiniciar y recrear
+        run: |
+          docker compose restart
+          sleep 8
+          docker compose down
+          docker compose up -d
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8000/health >/dev/null && break; sleep 2; done
+          python - <<'PY'
+          import json, os, pathlib, urllib.request, http.cookiejar
+          jar = http.cookiejar.CookieJar()
+          opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+          pw = pathlib.Path(os.environ["RUNNER_TEMP"], "pw.txt").read_text().strip()
+          req = urllib.request.Request("http://127.0.0.1:8000/auth/login", data=json.dumps({"username": "admin", "password": pw}).encode(), headers={"Content-Type": "application/json"}, method="POST")
+          opener.open(req, timeout=30)
+          docs = json.loads(opener.open("http://127.0.0.1:8000/documents", timeout=30).read())
+          assert docs["total"] == 1 and docs["items"][0]["original_filename"] == "agua.txt", docs
+          print("Docker: el documento persiste en el volumen tras recrear el contenedor")
+          PY
+          docker run --rm --entrypoint sh docusearch-local:1.1 -c 'test ! -e /data/metadata.db' && echo "la imagen no contiene datos"
+      - name: Limpiar
+        if: always()
+        run: docker compose down -v
+
   # Pruebas con el modelo de embeddings real (DOC-17). Es opcional: no bloquea
   # el PR si falla (p. ej. por un corte de Hugging Face), pero su resultado se
   # ve en los checks. El modelo (~460 MB) se guarda en la caché de Actions.
