@@ -10,7 +10,7 @@
 Estados: **Cumple** (probado y reproducible), **Parcial** (existe pero falta
 una parte), **Pendiente** (no implementado), **Fuera de alcance**.
 
-Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-31.
+Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-32.
 
 ## Requisitos funcionales
 
@@ -34,7 +34,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-31.
 | RNF03 | Arquitectura modular y mantenible; índices reconstruibles | Cumple | Capas `api/ → documents/service → repository/storage`, `search/` independiente; índices regenerables desde originales | — (borrado con compensación y purga de índices, DOC-30) |
 | RNF04 | Usabilidad: interfaz en español, accesible y clara | Parcial | Interfaz web en `/` con navegación por teclado, enlace de salto, foco gestionado, contraste AA y diseño responsive, verificada en Chrome real (`tests/e2e/test_web_shell.py`, DOC-26) | Vistas de documentos, visor y buscador (DOC-27 a DOC-29); E2E bloqueante en CI (DOC-33) |
 | RNF05 | Ejecución en CPU, Python ≥ 3.10, sin GPU (Windows) | Cumple (backend) | CI 3.10–3.12; extra `semantic` con PyTorch CPU; README | Guía y scripts Windows (DOC-34) |
-| RNF06 | Seguridad y privacidad de los documentos | Parcial | Validación de cargas, path traversal y SSRF en importación (DOC-04/22); sesión `HttpOnly`, CSRF, roles y límite de intentos (DOC-25) | Endurecimiento, cabeceras y pruebas adversariales (DOC-32) |
+| RNF06 | Seguridad y privacidad de los documentos | Cumple (uso local) | Validación de cargas, path traversal y SSRF en importación (DOC-04/22); sesión `HttpOnly`, CSRF, roles y límite de intentos (DOC-25); CSP y cabeceras, rechazo previo al cuerpo, purga al borrar, pruebas adversariales (DOC-32, `docs/seguridad.md`, `tests/test_security.py`) | Exposición en red: HTTPS y pasos de `docs/seguridad.md`; sin auditoría externa |
 | RNF07 | Reproducibilidad: pruebas automatizadas, CI y resultados versionados | Cumple (backend) | CI GitHub Actions, `evaluation/results/`, revisiones de corpus fijadas | E2E web bloqueante (DOC-33), instalación limpia (DOC-34) |
 
 ## Limitaciones declaradas
