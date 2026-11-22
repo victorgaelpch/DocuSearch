@@ -217,6 +217,51 @@ class DocumentRepository:
             rows = connection.execute(query, params).fetchall()
         return [_row_to_document(row) for row in rows]
 
+    @staticmethod
+    def _filters(
+        collection: str | None, text: str | None, mime_types: Sequence[str] | None, statuses: Sequence[str] | None
+    ) -> tuple[str, list[Any]]:
+        clauses: list[str] = []
+        params: list[Any] = []
+        if collection is not None:
+            clauses.append("collection = ?")
+            params.append(collection)
+        if text:
+            escaped = text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            clauses.append("(title LIKE ? ESCAPE '\\' OR original_filename LIKE ? ESCAPE '\\')")
+            params.extend([f"%{escaped}%"] * 2)
+        if mime_types:
+            clauses.append(f"mime_type IN ({','.join('?' * len(mime_types))})")
+            params.extend(mime_types)
+        if statuses:
+            clauses.append(f"extraction_status IN ({','.join('?' * len(statuses))})")
+            params.extend(statuses)
+        return (" WHERE " + " AND ".join(clauses)) if clauses else "", params
+
+    def filter_documents(
+        self,
+        collection: str | None,
+        *,
+        text: str | None = None,
+        mime_types: Sequence[str] | None = None,
+        statuses: Sequence[str] | None = None,
+        limit: int = 50,
+        offset: int = 0,
+        newest_first: bool = False,
+    ) -> tuple[list[Document], int]:
+        """Documentos filtrados por texto (título o nombre), tipo y estado, con el total."""
+        if limit < 1 or offset < 0:
+            raise ValueError("limit debe ser >= 1 y offset >= 0")
+        where, params = self._filters(collection, text, mime_types, statuses)
+        with self._connect() as connection:
+            total = connection.execute(f"SELECT COUNT(*) FROM documents{where}", params).fetchone()[0]
+            rows = connection.execute(
+                f"SELECT * FROM documents{where} ORDER BY created_at {'DESC' if newest_first else 'ASC'}, doc_id "
+                "LIMIT ? OFFSET ?",
+                [*params, limit, offset],
+            ).fetchall()
+        return [_row_to_document(row) for row in rows], int(total)
+
     def count_documents(self, collection: str | None = None) -> int:
         with self._connect() as connection:
             if collection is None:

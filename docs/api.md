@@ -12,7 +12,7 @@ Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 | --- | --- | --- | --- |
 | `POST` | `/documents` | Carga multipart (campo `file`) de un `.pdf`, `.docx` o `.txt` | 201, 400, 409, 413, 415, 422 |
 | `POST` | `/documents/import` | Importa un Google Doc **público** por enlace (JSON `{"url": "…"}`, DOC-22) | 201, 403, 404, 409, 413, 415, 422, 502, 504 |
-| `GET` | `/documents?limit=50&offset=0` | Lista paginada (`limit` 1–200) | 200, 422 |
+| `GET` | `/documents?limit=50&offset=0` | Lista paginada (`limit` 1–200). Filtros (DOC-27): `q` (texto en título o nombre de archivo, literal), `format` (`pdf`, `docx`, `txt`; repetible), `status` (`extracted`, `needs_ocr`, …; repetible), `order` (`oldest` por defecto o `newest`). `total` cuenta los documentos filtrados | 200, 401, 422 |
 | `GET` | `/documents/{doc_id}` | Metadatos de un documento | 200, 404, 422 |
 | `GET` | `/search` | Búsqueda BM25, TF-IDF, semántica o híbrida (DOC-10, DOC-14, DOC-15) | 200, 422, 503 |
 | `GET` | `/search/index` | Versión y parámetros de los índices | 200, 422 |

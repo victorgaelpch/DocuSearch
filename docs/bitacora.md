@@ -508,3 +508,32 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Pruebas:** `python -m pytest -q` → `428 passed, 8 skipped`;
   `DOCUSEARCH_TEST_BROWSER=1 python -m pytest -q tests/e2e` → `8 passed`
   (Chrome 1xx del sistema, Linux). Windows no verificado en esta sesión.
+
+## DOC-27 — Interfaz de carga, listado y filtrado de documentos
+
+- **Issue:** #47 · **Rama:** `feature/DOC-27-carga-listado-documentos`
+- **Cambios:**
+  - `GET /documents`: filtros en el servidor `q` (título o nombre, búsqueda
+    literal con `LIKE … ESCAPE`), `format` y `status` repetibles, y `order`
+    (`oldest` por defecto, compatible; `newest` para la web). `total` cuenta
+    los documentos filtrados. `DocumentRepository.filter_documents`.
+  - Vista `#/documentos`: carga múltiple con selector o arrastrar y soltar,
+    procesamiento archivo por archivo con su resultado real (estado,
+    palabras, fragmentos, avisos, `doc_id`), mensajes para 409 (con el
+    identificador existente), 413, 415, 422, sesión expirada y red; la
+    selección se conserva si algo falla. Importación de Google Docs públicos.
+    Tabla paginada con formato, tamaño, fecha, estado y detalle (doc_id,
+    SHA-256, páginas, procedencia, fragmentación, avisos, descarga). Filtros
+    en la URL. El rol Usuario ve el listado sin formularios de carga.
+  - Sin porcentajes simulados: cada archivo muestra "Procesando…" hasta que el
+    servidor responde.
+  - `tests/synthetic.py`: generador de PDF escaneado compartido con
+    `test_ocr.py`.
+- **Fallos encontrados por las pruebas E2E y corregidos:**
+  - el enlace "Saltar al contenido" (`#main`) era interpretado como ruta y
+    mostraba "Esta página no existe"; el enrutador ignora anclas que no
+    empiezan por `#/`;
+  - "undefined palabras" en la fragmentación del detalle (clave
+    `chunk_size`), "(Word (DOCX))" y "1 fragmentos".
+- **Pruebas:** `python -m pytest -q` → `433 passed, 8 skipped`; E2E
+  (`DOCUSEARCH_TEST_BROWSER=1`, Chrome) → `14 passed`.

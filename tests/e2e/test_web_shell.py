@@ -23,6 +23,8 @@ def test_skip_link_is_first_tab_stop(page, live_server) -> None:
     assert focused == "Saltar al contenido"
     page.keyboard.press("Enter")
     assert page.evaluate("document.activeElement.id") == "main"
+    # el enlace de salto no cambia de vista
+    assert page.get_by_role("heading", level=1, name="Busque dentro de sus documentos").is_visible()
 
 
 def test_login_errors_then_success_and_logout(page, live_server) -> None:

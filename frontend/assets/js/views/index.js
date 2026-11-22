@@ -3,5 +3,6 @@
 import home from "./home.js";
 import login from "./login.js";
 import help from "./help.js";
+import documents from "./documents.js";
 
-export default [home, login, help];
+export default [home, login, help, documents];

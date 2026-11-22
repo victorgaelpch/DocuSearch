@@ -239,9 +239,26 @@ class DocumentService:
         self.repository.get_document(doc_id)
         return self.repository.get_chunks(doc_id)
 
-    def list_documents(self, *, limit: int, offset: int) -> tuple[list[Document], int]:
-        items = self.repository.list_documents(DEFAULT_COLLECTION, limit=limit, offset=offset)
-        return items, self.repository.count_documents(DEFAULT_COLLECTION)
+    def list_documents(
+        self,
+        *,
+        limit: int,
+        offset: int,
+        text: str | None = None,
+        mime_types: list[str] | None = None,
+        statuses: list[str] | None = None,
+        newest_first: bool = False,
+    ) -> tuple[list[Document], int]:
+        """Documentos de la colección ``user`` con filtros opcionales (DOC-27)."""
+        return self.repository.filter_documents(
+            DEFAULT_COLLECTION,
+            text=(text or "").strip() or None,
+            mime_types=mime_types,
+            statuses=statuses,
+            limit=limit,
+            offset=offset,
+            newest_first=newest_first,
+        )
 
     def get_document(self, doc_id: str) -> Document:
         return self.repository.get_document(doc_id)
