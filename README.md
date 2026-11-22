@@ -49,6 +49,15 @@ python -m backend.app.cli demo
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
+### Docker (opcional)
+
+```bash
+python -m backend.app.cli hash-password --env-file .env
+docker compose up -d --build                     # http://127.0.0.1:8000/ (solo esta computadora)
+```
+
+Detalles y diferencias con la instalación nativa en [`docs/docker.md`](docs/docker.md).
+
 `python -m backend.app.cli doctor` revisa la instalación y dice qué falta;
 `python -m backend.app.cli report` mide el rendimiento en su máquina.
 
@@ -70,6 +79,7 @@ python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 | [`docs/instalacion-windows.md`](docs/instalacion-windows.md) | Instalación, modos, problemas frecuentes, plataformas verificadas |
 | [`docs/seguridad.md`](docs/seguridad.md) / [`docs/autenticacion.md`](docs/autenticacion.md) | Modelo de amenazas, cuentas y sesión |
 | [`docs/rag.md`](docs/rag.md) | Preguntas con respuestas citadas (RAG local opcional, v1.1) |
+| [`docs/docker.md`](docs/docker.md) | Docker Compose local opcional (v1.1) |
 | [`docs/observabilidad.md`](docs/observabilidad.md) | Registros, salud y preparación, métricas e informe de rendimiento (v1.1) |
 | [`docs/evaluacion.md`](docs/evaluacion.md) / [`docs/pruebas.md`](docs/pruebas.md) | Evaluación reproducible, pruebas y checks de CI |
 | [`docs/arquitectura.md`](docs/arquitectura.md), [`docs/adr/`](docs/adr/) | Diseño y decisiones |
@@ -85,8 +95,8 @@ $env:DOCUSEARCH_TEST_BROWSER = "1"; python -m pytest -q tests/e2e   # navegador 
 ```
 
 Cada Pull Request ejecuta `tests (3.10/3.11/3.12)`, `web-e2e` (Chromium),
-`windows-install` (instalación limpia en Windows), `semantic-model` (modelo
-real) y GitGuardian ([detalle](docs/pruebas.md)).
+`windows-install` (instalación limpia en Windows), `docker-local` (Docker
+Compose), `semantic-model` (modelo real) y GitGuardian ([detalle](docs/pruebas.md)).
 
 ## Módulos
 

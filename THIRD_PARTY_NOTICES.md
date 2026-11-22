@@ -11,7 +11,7 @@ conjuntos de datos (noviembre de 2026).
 
 | Componente | Licencia | Uso |
 | --- | --- | --- |
-| FastAPI, Pydantic, python-docx, spaCy, mwparserfromhell, faiss-cpu, pytest, pytest-cov | MIT | API, modelos, DOCX, PLN, corpus, índice semántico, pruebas |
+| FastAPI, Pydantic, python-docx, spaCy, mwparserfromhell, faiss-cpu, pytest, pytest-cov, PyYAML | MIT | API, modelos, DOCX, PLN, corpus, índice semántico, pruebas |
 | Starlette, Uvicorn, NumPy, scikit-learn, lxml, httpx, psutil | BSD-3-Clause (NumPy incluye además otras permisivas) | API, cálculo, TF-IDF, DOCX, pruebas |
 | python-multipart, sentence-transformers, transformers, huggingface-hub, tokenizers, safetensors, pyarrow | Apache-2.0 | cargas, embeddings, evaluación |
 | PyTorch | BSD-3-Clause y otras permisivas | embeddings (extra `semantic`) |

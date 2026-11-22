@@ -92,10 +92,19 @@ def test_hash_password_writes_env_file(tmp_path: Path, monkeypatch, capsys) -> N
     lines = env.read_text(encoding="utf-8").splitlines()
     assert lines[0] == "DOCUSEARCH_MAX_UPLOAD_MB=20"
     hashes = [line.split("=", 1)[1] for line in lines if line.startswith("DOCUSEARCH_ADMIN_PASSWORD_HASH=")]
-    assert len(hashes) == 1 and verify_password("una contraseña nueva y larga", hashes[0])
+    assert len(hashes) == 1 and hashes[0].startswith("'scrypt$") and hashes[0].endswith("'")  # literal en Compose
+    assert verify_password("una contraseña nueva y larga", hashes[0].strip("'"))
+    snapshot = dict(os.environ)
+    try:
+        os.environ.pop("DOCUSEARCH_ADMIN_PASSWORD_HASH", None)
+        load_env_file(env)
+        assert verify_password("una contraseña nueva y larga", os.environ["DOCUSEARCH_ADMIN_PASSWORD_HASH"])
+    finally:
+        os.environ.clear()
+        os.environ.update(snapshot)
     monkeypatch.setattr("sys.stdin", io.StringIO("consulta solo lectura 99\n"))
     assert cli_main(["hash-password", "--stdin", "--env-file", str(env), "--role", "user"]) == 0
-    assert "DOCUSEARCH_USER_PASSWORD_HASH=scrypt$" in env.read_text(encoding="utf-8")
+    assert "DOCUSEARCH_USER_PASSWORD_HASH='scrypt$" in env.read_text(encoding="utf-8")
 
 
 def test_doctor_reports_missing_account_then_ok(tmp_path: Path, monkeypatch, capsys) -> None:
