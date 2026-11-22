@@ -4,5 +4,6 @@ import home from "./home.js";
 import login from "./login.js";
 import help from "./help.js";
 import documents from "./documents.js";
+import viewer from "./viewer.js";
 
-export default [home, login, help, documents];
+export default [home, login, help, documents, viewer];

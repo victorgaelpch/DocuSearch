@@ -317,3 +317,79 @@ def list_chunks(
         chunking=document.extra.get("chunking", {}),
         items=[ChunkOut(**c.model_dump(exclude={"doc_id"})) for c in chunks],
     )
+
+
+class TextChunkOut(BaseModel):
+    chunk_id: str
+    ordinal: int
+    char_start: int
+    char_end: int
+    page_start: Optional[int] = None
+    page_end: Optional[int] = None
+
+
+class DocumentTextOut(BaseModel):
+    doc_id: str
+    extraction_status: ExtractionStatus
+    text: str
+    chunks: list[TextChunkOut]
+
+
+@router.get(
+    "/{doc_id}/text",
+    response_model=DocumentTextOut,
+    responses={404: {"model": ErrorResponse}},
+    summary="Texto extraído completo con la posición de cada fragmento (DOC-28)",
+    dependencies=_READ,
+)
+def document_text(
+    doc_id: DocIdPath,
+    service: DocumentService = Depends(get_document_service),
+):
+    """Texto plano (nunca HTML) para el visor; los offsets permiten resaltar un fragmento."""
+    try:
+        document = service.get_document(doc_id)
+        text, chunks = service.document_text(doc_id)
+    except DocumentNotFoundError:
+        return _error(404, "not_found", "documento no encontrado")
+    return DocumentTextOut(
+        doc_id=doc_id,
+        extraction_status=document.extraction_status,
+        text=text,
+        chunks=[TextChunkOut(**c.model_dump(include=set(TextChunkOut.model_fields))) for c in chunks],
+    )
+
+
+@router.get(
+    "/{doc_id}/content",
+    response_class=FileResponse,
+    responses={404: {"model": ErrorResponse}, 415: {"model": ErrorResponse}},
+    summary="Original PDF en línea para la vista previa del visor (DOC-28)",
+    dependencies=_READ,
+)
+def document_content(
+    doc_id: DocIdPath,
+    service: DocumentService = Depends(get_document_service),
+):
+    """Solo PDF: DOCX y TXT se muestran como texto con ``/text`` (no se renderiza su contenido)."""
+    try:
+        document = service.get_document(doc_id)
+        if document.mime_type != PDF_MIME:
+            return _error(415, "preview_unavailable", "la vista previa en línea solo está disponible para PDF")
+        path = service.original_path(document)
+    except DocumentNotFoundError:
+        return _error(404, "not_found", "documento no encontrado")
+    except FileNotFoundError:
+        return _error(404, "original_missing", "el archivo original no está disponible")
+    return FileResponse(
+        path,
+        media_type=PDF_MIME,
+        filename=document.original_filename,
+        content_disposition_type="inline",
+        headers={
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-store",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Content-Security-Policy": "frame-ancestors 'self'",
+        },
+    )

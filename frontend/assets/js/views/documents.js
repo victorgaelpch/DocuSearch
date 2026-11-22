@@ -15,7 +15,7 @@ function statusTag(status) {
 function uploadMessage(file, error) {
   if (error.code === "duplicate_document") {
     const existing = error.body && error.body.error && error.body.error.doc_id;
-    return [`${file.name}: ya estaba cargado`, existing ? h("span", {}, " con el identificador ", h("code", {}, existing)) : null, "."];
+    return [`${file.name}: ya estaba cargado`, existing ? h("span", {}, " con el identificador ", h("code", {}, existing), " (", h("a", { href: `#/documentos/${existing}` }, "abrir"), ")") : null, "."];
   }
   if (error.code === "not_authenticated") return [`${file.name}: la sesión expiró; inicie sesión y vuelva a intentarlo.`];
   if (error.code === "network_error") return [`${file.name}: no hay conexión con el servidor.`];
@@ -31,7 +31,8 @@ function resultLine(doc) {
   const parts = [
     h("strong", {}, doc.title), `. ${formatLabel(doc.mime_type)}, ${info.label.toLowerCase()}, `,
     `${plural(doc.word_count, "palabra", "palabras")}, ${plural(doc.chunk_count, "fragmento", "fragmentos")}. `,
-    "Identificador: ", h("code", {}, doc.doc_id), ".",
+    "Identificador: ", h("code", {}, doc.doc_id), ". ",
+    h("a", { href: `#/documentos/${doc.doc_id}` }, `Abrir ${doc.title}`),
   ];
   if (doc.warnings && doc.warnings.length) parts.push(h("br"), `Avisos: ${doc.warnings.join("; ")}`);
   return parts;
@@ -181,7 +182,8 @@ function detailRow(doc, columns) {
   return h("tr", { class: "detail-row", hidden: true },
     h("td", { colspan: columns },
       h("dl", { class: "meta-grid" }, items.map(([k, v]) => [h("dt", {}, k), h("dd", {}, v)])),
-      h("p", {}, h("a", { class: "btn btn-quiet btn-small", href: `/documents/${doc.doc_id}/download` }, "Descargar original"))));
+      h("p", {}, h("a", { class: "btn btn-small", href: `#/documentos/${doc.doc_id}` }, "Abrir documento"), " ",
+        h("a", { class: "btn btn-quiet btn-small", href: `/documents/${doc.doc_id}/download` }, "Descargar original"))));
 }
 
 function documentTable(data) {
@@ -198,7 +200,7 @@ function documentTable(data) {
     const warnings = (doc.metadata && doc.metadata.warnings) || [];
     body.append(
       h("tr", {},
-        h("th", { scope: "row" }, doc.title, h("span", { class: "sub" }, doc.original_filename)),
+        h("th", { scope: "row" }, h("a", { href: `#/documentos/${doc.doc_id}` }, doc.title), h("span", { class: "sub" }, doc.original_filename)),
         h("td", {}, formatLabel(doc.mime_type)),
         h("td", { class: "num" }, formatBytes(doc.size_bytes)),
         h("td", { class: "num" }, formatDate(doc.created_at)),
