@@ -483,3 +483,28 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   Checks* en verde.
 - **Acción del propietario:** marcar los incidentes 40852052 y 40852053 como
   falso positivo en el panel de GitGuardian (no hay acceso desde esta sesión).
+## DOC-26 — Frontend responsive y accesible integrado en FastAPI
+
+- **Issue:** #46 · **Rama:** `feature/DOC-26-frontend-base`
+- **Objetivo:** convertir `frontend/` en una aplicación real servida en el
+  mismo origen, sin Node en ejecución ni recursos externos.
+- **Cambios:**
+  - `backend/app/web.py`: `GET /` y `/assets/*`; tipos MIME fijados para
+    `.js`/`.css`/`.svg` (en Windows el registro puede devolver `text/plain`
+    para `.js` y bloquear los módulos ES). `/docs` y `/openapi.json` intactos.
+  - `frontend/`: `index.html`, `assets/css/app.css`, módulos `dom.js`
+    (construcción segura sin `innerHTML`), `api.js` (cookie de sesión, CSRF
+    en memoria, errores uniformes, aviso de servidor caído y de sesión
+    expirada), `router.js` (rutas por hash, foco accesible), vistas
+    Inicio, Iniciar sesión y Ayuda. Solo se listan secciones implementadas.
+  - Diseño: papel de archivo frío, tinta pizarra, azul de sello y resaltador
+    amarillo reservado al fragmento encontrado; fuentes del sistema
+    (Palatino/Segoe UI); barra lateral en escritorio y menú en móvil.
+  - Pruebas: `tests/test_web.py` (12) y `tests/e2e/` (8, Playwright) con
+    servidor real; extra `e2e` en `pyproject.toml`.
+- **Fallo encontrado por las pruebas E2E:** en la carga inicial el foco se
+  llevaba al título y el primer Tab se saltaba el enlace "Saltar al
+  contenido". Ahora solo se mueve el foco en los cambios de vista.
+- **Pruebas:** `python -m pytest -q` → `428 passed, 8 skipped`;
+  `DOCUSEARCH_TEST_BROWSER=1 python -m pytest -q tests/e2e` → `8 passed`
+  (Chrome 1xx del sistema, Linux). Windows no verificado en esta sesión.

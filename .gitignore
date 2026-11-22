@@ -43,3 +43,6 @@ data/*
 # Artefactos generados
 *.log
 .hf-cache/
+
+# Evidencias de pruebas E2E
+e2e-artifacts/
