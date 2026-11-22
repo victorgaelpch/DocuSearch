@@ -118,3 +118,17 @@ def test_powershell_scripts_do_not_weaken_policy_or_store_secrets(script: str) -
     assert "set-executionpolicy" not in lowered or "-scope process" in lowered
     assert "convertfrom-securestring" not in lowered and "password =" not in lowered
     assert "0.0.0.0" not in text
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [b"\xef\xbb\xbfclave-con-bom-12345\r\n", b"clave-con-bom-12345\n"],
+)
+def test_hash_password_stdin_ignores_powershell_bom(raw: bytes, monkeypatch, capsys) -> None:
+    class _Stdin:
+        encoding = "cp1252"
+        buffer = io.BytesIO(raw)
+
+    monkeypatch.setattr("sys.stdin", _Stdin())
+    assert cli_main(["hash-password", "--stdin"]) == 0
+    assert verify_password("clave-con-bom-12345", capsys.readouterr().out.strip())

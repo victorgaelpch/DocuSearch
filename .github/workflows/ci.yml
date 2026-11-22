@@ -90,6 +90,20 @@ jobs:
           $pw | .\.venv\Scripts\python.exe -m backend.app.cli hash-password --stdin --env-file .env
           if ($LASTEXITCODE -ne 0) { exit 1 }
           Set-Content -Path "$env:RUNNER_TEMP\pw.txt" -Value $pw -NoNewline
+          # Comprobación aislada: el hash guardado en .env corresponde a la contraseña
+          $check = @"
+          import os, pathlib, sys
+          sys.path.insert(0, '.')
+          from backend.app.config import load_env_file
+          from backend.app.auth.passwords import verify_password
+          load_env_file()
+          pw = pathlib.Path(os.environ['RUNNER_TEMP'], 'pw.txt').read_text(encoding='utf-8-sig')
+          assert verify_password(pw, os.environ['DOCUSEARCH_ADMIN_PASSWORD_HASH']), 'hash in .env does not match the password'
+          print('hash in .env verified')
+          "@
+          Set-Content -Path "$env:RUNNER_TEMP\check.py" -Value $check
+          .\.venv\Scripts\python.exe "$env:RUNNER_TEMP\check.py"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
           .\.venv\Scripts\python.exe -m backend.app.cli demo
           if ($LASTEXITCODE -ne 0) { exit 1 }
           powershell -ExecutionPolicy Bypass -File scripts\windows\verificar.ps1

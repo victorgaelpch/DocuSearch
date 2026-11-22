@@ -332,6 +332,25 @@ def _cmd_miracl(args: argparse.Namespace) -> int:
     return 0
 
 
+def _read_stdin_line() -> str:
+    """Primera línea de stdin sin BOM ni fin de línea.
+
+    Windows PowerShell 5.1 puede anteponer un BOM al canalizar texto a un
+    programa (``"clave" | python …``) según ``$OutputEncoding``; sin quitarlo,
+    el BOM formaría parte de la contraseña.
+    """
+    buffer = getattr(sys.stdin, "buffer", None)
+    if buffer is None:  # stdin sustituido por texto (pruebas)
+        line = sys.stdin.readline()
+    else:
+        raw = buffer.readline()
+        try:
+            line = raw.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            line = raw.decode(sys.stdin.encoding or "utf-8", errors="strict")
+    return line.lstrip("\ufeff").rstrip("\r\n")
+
+
 def _cmd_hash_password(args: argparse.Namespace) -> int:
     """Genera el hash scrypt para DOCUSEARCH_ADMIN/USER_PASSWORD_HASH (DOC-25).
 
@@ -342,7 +361,7 @@ def _cmd_hash_password(args: argparse.Namespace) -> int:
     from backend.app.auth.passwords import hash_password
 
     if args.stdin:
-        password = sys.stdin.readline().rstrip("\r\n")
+        password = _read_stdin_line()
     else:
         password = getpass.getpass("Contraseña (mínimo 12 caracteres): ")
         if getpass.getpass("Repita la contraseña: ") != password:

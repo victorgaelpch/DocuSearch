@@ -730,6 +730,12 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   `ConvertTo-Json` envió un objeto en lugar de la contraseña. Corregido con
   `ReadAllText`. También se fuerza UTF-8 en la salida de Python (el registro
   mostraba "espa�ol").
+- **Segunda ejecución en Windows:** el login devolvió "usuario o contraseña
+  incorrectos": al canalizar la contraseña (`$pw | python … --stdin`),
+  PowerShell 5.1 puede anteponer un BOM según `$OutputEncoding` y pasaba a
+  formar parte de la contraseña. `hash-password --stdin` lee ahora bytes y
+  decodifica con `utf-8-sig` (afectaba también a usuarios que canalicen la
+  contraseña).
 - **No verificado:** Windows de escritorio (no se instaló nada en equipos
   personales), OCR y semántica en Windows.
 - **Pruebas:** `python -m pytest -q` → `521 passed, 8 skipped`
