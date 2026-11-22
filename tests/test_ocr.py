@@ -19,6 +19,7 @@ from backend.app.documents.models import ExtractionStatus
 from backend.app.documents.ocr import OcrConfig, TesseractOcr, find_tessdata, get_ocr
 from backend.app.documents.readers import extract_document
 from tests.auth_helpers import admin_client
+from tests.synthetic import scanned_pdf
 
 TESSDATA = find_tessdata()
 needs_tesseract = pytest.mark.skipif(TESSDATA is None, reason="Tesseract no está instalado")
@@ -26,21 +27,7 @@ needs_tesseract = pytest.mark.skipif(TESSDATA is None, reason="Tesseract no est�
 TEXT_PAGE_2 = "El astrolabio era un instrumento usado por los navegantes para medir la altura de los astros."
 
 
-def _scanned_pdf(pages: list[str | None], dpi: int = 150) -> bytes:
-    """PDF cuyas páginas son imágenes del texto (``None`` = página en blanco)."""
-    output = pymupdf.open()
-    for text in pages:
-        source = pymupdf.open()
-        page = source.new_page()
-        if text:
-            page.insert_textbox(pymupdf.Rect(50, 60, 550, 800), text, fontsize=13)
-        pixmap = page.get_pixmap(dpi=dpi, colorspace=pymupdf.csGRAY)
-        target = output.new_page(width=page.rect.width, height=page.rect.height)
-        target.insert_image(target.rect, stream=pixmap.tobytes("png"))
-        source.close()
-    data = output.tobytes(deflate=True)
-    output.close()
-    return data
+_scanned_pdf = scanned_pdf
 
 
 @pytest.fixture(autouse=True)

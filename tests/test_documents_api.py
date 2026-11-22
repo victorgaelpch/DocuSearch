@@ -203,3 +203,30 @@ def test_openapi_documents_endpoints(client: TestClient) -> None:
     paths = client.get("/openapi.json").json()["paths"]
     assert {"/documents", "/documents/{doc_id}", "/documents/{doc_id}/download"} <= set(paths)
     assert "post" in paths["/documents"] and "get" in paths["/documents"]
+
+
+def test_list_filters_by_text_format_and_status(client: TestClient) -> None:
+    for name in MIMES:
+        assert _upload(client, name, _fixture(name)).status_code == 201
+    by_format = client.get("/documents", params={"format": "pdf"}).json()
+    assert by_format["total"] == 1 and by_format["items"][0]["mime_type"] == "application/pdf"
+    both = client.get("/documents", params=[("format", "docx"), ("format", "txt")]).json()
+    assert both["total"] == 2
+    by_name = client.get("/documents", params={"q": "MUESTRA.TXT"}).json()
+    assert [d["original_filename"] for d in by_name["items"]] == ["muestra.txt"]
+    assert client.get("/documents", params={"status": "needs_ocr"}).json()["total"] == 0
+    assert client.get("/documents", params={"status": "extracted"}).json()["total"] == 3
+    assert client.get("/documents", params={"format": "exe"}).status_code == 422
+
+
+def test_list_filter_text_is_literal(client: TestClient) -> None:
+    _upload(client, "muestra.txt", _fixture("muestra.txt"))
+    for pattern in ["%", "_", "\\", "' OR 1=1 --"]:
+        assert client.get("/documents", params={"q": pattern}).json()["total"] == 0, pattern
+
+
+def test_list_order_newest(client: TestClient) -> None:
+    ids = [_upload(client, name, _fixture(name)).json()["doc_id"] for name in MIMES]
+    oldest = [d["doc_id"] for d in client.get("/documents").json()["items"]]
+    newest = [d["doc_id"] for d in client.get("/documents", params={"order": "newest"}).json()["items"]]
+    assert oldest == ids and newest == ids[::-1]

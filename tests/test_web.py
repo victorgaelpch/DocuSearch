@@ -73,7 +73,8 @@ def test_index_structure_is_accessible() -> None:
 @pytest.mark.parametrize("path", JS_FILES + [FRONTEND / "index.html", FRONTEND / "assets" / "css" / "app.css"], ids=lambda p: p.name)
 def test_no_external_resources_or_unsafe_dom(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
-    assert not re.search(r"https?://(?!127\.0\.0\.1|localhost)", text), "recurso externo"
+    # docs.google.com solo aparece como texto para validar el enlace de origen, no se carga
+    assert not re.search(r"https?://(?!127\.0\.0\.1|localhost|docs\.google\.com/)", text), "recurso externo"
     assert "innerHTML" not in text and "outerHTML =" not in text and "insertAdjacentHTML" not in text
     assert "document.write" not in text and "eval(" not in text
     assert "localStorage.setItem" not in text and "sessionStorage.setItem" not in text

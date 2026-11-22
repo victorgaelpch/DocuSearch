@@ -40,7 +40,14 @@ function match(path) {
   return null;
 }
 
+export function isAppHash() {
+  const hash = window.location.hash;
+  return !hash || hash === "#" || hash.startsWith("#/");
+}
+
 export async function render() {
+  // anclas internas (p. ej. #main del enlace de salto) no son rutas
+  if (!isAppHash()) return;
   const main = document.getElementById("main");
   const path = currentPath();
   const found = match(path);

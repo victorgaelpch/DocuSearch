@@ -56,8 +56,17 @@ function setupNavToggle() {
   });
 }
 
+function setupSkipLink() {
+  const link = document.querySelector(".skip-link");
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.getElementById("main").focus();
+  });
+}
+
 async function start() {
   setupNavToggle();
+  setupSkipLink();
   await refreshSession();
   let wasAuthenticated = session().authenticated;
   onSessionChange((current) => {

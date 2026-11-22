@@ -12,6 +12,7 @@ La ruta interna del original nunca se expone en las respuestas.
 from __future__ import annotations
 
 from datetime import datetime
+from enum import Enum
 from typing import Annotated, Any, Optional
 
 from fastapi import APIRouter, Depends, File, Path, Query, Request, UploadFile, status
@@ -22,6 +23,7 @@ from pydantic import BaseModel
 from backend.app.api.errors import ErrorBody, ErrorResponse, error_response  # noqa: F401 (reexport)
 from backend.app.auth.dependencies import require_admin_mutation, require_user
 from backend.app.documents.models import DOC_ID_PATTERN, Document, ExtractionStatus
+from backend.app.documents.readers import DOCX_MIME, PDF_MIME, TXT_MIME
 from backend.app.documents.repository import DocumentNotFoundError, DuplicateDocumentError
 from backend.app.documents.service import DocumentService
 from backend.app.documents.validation import UploadValidationError
@@ -213,13 +215,38 @@ async def import_google_doc(
     )
 
 
+class DocumentFormat(str, Enum):
+    pdf = "pdf"
+    docx = "docx"
+    txt = "txt"
+
+
+_FORMAT_MIME = {DocumentFormat.pdf: PDF_MIME, DocumentFormat.docx: DOCX_MIME, DocumentFormat.txt: TXT_MIME}
+
+
+class ListOrder(str, Enum):
+    oldest = "oldest"
+    newest = "newest"
+
+
 @router.get("", response_model=DocumentListOut, summary="Listar documentos cargados", dependencies=_READ)
 def list_documents(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
+    q: Optional[str] = Query(None, max_length=200, description="Texto en el título o el nombre de archivo"),
+    format: Optional[list[DocumentFormat]] = Query(None, description="Formato: pdf, docx o txt (repetible)"),
+    status: Optional[list[ExtractionStatus]] = Query(None, description="Estado de extracción (repetible)"),
+    order: ListOrder = Query(ListOrder.oldest, description="`oldest` (por defecto) o `newest`"),
     service: DocumentService = Depends(get_document_service),
 ) -> DocumentListOut:
-    items, total = service.list_documents(limit=limit, offset=offset)
+    items, total = service.list_documents(
+        limit=limit,
+        offset=offset,
+        text=q,
+        mime_types=[_FORMAT_MIME[f] for f in format] if format else None,
+        statuses=[s.value for s in status] if status else None,
+        newest_first=order is ListOrder.newest,
+    )
     return DocumentListOut(
         items=[DocumentOut.from_document(d) for d in items], total=total, limit=limit, offset=offset
     )
