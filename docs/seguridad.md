@@ -25,6 +25,7 @@ pasos de la sección "Exponer en una red".
 | Clickjacking | `X-Frame-Options: DENY` y `frame-ancestors 'none'`; la vista previa PDF solo se enmarca en el mismo origen | `test_security_headers_everywhere`, `test_pdf_preview_keeps_its_frame_policy` |
 | Datos de un documento borrado en índices | Purga de caché léxica y vectores FAISS al eliminar | `test_delete_removes_document_everywhere` |
 | Secretos o datos privados en Git | `.gitignore` de `data/`, `.env`; prueba que revisa los archivos versionados; GitGuardian en los PR | `test_no_secrets_or_private_data_tracked` |
+| Inyección de instrucciones o fuga de documentos vía RAG (v1.1) | Fragmentos delimitados como datos, delimitadores neutralizados, sin herramientas; solo proveedor en `127.0.0.1` sin proxy; citas validadas contra lo recuperado | `tests/test_rag.py` |
 | Contraseñas en registros o respuestas | Ninguna ruta registra el cuerpo del login; solo se guarda el hash scrypt | `test_password_never_appears_in_logs_or_responses` |
 
 ## Cabeceras
