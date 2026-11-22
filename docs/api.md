@@ -6,6 +6,8 @@ Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 
 ## Endpoints
 
+> **DOC-25:** las rutas de documentos y `GET /search?collection=user` requieren sesión; las mutaciones, rol Administrador y cabecera `X-CSRF-Token`. Ver `docs/autenticacion.md`.
+
 | Método | Ruta | Descripción | Respuestas |
 | --- | --- | --- | --- |
 | `POST` | `/documents` | Carga multipart (campo `file`) de un `.pdf`, `.docx` o `.txt` | 201, 400, 409, 413, 415, 422 |

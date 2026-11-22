@@ -15,6 +15,7 @@ from backend.app.documents import compute_sha256, extract_document, make_documen
 from backend.app.documents.service import DocumentService
 from backend.app.main import create_app
 from backend.app.nlp.chunking import ChunkingConfig, chunk_extraction, chunk_text
+from tests.auth_helpers import admin_client
 
 DOC_ID = make_document_id(compute_sha256(b"chunking"))
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -127,7 +128,7 @@ def settings(tmp_path: Path) -> Settings:
 
 
 def test_upload_persists_chunks_and_exposes_them(settings: Settings) -> None:
-    client = TestClient(create_app(settings))
+    client = admin_client(settings)
     data = _multi_page_pdf(150, 3)
     body = client.post("/documents", files={"file": ("tres.pdf", data)}).json()
     assert body["chunk_count"] == 3

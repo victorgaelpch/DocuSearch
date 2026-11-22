@@ -26,6 +26,7 @@ from backend.app.corpus.wikipedia import (
 from backend.app.documents import WIKIPEDIA_COLLECTION, DuplicateDocumentError
 from backend.app.documents.service import DocumentService
 from backend.app.main import create_app
+from tests.auth_helpers import admin_client
 
 LONG = " ".join(["palabra"] * 60)
 
@@ -195,7 +196,7 @@ def test_corpus_documents_stay_separate_from_user_uploads(tmp_path: Path) -> Non
     assert corpus.document.extra["topic"] == "metales"
     assert corpus.chunks and corpus.chunks[0].doc_id == corpus.document.doc_id
 
-    client = TestClient(create_app(settings))
+    client = admin_client(settings)
     listed = client.get("/documents").json()
     assert [d["doc_id"] for d in listed["items"]] == [user.document.doc_id]
 

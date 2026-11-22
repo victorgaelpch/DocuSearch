@@ -438,3 +438,32 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Fuentes:** `documentacion.pdf` no estuvo disponible; las descripciones de
   RF/RNF se infieren del backlog y están marcadas para verificar.
 - **Pruebas:** ver PR.
+
+## DOC-25 — Autenticación local segura y permisos de Usuario/Administrador
+
+- **Issue:** #45 · **Rama:** `feature/DOC-25-autenticacion-local`
+- **Objetivo:** impedir el acceso anónimo a documentos privados y a las
+  operaciones de administración, sin servicios externos.
+- **Cambios:**
+  - `backend/app/auth/`: hash scrypt (biblioteca estándar), sesiones en
+    memoria con caducidad por inactividad y absoluta, límite de intentos por
+    IP, dependencias `require_user` / `require_admin` /
+    `require_admin_mutation` con CSRF por cabecera y comprobación de origen.
+  - `backend/app/api/auth.py`: `POST /auth/login`, `POST /auth/logout`,
+    `GET /auth/me`. `backend/app/api/errors.py`: formato de error común.
+  - Documentos: lectura con sesión; carga e importación solo Administrador +
+    CSRF. `GET /search` y `/search/index` exigen sesión para `collection=user`;
+    los corpus públicos siguen siendo anónimos.
+  - CLI `hash-password` (sin eco; `--stdin` para scripts).
+  - `.env.example` sin secretos, `docs/autenticacion.md`.
+  - Pruebas: `tests/auth_helpers.py` genera contraseñas aleatorias por sesión
+    de pruebas e inicia sesión de verdad; las pruebas anteriores usan ese
+    cliente en lugar de desactivar la protección. `tests/test_auth.py` (29).
+- **Decisiones:** sin hash configurado no hay cuenta (no existe
+  administrador por defecto). Un hash mal formado detiene el arranque.
+  Modo local monousuario: no se declara soporte multiusuario.
+- **Pruebas:** `python -m pytest -q` → `409 passed, 7 skipped` (Linux,
+  Python 3.13).
+- **Pendiente para DOC-32:** el cuerpo multipart se lee antes de comprobar la
+  sesión (FastAPI resuelve el formulario junto con las dependencias); se
+  añadirá un límite previo para peticiones anónimas.

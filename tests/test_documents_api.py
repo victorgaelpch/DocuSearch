@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.config import Settings
 from backend.app.main import create_app
+from tests.auth_helpers import admin_client
 
 FIXTURES = Path(__file__).parent / "fixtures"
 MIMES = {
@@ -27,7 +28,7 @@ def settings(tmp_path: Path) -> Settings:
 
 @pytest.fixture()
 def client(settings: Settings) -> TestClient:
-    return TestClient(create_app(settings))
+    return admin_client(settings)
 
 
 def _upload(client: TestClient, name: str, data: bytes, content_type: str = "application/octet-stream"):
@@ -153,7 +154,7 @@ def test_path_traversal_filename_is_sanitized(client: TestClient, settings: Sett
 
 
 def test_upload_size_limit_returns_413(settings: Settings) -> None:
-    small = TestClient(create_app(replace(settings, max_upload_bytes=1024)))
+    small = admin_client(replace(settings, max_upload_bytes=1024))
     response = _upload(small, "grande.txt", b"a" * 2048)
     assert response.status_code == 413
     assert response.json()["error"]["code"] == "file_too_large"
@@ -193,8 +194,8 @@ def test_download_when_original_was_removed(client: TestClient, settings: Settin
 
 
 def test_metadata_persists_across_app_instances(settings: Settings) -> None:
-    doc_id = _upload(TestClient(create_app(settings)), "muestra.docx", _fixture("muestra.docx")).json()["doc_id"]
-    again = TestClient(create_app(settings))
+    doc_id = _upload(admin_client(settings), "muestra.docx", _fixture("muestra.docx")).json()["doc_id"]
+    again = admin_client(settings)
     assert again.get(f"/documents/{doc_id}").status_code == 200
 
 

@@ -18,6 +18,7 @@ from backend.app.documents import ocr as ocr_module
 from backend.app.documents.models import ExtractionStatus
 from backend.app.documents.ocr import OcrConfig, TesseractOcr, find_tessdata, get_ocr
 from backend.app.documents.readers import extract_document
+from tests.auth_helpers import admin_client
 
 TESSDATA = find_tessdata()
 needs_tesseract = pytest.mark.skipif(TESSDATA is None, reason="Tesseract no está instalado")
@@ -180,7 +181,7 @@ def test_upload_scanned_pdf_is_searchable_and_cli_processes_pending(tmp_path: Pa
 
     # 1) sin OCR: se carga como needs_ocr y no se encuentra
     monkeypatch.setenv("DOCUSEARCH_OCR", "off")
-    client = TestClient(create_app(settings))
+    client = admin_client(settings)
     body = client.post("/documents", files={"file": ("escaneado.pdf", _scanned_pdf([None, TEXT_PAGE_2]))}).json()
     assert body["extraction_status"] == "needs_ocr"
     assert client.get("/search", params={"q": "astrolabio"}).json()["total"] == 0
