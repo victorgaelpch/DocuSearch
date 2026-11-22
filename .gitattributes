@@ -2,3 +2,6 @@
 tests/fixtures/*.txt -text
 tests/fixtures/*.pdf binary
 tests/fixtures/*.docx binary
+
+# Scripts de PowerShell: UTF-8 con BOM y CRLF (Windows PowerShell 5.1)
+*.ps1 -text

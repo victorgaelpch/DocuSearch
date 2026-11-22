@@ -695,3 +695,35 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Pruebas:** `python -m pytest -q` → `504 passed, 8 skipped`; E2E local
   (Chrome) → `37 passed, 1 skipped` (38 recolectadas; la omitida requiere el
   modelo real y se ejecuta en `semantic-model`).
+
+## DOC-34 — Instalación reproducible y demostración local en Windows/CPU
+
+- **Issue:** #54 · **Rama:** `feature/DOC-34-instalacion-windows`
+- **Cambios:**
+  - `scripts/windows/`: `instalar.ps1` (`-Semantico` con PyTorch CPU,
+    `-Desarrollo`), `configurar-cuenta.ps1`, `iniciar.ps1` (solo
+    `127.0.0.1`), `verificar.ps1`. UTF-8 con BOM y CRLF (Windows PowerShell
+    5.1); se ejecutan con `-ExecutionPolicy Bypass` solo para ese proceso.
+  - `.env` local opcional: `Settings.from_env` carga `DOCUSEARCH_*` sin pisar
+    el entorno ni interpretar `$` (los hashes lo contienen); las pruebas lo
+    ignoran.
+  - CLI: `hash-password --env-file .env [--role user]` (guarda el hash sin
+    imprimirlo), `doctor` (Python, paquetes, modelo spaCy, cuenta, carpeta de
+    datos, OCR, semántica, puerto; código 1 si falta algo esencial), `demo`
+    (carga `demo/documentos`, idempotente).
+  - `demo/`: PDF de 2 páginas, DOCX con tabla, TXT y PDF escaneado, todos
+    sintéticos y generados por `demo/generar_demo.py`; `consultas.json`
+    léxicas (BM25), de paráfrasis (semántica) y de OCR.
+  - CI `windows-install` (`windows-latest`, Python 3.11, Windows PowerShell
+    5.1): instalación limpia con el script, cuenta con contraseña aleatoria,
+    demostración, servidor real y recorrido HTTP.
+  - `docs/instalacion-windows.md`: pasos, modos y degradación, guion de
+    demostración, problemas frecuentes, plataformas verificadas y **no**
+    verificadas.
+- **Fallo encontrado:** una prueba del `.env` dejaba variables en el entorno
+  (`monkeypatch.delenv(raising=False)` no registra variables inexistentes) y
+  rompía las siguientes; ahora restaura el entorno completo.
+- **No verificado:** Windows de escritorio (no se instaló nada en equipos
+  personales), OCR y semántica en Windows.
+- **Pruebas:** `python -m pytest -q` → `521 passed, 8 skipped`
+  (`tests/test_demo_install.py`: 17).

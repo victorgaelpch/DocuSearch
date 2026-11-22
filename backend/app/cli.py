@@ -12,7 +12,9 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli ocr [--collection user]
     python -m backend.app.cli tessdata [--variant fast] [--languages spa eng]
     python -m backend.app.cli miracl
-    python -m backend.app.cli hash-password [--stdin]
+    python -m backend.app.cli hash-password [--stdin] [--env-file .env]
+    python -m backend.app.cli doctor
+    python -m backend.app.cli demo [--queries]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -347,10 +349,109 @@ def _cmd_hash_password(args: argparse.Namespace) -> int:
             print("Las contraseñas no coinciden.", file=sys.stderr)
             return 1
     try:
-        print(hash_password(password))
+        encoded = hash_password(password)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
+    if args.env_file:
+        _write_env_value(Path(args.env_file), f"DOCUSEARCH_{args.role.upper()}_PASSWORD_HASH", encoded)
+        print(f"Hash guardado en {args.env_file} (DOCUSEARCH_{args.role.upper()}_PASSWORD_HASH).")
+    else:
+        print(encoded)
+    return 0
+
+
+def _write_env_value(path: Path, key: str, value: str) -> None:
+    """Escribe o reemplaza ``KEY=valor`` en un .env local sin tocar otras líneas."""
+    lines = path.read_text(encoding="utf-8").splitlines() if path.is_file() else []
+    lines = [line for line in lines if not line.strip().startswith(f"{key}=")]
+    lines.append(f"{key}={value}")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _cmd_doctor(args: argparse.Namespace) -> int:
+    """Diagnóstico de la instalación local (DOC-34). Código 1 si falta algo esencial."""
+    import importlib.util
+    import platform
+    import shutil
+    import socket
+
+    from backend.app.config import load_env_file
+
+    checks: list[tuple[str, bool, str, bool]] = []  # nombre, ok, detalle, esencial
+
+    def add(name: str, ok: bool, detail: str, essential: bool = True) -> None:
+        checks.append((name, ok, detail, essential))
+
+    version = sys.version_info
+    add("Python >= 3.10", version >= (3, 10), platform.python_version())
+    add("Entorno virtual", sys.prefix != sys.base_prefix, sys.prefix, essential=False)
+    for module in ("fastapi", "uvicorn", "pymupdf", "docx", "spacy", "sklearn"):
+        add(f"Paquete {module}", importlib.util.find_spec(module) is not None, "instalado" if importlib.util.find_spec(module) else 'falta: python -m pip install -e ".[model]"')
+    model = importlib.util.find_spec("es_core_news_sm") is not None
+    add("Modelo spaCy es_core_news_sm", model, "instalado" if model else 'falta: python -m pip install -e ".[model]"')
+    loaded = load_env_file()
+    settings = Settings.from_env()
+    add("Cuenta de Administrador", bool(settings.admin_password_hash),
+        "configurada" if settings.admin_password_hash else "sin hash: python -m backend.app.cli hash-password --env-file .env")
+    if loaded:
+        add("Archivo .env", True, f"variables cargadas: {', '.join(sorted(loaded))}", essential=False)
+    try:
+        settings.paths.ensure()
+        probe = settings.paths.root / ".escritura"
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink()
+        add("Carpeta de datos escribible", True, str(settings.paths.root))
+    except OSError as exc:
+        add("Carpeta de datos escribible", False, f"{settings.paths.root}: {exc}")
+    from backend.app.documents.ocr import find_tessdata
+
+    tessdata = find_tessdata()
+    spa = bool(tessdata and (tessdata / "spa.traineddata").is_file())
+    add("OCR (Tesseract + español)", spa, f"tessdata en {tessdata}" if spa else
+        ("Tesseract sin idioma español: python -m backend.app.cli tessdata" if shutil.which("tesseract") else "no instalado: PDF escaneados quedarán como pendientes de OCR"), essential=False)
+    semantic = importlib.util.find_spec("sentence_transformers") is not None and importlib.util.find_spec("faiss") is not None
+    add("Búsqueda semántica (extra semantic)", semantic, "instalada" if semantic else 'opcional: python -m pip install -e ".[semantic]" (BM25 funciona sin ella)', essential=False)
+    with socket.socket() as sock:
+        free = sock.connect_ex(("127.0.0.1", args.port)) != 0
+    add(f"Puerto {args.port} libre", free, "libre" if free else "ocupado: ¿ya hay un servidor en marcha? use --port otro", essential=False)
+
+    width = max(len(name) for name, *_ in checks)
+    for name, ok, detail, essential in checks:
+        mark = "OK " if ok else ("ERR" if essential else "-- ")
+        print(f"[{mark}] {name.ljust(width)}  {detail}")
+    missing = [name for name, ok, _, essential in checks if essential and not ok]
+    print("\nListo para iniciar." if not missing else f"\nFalta: {', '.join(missing)}.")
+    return 1 if missing else 0
+
+
+def _cmd_demo(args: argparse.Namespace) -> int:
+    """Carga los documentos sintéticos de demo/documentos en la colección user (DOC-34)."""
+    demo_dir = REPO_ROOT / "demo"
+    queries = json.loads((demo_dir / "consultas.json").read_text(encoding="utf-8"))
+    if args.queries:
+        for group in ("lexicas", "parafrasis", "ocr"):
+            print(f"\n{group}:")
+            for item in queries[group]:
+                print(f"  {item['consulta']!r} -> {item['documento']}")
+        return 0
+    service = DocumentService(Settings.from_env())
+    loaded = 0
+    for path in sorted((demo_dir / "documentos").iterdir()):
+        if path.suffix.lower() not in {".pdf", ".docx", ".txt"}:
+            continue
+        try:
+            result = service.ingest(path.name, path.read_bytes())
+        except DuplicateDocumentError:
+            print(f"  ya cargado: {path.name}")
+            continue
+        loaded += 1
+        status = result.document.extraction_status.value
+        note = " (sin OCR: instale Tesseract con español y ejecute 'cli ocr')" if status == "needs_ocr" else ""
+        print(f"  cargado: {path.name} -> {result.document.doc_id}, {status}, {len(result.chunks)} fragmento(s){note}")
+    print(f"\n{loaded} documento(s) nuevo(s). Pruebe en http://127.0.0.1:8000/#/buscar con:")
+    for item in queries["lexicas"][:3]:
+        print(f"  {item['consulta']}")
     return 0
 
 
@@ -410,7 +511,15 @@ def build_parser() -> argparse.ArgumentParser:
     semantic.set_defaults(func=_cmd_semantic_index)
     hashpw = sub.add_parser("hash-password", help="generar el hash de una contraseña local (DOC-25)")
     hashpw.add_argument("--stdin", action="store_true", help="leer la contraseña de la entrada estándar")
+    hashpw.add_argument("--env-file", default=None, help="guardar el hash en este archivo .env en lugar de imprimirlo")
+    hashpw.add_argument("--role", choices=["admin", "user"], default="admin", help="cuenta a la que pertenece el hash")
     hashpw.set_defaults(func=_cmd_hash_password)
+    doctor = sub.add_parser("doctor", help="diagnosticar la instalación local (Python, paquetes, OCR, semántica, cuenta)")
+    doctor.add_argument("--port", type=int, default=8000)
+    doctor.set_defaults(func=_cmd_doctor)
+    demo = sub.add_parser("demo", help="cargar los documentos sintéticos de demo/documentos")
+    demo.add_argument("--queries", action="store_true", help="mostrar solo las consultas de ejemplo")
+    demo.set_defaults(func=_cmd_demo)
     return parser
 
 

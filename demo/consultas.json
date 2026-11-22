@@ -1,0 +1,19 @@
+{
+  "descripcion": "Consultas de la demostración. 'lexicas' funcionan con BM25 sin extras; 'parafrasis' no comparten palabras con el documento y requieren la búsqueda semántica o híbrida (extra semantic). 'ocr' requiere Tesseract con español.",
+  "lexicas": [
+    {"consulta": "acuíferos subterráneos", "documento": "ciclo-del-agua.pdf"},
+    {"consulta": "hundimiento del terreno por extraer agua", "documento": "ciclo-del-agua.pdf"},
+    {"consulta": "retropropagación descenso de gradiente", "documento": "redes-neuronales.docx"},
+    {"consulta": "tasa de aprendizaje", "documento": "redes-neuronales.docx"},
+    {"consulta": "composta con cáscaras de fruta", "documento": "reciclaje-en-casa.txt"},
+    {"consulta": "pilas centro de acopio", "documento": "reciclaje-en-casa.txt"}
+  ],
+  "parafrasis": [
+    {"consulta": "de dónde sale la lluvia", "documento": "ciclo-del-agua.pdf"},
+    {"consulta": "el modelo se aprende de memoria los ejemplos", "documento": "redes-neuronales.docx"},
+    {"consulta": "qué hago con las baterías usadas", "documento": "reciclaje-en-casa.txt"}
+  ],
+  "ocr": [
+    {"consulta": "biblioteca cerrada por mantenimiento", "documento": "aviso-escaneado.pdf"}
+  ]
+}

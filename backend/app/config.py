@@ -16,7 +16,39 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_DATA_DIR = REPO_ROOT / "data"
+ENV_FILE_ENV = "DOCUSEARCH_ENV_FILE"
+
+
+def load_env_file(path: str | os.PathLike[str] | None = None) -> list[str]:
+    """Carga ``KEY=VALOR`` de un archivo ``.env`` local sin pisar el entorno (DOC-34).
+
+    Sin dependencias ni interpolación: ``$`` se toma literal (los hashes scrypt
+    lo contienen). Solo se cargan variables ``DOCUSEARCH_*``. Por defecto lee
+    ``.env`` en la raíz del proyecto, que ``.gitignore`` excluye. Devuelve los
+    nombres cargados (nunca los valores).
+    """
+    env_path = Path(path or os.environ.get(ENV_FILE_ENV) or REPO_ROOT / ".env")
+    if not env_path.is_file():
+        return []
+    loaded: list[str] = []
+    for raw in env_path.read_text(encoding="utf-8-sig").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        if key.startswith("export "):
+            key = key[7:].strip()
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+            value = value[1:-1]
+        if not key.startswith("DOCUSEARCH_") or key in os.environ or not value:
+            continue
+        os.environ[key] = value
+        loaded.append(key)
+    return loaded
 DATA_DIR_ENV = "DOCUSEARCH_DATA_DIR"
 
 
@@ -117,6 +149,7 @@ class Settings:
 
     @classmethod
     def from_env(cls, data_dir: str | os.PathLike[str] | None = None) -> "Settings":
+        load_env_file()
         upload_mb = _positive_float_env(MAX_UPLOAD_MB_ENV, DEFAULT_MAX_UPLOAD_MB)
         docx_mb = _positive_float_env(
             MAX_DOCX_UNCOMPRESSED_MB_ENV, DEFAULT_MAX_DOCX_UNCOMPRESSED_MB
