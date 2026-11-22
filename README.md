@@ -4,7 +4,7 @@ Buscador de documentos en español, diseñado para evolucionar hacia una platafo
 
 > **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`); corpus experimental de Wikipedia en español con revisiones fijadas ([DOC-05](https://github.com/victorgaelpch/DocuSearch/issues/5), ver `docs/corpus.md`). Motor de búsqueda TF-IDF con caché de tokens ([DOC-08](https://github.com/victorgaelpch/DocuSearch/issues/8), ver `docs/busqueda.md`). BM25 como método por defecto y evaluación frente a TF-IDF con consultas anotadas ([DOC-09](https://github.com/victorgaelpch/DocuSearch/issues/9), ver `docs/evaluacion.md`). Endpoint `GET /search` y comando `reindex` ([DOC-10](https://github.com/victorgaelpch/DocuSearch/issues/10)). Suite de pruebas v0.1 de extremo a extremo y medición de latencia ([DOC-11](https://github.com/victorgaelpch/DocuSearch/issues/11), ver `docs/pruebas.md`). v0.2 en curso: servicio de embeddings multilingüe en CPU ([DOC-12](https://github.com/victorgaelpch/DocuSearch/issues/23), ver `docs/embeddings.md`). Índice FAISS persistente e incremental por colección ([DOC-13](https://github.com/victorgaelpch/DocuSearch/issues/24), ver `docs/indice-semantico.md`). Búsqueda semántica en `GET /search?method=semantic` ([DOC-14](https://github.com/victorgaelpch/DocuSearch/issues/25)). Búsqueda híbrida BM25 + semántica con Reciprocal Rank Fusion ([DOC-15](https://github.com/victorgaelpch/DocuSearch/issues/26), ver `docs/busqueda.md`). Evaluación v0.2 con consultas nuevas y prueba de significación ([DOC-16](https://github.com/victorgaelpch/DocuSearch/issues/27), ver `docs/evaluacion.md`): con 648 consultas anotadas por personas (MIRACL español), la híbrida supera a BM25 de forma significativa (nDCG@10 0,752 frente a 0,709) y es el método recomendado con el extra `semantic`; BM25 sigue por defecto porque no requiere dependencias opcionales. Pruebas de extremo a extremo y rendimiento de v0.2 ([DOC-17](https://github.com/victorgaelpch/DocuSearch/issues/28), ver `docs/pruebas.md`). OCR de PDF escaneados con Tesseract ([DOC-23](https://github.com/victorgaelpch/DocuSearch/issues/31), ver `docs/lectores.md`). Importación de Google Docs públicos por enlace ([DOC-22](https://github.com/victorgaelpch/DocuSearch/issues/30), ver `docs/api.md`).
 
-**Entrega v1.0 (en curso):** contratos y trazabilidad en `docs/adr/0001-entrega-web-v1.md` y `docs/trazabilidad.md` ([DOC-24](https://github.com/victorgaelpch/DocuSearch/issues/44)). Aún no implementado: autenticación, interfaz web, edición/eliminación, panel de índices, Google Docs privados (OAuth) y RAG.
+**Entrega v1.0 (en curso):** contratos y trazabilidad en `docs/adr/0001-entrega-web-v1.md` y `docs/trazabilidad.md` ([DOC-24](https://github.com/victorgaelpch/DocuSearch/issues/44)). Autenticación local con roles Administrador/Usuario, sesión por cookie y CSRF ([DOC-25](https://github.com/victorgaelpch/DocuSearch/issues/45), ver `docs/autenticacion.md`). Aún no implementado: interfaz web, edición/eliminación, panel de índices, Google Docs privados (OAuth) y RAG.
 
 ## Requisitos
 
@@ -61,7 +61,7 @@ $env:DOCUSEARCH_DATA_DIR = "D:\docusearch-data"
 $env:DOCUSEARCH_MAX_UPLOAD_MB = "20"   # tamaño máximo de carga
 ```
 
-La API no tiene autenticación todavía: úsala solo en local.
+Los documentos privados y las operaciones de administración requieren sesión (ver `docs/autenticacion.md`): configura `DOCUSEARCH_ADMIN_PASSWORD_HASH` con el hash que genera `python -m backend.app.cli hash-password`. No hay contraseña por defecto. Úsalo solo en `127.0.0.1`.
 
 ## Pruebas
 
@@ -83,7 +83,8 @@ Detalle de la estrategia, resultados y fallos encontrados en `docs/pruebas.md`.
 | `backend/app/nlp/` | Limpieza, pipelines léxico y semántico (DOC-06); fragmentación (DOC-07); embeddings (DOC-12) |
 | `backend/app/search/` | Corpus léxico, TF-IDF, BM25, ranking, motor y evaluación (DOC-08/09); índice FAISS (DOC-13) |
 | `evaluation/` | Consultas anotadas y resultados de evaluación versionados |
-| `backend/app/api/` | Endpoints de documentos (DOC-04) y búsqueda (DOC-10) |
+| `backend/app/api/` | Endpoints de documentos (DOC-04), búsqueda (DOC-10) y sesión (DOC-25) |
+| `backend/app/auth/` | Contraseñas scrypt, sesiones, roles y CSRF (DOC-25) |
 | `backend/app/corpus/` | Corpus experimental de Wikipedia (DOC-05) |
 | `corpus/` | Configuración y manifiesto versionados del corpus |
 | `frontend/` | Interfaz web en una etapa posterior |

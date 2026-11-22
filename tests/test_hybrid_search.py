@@ -49,6 +49,7 @@ faiss = pytest.importorskip("faiss")
 from backend.app.config import Settings  # noqa: E402
 from backend.app.main import create_app  # noqa: E402
 from backend.app.nlp.embeddings import EmbeddingUnavailableError, HashingEncoder  # noqa: E402
+from tests.auth_helpers import admin_client
 
 DOCS = {
     "volcanes.txt": "Los volcanes expulsan lava ceniza y gases durante una erupción violenta.",
@@ -58,7 +59,7 @@ DOCS = {
 
 
 def _client(tmp_path: Path, factory=lambda: HashingEncoder(64)) -> TestClient:
-    client = TestClient(create_app(Settings.from_env(tmp_path / "data"), encoder_factory=factory))
+    client = admin_client(Settings.from_env(tmp_path / "data"), encoder_factory=factory)
     for name, text in DOCS.items():
         assert client.post("/documents", files={"file": (name, text.encode())}).status_code == 201
     return client

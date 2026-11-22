@@ -27,6 +27,7 @@ from backend.app.documents.google_docs import (
     parse_google_doc_url,
 )
 from backend.app.main import create_app
+from tests.auth_helpers import admin_client
 
 FIXTURES = Path(__file__).parent / "fixtures"
 DOC_ID = "1AbCdEfGhIjKlMnOpQrStUvWxYz0123456789abcd"
@@ -168,7 +169,7 @@ def test_fetch_errors(result, code: str, status: int) -> None:
 
 @pytest.fixture()
 def client(tmp_path: Path, lexical_pipeline) -> TestClient:
-    return TestClient(create_app(Settings.from_env(tmp_path / "data")))
+    return admin_client(Settings.from_env(tmp_path / "data"))
 
 
 def _patch_fetch(client: TestClient, monkeypatch, result) -> None:

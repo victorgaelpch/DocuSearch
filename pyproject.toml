@@ -52,6 +52,7 @@ include = ["backend", "backend.*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-ra"
 markers = [
   "semantic_model: usa el modelo de embeddings real (requiere el extra semantic y DOCUSEARCH_TEST_SEMANTIC_MODEL=1)",

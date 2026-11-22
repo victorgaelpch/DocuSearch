@@ -24,6 +24,7 @@ from backend.app.main import create_app  # noqa: E402
 from backend.app.nlp import embeddings  # noqa: E402
 from backend.app.nlp.embeddings import EmbeddingUnavailableError, HashingEncoder  # noqa: E402
 from backend.app.search.evaluation import benchmark_latency  # noqa: E402
+from tests.auth_helpers import admin_client
 
 FILLER = "La biblioteca municipal organiza talleres de lectura para estudiantes y vecinos".split()
 
@@ -62,7 +63,7 @@ def settings(tmp_path: Path) -> Settings:
 
 @pytest.mark.parametrize("method", ["semantic", "hybrid"])
 def test_full_flow_page_provenance(settings: Settings, method: str, lexical_pipeline) -> None:
-    client = TestClient(create_app(settings, encoder_factory=lambda: HashingEncoder(64)))
+    client = admin_client(settings, encoder_factory=lambda: HashingEncoder(64))
     pages = [_filler(180, 1), _filler(180, 2), _filler(90, 3) + " xilófono marimba percusión " + _filler(90, 4)]
     doc_id = client.post("/documents", files={"file": ("informe.pdf", _pdf(pages))}).json()["doc_id"]
     client.post("/documents", files={"file": ("otro.txt", "El café se cultiva en montañas tropicales.".encode())})
@@ -77,14 +78,14 @@ def test_full_flow_page_provenance(settings: Settings, method: str, lexical_pipe
 
 def test_restart_reuses_faiss_index_without_reencoding(settings: Settings, lexical_pipeline) -> None:
     first_encoder = CountingEncoder()
-    first = TestClient(create_app(settings, encoder_factory=lambda: first_encoder))
+    first = admin_client(settings, encoder_factory=lambda: first_encoder)
     for i in range(5):
         first.post("/documents", files={"file": (f"d{i}.txt", (_filler(300, i) + f" clave{i}").encode())})
     before = first.get("/search", params={"q": "clave3", "method": "hybrid"}).json()
     assert first_encoder.calls > 0
 
     second_encoder = CountingEncoder()
-    restarted = TestClient(create_app(settings, encoder_factory=lambda: second_encoder))
+    restarted = admin_client(settings, encoder_factory=lambda: second_encoder)
     after = restarted.get("/search", params={"q": "clave3", "method": "hybrid"}).json()
     assert second_encoder.calls == 1  # solo la consulta: los fragmentos se leen del disco
     assert after["index_version"] == before["index_version"]
@@ -95,7 +96,7 @@ def test_service_without_semantic_extra_keeps_v01_flow(settings: Settings, lexic
     def missing():
         raise EmbeddingUnavailableError("Falta el extra 'semantic'")
 
-    client = TestClient(create_app(settings, encoder_factory=missing))
+    client = admin_client(settings, encoder_factory=missing)
     upload = client.post("/documents", files={"file": ("nota.txt", "Los volcanes expulsan lava.".encode())})
     assert upload.status_code == 201
     assert client.get("/search", params={"q": "volcanes"}).json()["total"] == 1
@@ -108,7 +109,7 @@ def test_service_without_semantic_extra_keeps_v01_flow(settings: Settings, lexic
 
 def test_latency_all_methods_under_two_seconds(settings: Settings, lexical_pipeline) -> None:
     """RNF de tiempo de respuesta con ~150 fragmentos sintéticos (no sustituye a la medición real)."""
-    client = TestClient(create_app(settings, encoder_factory=lambda: HashingEncoder(64)))
+    client = admin_client(settings, encoder_factory=lambda: HashingEncoder(64))
     for i in range(30):
         client.post("/documents", files={"file": (f"doc_{i}.txt", (_filler(900, 100 + i) + f" termino{i}").encode())})
     client.get("/search", params={"q": "biblioteca"})

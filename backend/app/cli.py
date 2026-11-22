@@ -12,6 +12,7 @@ Uso (desde la raíz del repositorio)::
     python -m backend.app.cli ocr [--collection user]
     python -m backend.app.cli tessdata [--variant fast] [--languages spa eng]
     python -m backend.app.cli miracl
+    python -m backend.app.cli hash-password [--stdin]
 
 Los comandos usan la misma configuración que la API (variables
 ``DOCUSEARCH_*``) y operan solo sobre el directorio de datos local.
@@ -329,6 +330,30 @@ def _cmd_miracl(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_hash_password(args: argparse.Namespace) -> int:
+    """Genera el hash scrypt para DOCUSEARCH_ADMIN/USER_PASSWORD_HASH (DOC-25).
+
+    La contraseña se pide sin eco (o se lee de stdin) y nunca se imprime.
+    """
+    import getpass
+
+    from backend.app.auth.passwords import hash_password
+
+    if args.stdin:
+        password = sys.stdin.readline().rstrip("\r\n")
+    else:
+        password = getpass.getpass("Contraseña (mínimo 12 caracteres): ")
+        if getpass.getpass("Repita la contraseña: ") != password:
+            print("Las contraseñas no coinciden.", file=sys.stderr)
+            return 1
+    try:
+        print(hash_password(password))
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m backend.app.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -383,6 +408,9 @@ def build_parser() -> argparse.ArgumentParser:
     semantic.add_argument("--collection", action="append", help="colección (repetible; por defecto, todas)")
     semantic.add_argument("--rebuild", action="store_true", help="reconstruir desde cero")
     semantic.set_defaults(func=_cmd_semantic_index)
+    hashpw = sub.add_parser("hash-password", help="generar el hash de una contraseña local (DOC-25)")
+    hashpw.add_argument("--stdin", action="store_true", help="leer la contraseña de la entrada estándar")
+    hashpw.set_defaults(func=_cmd_hash_password)
     return parser
 
 

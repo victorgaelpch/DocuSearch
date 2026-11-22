@@ -19,6 +19,8 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
+from backend.app.api.errors import ErrorBody, ErrorResponse, error_response  # noqa: F401 (reexport)
+from backend.app.auth.dependencies import require_admin_mutation, require_user
 from backend.app.documents.models import DOC_ID_PATTERN, Document, ExtractionStatus
 from backend.app.documents.repository import DocumentNotFoundError, DuplicateDocumentError
 from backend.app.documents.service import DocumentService
@@ -26,17 +28,11 @@ from backend.app.documents.validation import UploadValidationError
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
+# DOC-25: lectura para Usuario/Administrador; mutaciones solo Administrador + CSRF
+_READ = [Depends(require_user)]
+_WRITE = [Depends(require_admin_mutation)]
+
 _READ_CHUNK = 1024 * 1024
-
-
-class ErrorBody(BaseModel):
-    code: str
-    message: str
-    doc_id: Optional[str] = None
-
-
-class ErrorResponse(BaseModel):
-    error: ErrorBody
 
 
 class DocumentOut(BaseModel):
@@ -109,9 +105,7 @@ class DocumentListOut(BaseModel):
     offset: int
 
 
-def _error(status_code: int, code: str, message: str, doc_id: str | None = None) -> JSONResponse:
-    body = ErrorResponse(error=ErrorBody(code=code, message=message, doc_id=doc_id))
-    return JSONResponse(status_code=status_code, content=body.model_dump(exclude_none=True))
+_error = error_response
 
 
 def get_document_service(request: Request) -> DocumentService:
@@ -142,6 +136,7 @@ DocIdPath = Annotated[
     response_model=UploadOut,
     responses=_ERRORS,
     summary="Cargar un documento PDF, DOCX o TXT",
+    dependencies=_WRITE,
 )
 async def upload_document(
     request: Request,
@@ -196,6 +191,7 @@ class GoogleDocImportIn(BaseModel):
         504: {"model": ErrorResponse, "description": "Google Docs no respondió a tiempo"},
     },
     summary="Importar un Google Doc público por enlace (DOC-22)",
+    dependencies=_WRITE,
 )
 async def import_google_doc(
     body: GoogleDocImportIn,
@@ -217,7 +213,7 @@ async def import_google_doc(
     )
 
 
-@router.get("", response_model=DocumentListOut, summary="Listar documentos cargados")
+@router.get("", response_model=DocumentListOut, summary="Listar documentos cargados", dependencies=_READ)
 def list_documents(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
@@ -234,6 +230,7 @@ def list_documents(
     response_model=DocumentOut,
     responses={404: {"model": ErrorResponse}},
     summary="Consultar metadatos de un documento",
+    dependencies=_READ,
 )
 def get_document(
     doc_id: DocIdPath,
@@ -250,6 +247,7 @@ def get_document(
     response_class=FileResponse,
     responses={404: {"model": ErrorResponse}},
     summary="Descargar el archivo original",
+    dependencies=_READ,
 )
 def download_document(
     doc_id: DocIdPath,
@@ -276,6 +274,7 @@ def download_document(
     response_model=ChunkListOut,
     responses={404: {"model": ErrorResponse}},
     summary="Listar los fragmentos de un documento",
+    dependencies=_READ,
 )
 def list_chunks(
     doc_id: DocIdPath,

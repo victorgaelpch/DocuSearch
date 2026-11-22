@@ -10,8 +10,7 @@
 Estados: **Cumple** (probado y reproducible), **Parcial** (existe pero falta
 una parte), **Pendiente** (no implementado), **Fuera de alcance**.
 
-Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-24
-(commit de partida `840eaaa`).
+Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-25.
 
 ## Requisitos funcionales
 
@@ -22,7 +21,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-24
 | RF03 | Recuperación por similitud: FAISS con producto interno sobre vectores normalizados, BM25/TF-IDF léxicos e híbrida | Cumple (API) | `IndexFlatIP` (`docs/indice-semantico.md`), `tests/test_semantic_index.py`, `tests/test_hybrid_search.py` | Selector de método en la web (DOC-29) |
 | RF04 | Top-k configurable, 10 por defecto | Cumple (API) | `DEFAULT_TOP_K = 10` en `search/ranking.py`; `k` 1–100 en `/search` | Control en la web (DOC-29) |
 | RF05 | Cada resultado muestra título, fragmento, puntuación y origen (documento/página) | Parcial | `SearchHit` con `title`, `snippet`, `score`, `doc_id`, `chunk_id`, `page` | Mostrarlo y enlazar al visor (DOC-28/29) |
-| RF06 | Vista completa del documento y gestión del documento por el usuario | Parcial | Metadatos, fragmentos y descarga por API (DOC-04/07) | Autenticación (DOC-25), visor web (DOC-28), edición/eliminación (DOC-30) |
+| RF06 | Vista completa del documento y gestión del documento por el usuario | Parcial | Metadatos, fragmentos y descarga por API (DOC-04/07), protegidos por sesión y rol (DOC-25, `tests/test_auth.py`) | Visor web (DOC-28), edición/eliminación (DOC-30) |
 | RF07 | Carga e indexación de documentos (PDF, DOCX, TXT, OCR, Google Docs públicos) | Parcial | `POST /documents`, `POST /documents/import`, CLI `reindex`/`semantic-index`/`ocr` | Carga desde la web (DOC-27), panel de reindexación (DOC-31), Google Docs privados (DOC-37, OAuth) |
 | RF08 | Comparación de la búsqueda semántica/híbrida con la línea base BM25 | Cumple (evaluación) | `docs/evaluacion.md`, `evaluation/results/miracl_es_dev.json` (648 consultas MIRACL-es dev, subconjunto de pasajes juzgados) | Comparación desde la web (DOC-29, DOC-36) |
 
@@ -35,7 +34,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-24
 | RNF03 | Arquitectura modular y mantenible; índices reconstruibles | Cumple | Capas `api/ → documents/service → repository/storage`, `search/` independiente; índices regenerables desde originales | Consistencia al borrar (DOC-30) |
 | RNF04 | Usabilidad: interfaz en español, accesible y clara | Pendiente | — | DOC-26 a DOC-29, DOC-33 |
 | RNF05 | Ejecución en CPU, Python ≥ 3.10, sin GPU (Windows) | Cumple (backend) | CI 3.10–3.12; extra `semantic` con PyTorch CPU; README | Guía y scripts Windows (DOC-34) |
-| RNF06 | Seguridad y privacidad de los documentos | Pendiente | Validación de cargas, path traversal y SSRF en importación (DOC-04/22) | Autenticación (DOC-25), endurecimiento (DOC-32) |
+| RNF06 | Seguridad y privacidad de los documentos | Parcial | Validación de cargas, path traversal y SSRF en importación (DOC-04/22); sesión `HttpOnly`, CSRF, roles y límite de intentos (DOC-25) | Endurecimiento, cabeceras y pruebas adversariales (DOC-32) |
 | RNF07 | Reproducibilidad: pruebas automatizadas, CI y resultados versionados | Cumple (backend) | CI GitHub Actions, `evaluation/results/`, revisiones de corpus fijadas | E2E web bloqueante (DOC-33), instalación limpia (DOC-34) |
 
 ## Limitaciones declaradas
@@ -44,8 +43,8 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-24
   midieron sobre las 648 consultas de MIRACL-es *dev* y **solo el subconjunto
   de pasajes juzgados** (6410), no sobre el corpus MIRACL completo. No son
   cifras oficiales del benchmark.
-- **Sin autenticación** en `840eaaa`: la API no debe exponerse fuera de
-  `127.0.0.1` hasta DOC-25/DOC-32.
+- **Modo local monousuario** (DOC-25): no es multiusuario y no debe
+  exponerse fuera de `127.0.0.1` sin HTTPS y el endurecimiento de DOC-32.
 - **Google Docs privados** requieren OAuth con un proyecto del propietario
   (DOC-37); hoy solo se importan documentos públicos.
 - **RAG** no existe (DOC-38/39, P1). No hay evaluación RAG.

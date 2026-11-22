@@ -17,6 +17,8 @@ from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel
 
 from backend.app.api.documents import ErrorResponse, _error, get_document_service
+from backend.app.auth.dependencies import optional_session
+from backend.app.auth.sessions import Session
 from backend.app.documents.models import DEFAULT_COLLECTION, WIKIPEDIA_COLLECTION
 from backend.app.documents.service import DocumentService
 from backend.app.nlp.embeddings import EmbeddingUnavailableError
@@ -86,6 +88,7 @@ def get_search_engine(
     "/search",
     response_model=SearchOut,
     responses={
+        401: {"model": ErrorResponse, "description": "La colección `user` requiere sesión"},
         422: {"model": ErrorResponse, "description": "Consulta vacía o parámetros inválidos"},
         503: {"model": ErrorResponse, "description": "Búsqueda semántica no disponible (falta el extra `semantic` o el modelo)"},
     },
@@ -109,7 +112,10 @@ def search(
         Collection, Query(description="`user` (documentos cargados) o `wikipedia_es` (corpus)")
     ] = Collection.user,
     engine: SearchEngine = Depends(get_search_engine),
+    session: Optional[Session] = Depends(optional_session),
 ):
+    if collection is Collection.user and session is None:
+        return _error(401, "not_authenticated", "inicie sesión para buscar en sus documentos")
     if not q.strip():
         return _error(422, "empty_query", "la consulta no puede estar vacía")
     if "�" in q:
@@ -141,10 +147,14 @@ def search(
 @router.get(
     "/search/index",
     summary="Versión y parámetros de los índices de una colección",
+    responses={401: {"model": ErrorResponse}},
 )
 def index_info(
     collection: Annotated[Collection, Query()] = Collection.user,
     engine: SearchEngine = Depends(get_search_engine),
-) -> dict[str, Any]:
+    session: Optional[Session] = Depends(optional_session),
+):
+    if collection is Collection.user and session is None:
+        return _error(401, "not_authenticated", "inicie sesión para ver los índices de sus documentos")
     return engine.describe(collection.value)
 

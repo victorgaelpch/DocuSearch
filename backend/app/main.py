@@ -6,7 +6,9 @@ from collections.abc import Callable
 
 from fastapi import FastAPI
 
+from backend.app.api.auth import router as auth_router
 from backend.app.api.documents import router as documents_router
+from backend.app.api.errors import ApiError, api_error_handler
 from backend.app.api.search import router as search_router
 from backend.app.config import Settings
 
@@ -29,6 +31,8 @@ def create_app(settings: Settings | None = None, *, encoder_factory: Callable | 
         """Basic health check without external services or GPU."""
         return {"status": "ok"}
 
+    application.add_exception_handler(ApiError, api_error_handler)
+    application.include_router(auth_router)
     application.include_router(documents_router)
     application.include_router(search_router)
     return application

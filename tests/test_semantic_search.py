@@ -21,6 +21,7 @@ from backend.app.main import create_app
 from backend.app.nlp import embeddings
 from backend.app.nlp.embeddings import EmbeddingUnavailableError, HashingEncoder
 from backend.app.search import semantic_index
+from tests.auth_helpers import admin_client
 
 FIXTURES = Path(__file__).parent / "fixtures"
 DOCS = {
@@ -35,7 +36,7 @@ def settings(tmp_path: Path) -> Settings:
 
 
 def _client(settings: Settings, factory=lambda: HashingEncoder(64)) -> TestClient:
-    client = TestClient(create_app(settings, encoder_factory=factory))
+    client = admin_client(settings, encoder_factory=factory)
     for name, text in DOCS.items():
         assert client.post("/documents", files={"file": (name, text.encode())}).status_code == 201
     pdf = (FIXTURES / "muestra.pdf").read_bytes()
@@ -151,7 +152,7 @@ def test_reindex_cli_with_semantic(settings: Settings, monkeypatch, capsys, lexi
     reason="requiere el extra semantic y DOCUSEARCH_TEST_SEMANTIC_MODEL=1",
 )
 def test_real_model_finds_paraphrase_without_shared_words(settings: Settings, lexical_pipeline) -> None:
-    client = TestClient(create_app(settings))
+    client = admin_client(settings)
     texts = {
         "dengue.txt": "El dengue es una enfermedad viral transmitida por la picadura de mosquitos Aedes.",
         "fotosintesis.txt": DOCS["fotosintesis.txt"],

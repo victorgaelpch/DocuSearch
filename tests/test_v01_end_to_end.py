@@ -23,6 +23,7 @@ from backend.app.config import Settings
 from backend.app.main import create_app
 from backend.app.search.evaluation import benchmark_latency
 from backend.app.search.engine import SearchEngine
+from tests.auth_helpers import admin_client
 
 FIXTURES = Path(__file__).parent / "fixtures"
 FILLER = (
@@ -64,7 +65,7 @@ def settings(tmp_path: Path) -> Settings:
 
 @pytest.fixture()
 def client(settings: Settings, lexical_pipeline) -> TestClient:
-    return TestClient(create_app(settings))
+    return admin_client(settings)
 
 
 def _upload(client: TestClient, name: str, data: bytes):
@@ -161,11 +162,11 @@ def test_no_invalid_file_breaks_the_service(client: TestClient) -> None:
 
 
 def test_metadata_and_index_survive_restart(settings: Settings, lexical_pipeline) -> None:
-    first = TestClient(create_app(settings))
+    first = admin_client(settings)
     doc_id = _upload(first, "muestra.docx", (FIXTURES / "muestra.docx").read_bytes()).json()["doc_id"]
     before = first.get("/search", params={"q": "lematización"}).json()
 
-    restarted = TestClient(create_app(settings))
+    restarted = admin_client(settings)
     detail = restarted.get(f"/documents/{doc_id}").json()
     assert detail["extraction_status"] == "extracted" and detail["metadata"]["chunking"]["chunk_size"] == 200
     after = restarted.get("/search", params={"q": "lematización"}).json()

@@ -11,6 +11,7 @@ from backend.app.cli import main as cli_main
 from backend.app.config import Settings
 from backend.app.documents.models import WIKIPEDIA_COLLECTION
 from backend.app.main import create_app
+from tests.auth_helpers import admin_client
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -22,7 +23,7 @@ def settings(tmp_path: Path) -> Settings:
 
 @pytest.fixture()
 def client(settings: Settings, lexical_pipeline) -> TestClient:
-    client = TestClient(create_app(settings))
+    client = admin_client(settings)
     for name in ("muestra.pdf", "muestra.docx", "muestra.txt"):
         response = client.post("/documents", files={"file": (name, (FIXTURES / name).read_bytes())})
         assert response.status_code == 201
@@ -111,7 +112,7 @@ def test_queries_without_results(client: TestClient, query: str) -> None:
 
 
 def test_search_on_empty_collection(settings: Settings, lexical_pipeline) -> None:
-    client = TestClient(create_app(settings))
+    client = admin_client(settings)
     body = client.get("/search", params={"q": "gato"}).json()
     assert body["total"] == 0
     assert client.get("/search", params={"q": "gato", "collection": WIKIPEDIA_COLLECTION}).json()["total"] == 0
