@@ -298,6 +298,13 @@ class SemanticIndexManager:
                 self._signatures[collection] = signature
             return index
 
+    def forget(self, collection: str) -> None:
+        """Olvida el índice en memoria; el próximo uso lo carga del disco."""
+        with self._lock:
+            self._indexes.pop(collection, None)
+            self._signatures.pop(collection, None)
+            self.last_reports.pop(collection, None)
+
     def rebuild(self, collection: str) -> SyncReport:
         with self._lock:
             signature = self.repository.collection_signature(collection)

@@ -294,3 +294,10 @@ code.wrap { word-break: break-all; }
 .score-help { margin-top: 1.5rem; max-width: var(--measure); color: var(--muted); }
 .score-help summary { cursor: pointer; color: var(--ink); font-weight: 600; }
 .content .results h2 { margin-top: 0; }
+
+/* Administración documental (DOC-30) */
+.edit-form { max-width: 40rem; margin-bottom: 1.5rem; }
+textarea { font: inherit; color: inherit; background: var(--sheet); border: 1px solid #8a97a8; border-radius: var(--radius-s); padding: .5rem .65rem; width: 100%; resize: vertical; }
+.confirm-dialog { border: 1px solid var(--rule); border-top: 4px solid var(--danger); border-radius: var(--radius-m); padding: 1.5rem; max-width: 32rem; color: var(--ink); }
+.confirm-dialog::backdrop { background: rgb(28 36 48 / 55%); }
+.confirm-dialog h2 { margin-top: 0; font-size: var(--step-1); }

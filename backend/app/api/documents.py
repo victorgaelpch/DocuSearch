@@ -18,7 +18,7 @@ from typing import Annotated, Any, Optional
 from fastapi import APIRouter, Depends, File, Path, Query, Request, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.app.api.errors import ErrorBody, ErrorResponse, error_response  # noqa: F401 (reexport)
 from backend.app.auth.dependencies import require_admin_mutation, require_user
@@ -27,6 +27,7 @@ from backend.app.documents.readers import DOCX_MIME, PDF_MIME, TXT_MIME
 from backend.app.documents.repository import DocumentNotFoundError, DuplicateDocumentError
 from backend.app.documents.service import DocumentService
 from backend.app.documents.validation import UploadValidationError
+from backend.app.search.maintenance import forget_chunks
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -392,4 +393,78 @@ def document_content(
             "X-Frame-Options": "SAMEORIGIN",
             "Content-Security-Policy": "frame-ancestors 'self'",
         },
+    )
+
+
+class DocumentUpdateIn(BaseModel):
+    """Campos editables (DOC-30). El original y su SHA-256 no cambian."""
+
+    model_config = {"extra": "forbid"}
+
+    title: Optional[str] = Field(default=None, max_length=500)
+    description: Optional[str] = Field(default=None, max_length=2000)
+    tags: Optional[list[str]] = Field(default=None, max_length=20)
+
+
+@router.patch(
+    "/{doc_id}",
+    response_model=DocumentOut,
+    responses={404: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
+    summary="Editar título, descripción y etiquetas (Administrador, DOC-30)",
+    dependencies=_WRITE,
+)
+def update_document(
+    doc_id: DocIdPath,
+    body: DocumentUpdateIn,
+    service: DocumentService = Depends(get_document_service),
+):
+    try:
+        document = service.update_document(doc_id, title=body.title, description=body.description, tags=body.tags)
+    except DocumentNotFoundError:
+        return _error(404, "not_found", "documento no encontrado")
+    except UploadValidationError as exc:
+        return _error(422, exc.code, exc.message)
+    return DocumentOut.from_document(document)
+
+
+class DeleteOut(BaseModel):
+    doc_id: str
+    title: str
+    deleted: bool
+    chunks_removed: int
+    original_removed: bool
+    indexes: dict[str, Any]
+
+
+@router.delete(
+    "/{doc_id}",
+    response_model=DeleteOut,
+    responses={400: {"model": ErrorResponse}, 404: {"model": ErrorResponse}},
+    summary="Eliminar un documento con confirmación explícita (Administrador, DOC-30)",
+    dependencies=_WRITE,
+)
+def delete_document(
+    doc_id: DocIdPath,
+    request: Request,
+    confirm: str = Query(..., description="Debe repetir el `doc_id`: evita borrados accidentales"),
+    service: DocumentService = Depends(get_document_service),
+):
+    """Borra original, metadatos, fragmentos y sus datos derivados en los índices."""
+    if confirm != doc_id:
+        return _error(400, "confirmation_required", "confirme la eliminación repitiendo el identificador del documento", doc_id)
+    try:
+        result = service.delete_document(doc_id)
+    except DocumentNotFoundError:
+        return _error(404, "not_found", "documento no encontrado")
+    engine = getattr(request.app.state, "search_engine", None)
+    indexes = forget_chunks(
+        service.settings.paths.indexes_dir, result.document.collection, result.chunk_ids, engine
+    )
+    return DeleteOut(
+        doc_id=doc_id,
+        title=result.document.title,
+        deleted=True,
+        chunks_removed=len(result.chunk_ids),
+        original_removed=result.original_removed,
+        indexes=indexes,
     )

@@ -305,6 +305,17 @@ class DocumentRepository:
             )
         return updated
 
+    def update_title(self, doc_id: str, title: str) -> Document:
+        """Cambia solo el título (DOC-30); el original y su hash no se tocan."""
+        document = self.get_document(doc_id)
+        now = utc_now()
+        Document.model_validate({**document.model_dump(), "title": title, "updated_at": now})
+        with self._connect() as connection:
+            connection.execute(
+                "UPDATE documents SET title = ?, updated_at = ? WHERE doc_id = ?", (title, _isoformat(now), doc_id)
+            )
+        return self.get_document(doc_id)
+
     def update_extra(self, doc_id: str, updates: dict[str, Any]) -> Document:
         """Combina ``updates`` con los metadatos adicionales del documento."""
         document = self.get_document(doc_id)
