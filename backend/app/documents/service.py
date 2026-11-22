@@ -235,6 +235,27 @@ class DocumentService:
             recognized.append(document.doc_id)
         return OcrReport(pending=len(pending), recognized=recognized, still_pending=still, failed=failed)
 
+    def document_text(self, doc_id: str) -> tuple[str, list[Chunk]]:
+        """Texto extraído reconstruido a partir de los fragmentos (DOC-28).
+
+        Los fragmentos son subcadenas exactas del texto extraído
+        (``text[char_start:char_end]``) y se solapan, así que su unión
+        reproduce el texto sin volver a leer el original (ni repetir el OCR).
+        Si hubiera huecos (traslape 0), se rellenan con espacios del mismo
+        largo para que los offsets sigan siendo válidos.
+        """
+        chunks = self.get_chunks(doc_id)
+        parts: list[str] = []
+        cursor = 0
+        for chunk in chunks:
+            if chunk.char_start > cursor:
+                parts.append(" " * (chunk.char_start - cursor))
+                cursor = chunk.char_start
+            if chunk.char_end > cursor:
+                parts.append(chunk.text[cursor - chunk.char_start :])
+                cursor = chunk.char_end
+        return "".join(parts), chunks
+
     def get_chunks(self, doc_id: str) -> list[Chunk]:
         self.repository.get_document(doc_id)
         return self.repository.get_chunks(doc_id)

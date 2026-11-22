@@ -537,3 +537,25 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
     `chunk_size`), "(Word (DOCX))" y "1 fragmentos".
 - **Pruebas:** `python -m pytest -q` → `433 passed, 8 skipped`; E2E
   (`DOCUSEARCH_TEST_BROWSER=1`, Chrome) → `14 passed`.
+
+## DOC-28 — Visor documental y navegación a fragmento y página de origen
+
+- **Issue:** #48 · **Rama:** `feature/DOC-28-visor-documental`
+- **Cambios:**
+  - `GET /documents/{id}/text`: texto extraído completo y offsets/páginas de
+    cada fragmento. Se reconstruye uniendo los fragmentos (son subcadenas
+    exactas y se solapan), sin volver a leer el original ni repetir el OCR;
+    con traslape 0 los huecos se rellenan con espacios del mismo largo.
+  - `GET /documents/{id}/content`: solo PDF, en línea, con
+    `X-Frame-Options: SAMEORIGIN`, `frame-ancestors 'self'` y `nosniff`.
+    DOCX y TXT no se renderizan: 415 `preview_unavailable`.
+  - Vista `#/documentos/{id}?chunk={chunk_id}`: metadatos, aviso para PDF
+    escaneado sin OCR, texto con el fragmento resaltado y desplazado a la
+    vista, navegación anterior/siguiente (actualiza la URL sin recargar),
+    vista previa del PDF en la página del fragmento (`#page=N`), descarga.
+    El texto se inserta como nodos de texto: una carga útil
+    `<img onerror>`/`<script>` se muestra literal y no se ejecuta.
+  - Enlaces "Abrir" desde el listado, el detalle y el resultado de carga.
+- **Pruebas:** `python -m pytest -q` → `442 passed, 8 skipped`; E2E → `19 passed`. Nuevas: `tests/test_document_viewer_api.py` (8); E2E del visor (5):
+  fragmento pedido resaltado y navegación, XSS, PDF en la página, DOCX sin
+  vista PDF, PDF escaneado sin OCR, documento inexistente.

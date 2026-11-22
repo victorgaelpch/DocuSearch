@@ -17,6 +17,8 @@ Código: `backend/app/api/documents.py`, `backend/app/documents/service.py`,
 | `GET` | `/search` | Búsqueda BM25, TF-IDF, semántica o híbrida (DOC-10, DOC-14, DOC-15) | 200, 422, 503 |
 | `GET` | `/search/index` | Versión y parámetros de los índices | 200, 422 |
 | `GET` | `/documents/{doc_id}/chunks` | Fragmentos con offsets, páginas y configuración (DOC-07) | 200, 404, 422 |
+| `GET` | `/documents/{doc_id}/text` | Texto extraído completo (texto plano) y posición `char_start`/`char_end`/páginas de cada fragmento, reconstruido de los fragmentos sin volver a leer el original (DOC-28) | 200, 401, 404, 422 |
+| `GET` | `/documents/{doc_id}/content` | Solo PDF: original en línea para la vista previa (`inline`, `X-Frame-Options: SAMEORIGIN`, `nosniff`); DOCX/TXT → 415 `preview_unavailable` (DOC-28) | 200, 401, 404, 415, 422 |
 | `GET` | `/documents/{doc_id}/download` | Original como adjunto (`Content-Disposition: attachment`, `X-Content-Type-Options: nosniff`) | 200, 404, 422 |
 
 Ejemplo con PowerShell:
