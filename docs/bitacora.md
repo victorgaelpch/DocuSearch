@@ -723,7 +723,14 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Fallo encontrado:** una prueba del `.env` dejaba variables en el entorno
   (`monkeypatch.delenv(raising=False)` no registra variables inexistentes) y
   rompía las siguientes; ahora restaura el entorno completo.
+- **Primera ejecución en Windows real (CI):** instalación con el script,
+  `doctor`, cuenta, demostración, arranque del servidor, página web y `app.js`
+  con tipo JavaScript funcionaron; falló el login **de la propia prueba**:
+  en PowerShell 5.1 `Get-Content -Raw` añade propiedades al texto y
+  `ConvertTo-Json` envió un objeto en lugar de la contraseña. Corregido con
+  `ReadAllText`. También se fuerza UTF-8 en la salida de Python (el registro
+  mostraba "espa�ol").
 - **No verificado:** Windows de escritorio (no se instaló nada en equipos
   personales), OCR y semántica en Windows.
 - **Pruebas:** `python -m pytest -q` → `521 passed, 8 skipped`
-  (`tests/test_demo_install.py`: 17).
+  (`tests/test_demo_install.py`: 17); `windows-install` en CI.
