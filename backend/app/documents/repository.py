@@ -262,6 +262,24 @@ class DocumentRepository:
             ).fetchall()
         return [_row_to_document(row) for row in rows], int(total)
 
+    def chunk_id_set(self, collection: str) -> set[str]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT c.chunk_id FROM chunks c JOIN documents d ON d.doc_id = c.doc_id WHERE d.collection = ?",
+                (collection,),
+            ).fetchall()
+        return {row[0] for row in rows}
+
+    def collection_stats(self) -> dict[str, dict[str, int]]:
+        """Documentos, fragmentos y pendientes de OCR por colección (DOC-31)."""
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT d.collection, COUNT(DISTINCT d.doc_id), COUNT(c.chunk_id), "
+                "COUNT(DISTINCT CASE WHEN d.extraction_status = 'needs_ocr' THEN d.doc_id END) "
+                "FROM documents d LEFT JOIN chunks c ON c.doc_id = d.doc_id GROUP BY d.collection"
+            ).fetchall()
+        return {row[0]: {"documents": row[1], "chunks": row[2], "needs_ocr": row[3]} for row in rows}
+
     def count_documents(self, collection: str | None = None) -> int:
         with self._connect() as connection:
             if collection is None:

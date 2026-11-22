@@ -6,5 +6,6 @@ import help from "./help.js";
 import documents from "./documents.js";
 import viewer from "./viewer.js";
 import search from "./search.js";
+import indexes from "./indexes.js";
 
-export default [home, login, help, documents, viewer, search];
+export default [home, login, help, documents, viewer, search, indexes];

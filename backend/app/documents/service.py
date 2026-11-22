@@ -8,6 +8,7 @@ después de guardar el original, se deshace todo para no dejar huérfanos.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -184,7 +185,9 @@ class DocumentService:
             document = document.model_copy(update={"extra": {**document.extra, **metadata}})
         return self._store_new(document, extraction, data)
 
-    def rechunk(self, collection: str | None = None) -> RechunkReport:
+    def rechunk(
+        self, collection: str | None = None, progress: Callable[[int, int], None] | None = None
+    ) -> RechunkReport:
         """Vuelve a extraer y fragmentar desde los originales (reindexación).
 
         Usa la configuración de fragmentación actual. Un documento cuyo
@@ -198,7 +201,9 @@ class DocumentService:
         while batch := self.repository.list_documents(collection, limit=200, offset=offset):
             documents.extend(batch)
             offset += len(batch)
-        for document in documents:
+        for position, document in enumerate(documents):
+            if progress is not None:
+                progress(position, len(documents))
             try:
                 data = self.store.read(document.storage_path)
             except (FileNotFoundError, OSError) as exc:
@@ -213,6 +218,8 @@ class DocumentService:
             self.repository.update_extra(document.doc_id, {"chunking": self.chunking.as_dict()})
             processed += 1
             total_chunks += len(chunks)
+        if progress is not None:
+            progress(len(documents), len(documents))
         return RechunkReport(documents=processed, chunks=total_chunks, failed=failed)
 
     def process_pending_ocr(self, collection: str | None = DEFAULT_COLLECTION) -> OcrReport:

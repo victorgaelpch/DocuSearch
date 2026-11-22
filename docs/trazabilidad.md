@@ -10,7 +10,7 @@
 Estados: **Cumple** (probado y reproducible), **Parcial** (existe pero falta
 una parte), **Pendiente** (no implementado), **Fuera de alcance**.
 
-Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-30.
+Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-31.
 
 ## Requisitos funcionales
 
@@ -22,7 +22,7 @@ Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-30.
 | RF04 | Top-k configurable, 10 por defecto | Cumple | `DEFAULT_TOP_K = 10` en `search/ranking.py`; `k` 1–100 en `/search` y en la web (predeterminado 10, DOC-29) | — |
 | RF05 | Cada resultado muestra título, fragmento, puntuación y origen (documento/página) | Cumple | `SearchHit` con `title`, `snippet`, `score`, `doc_id`, `chunk_id`, `page`; el visor abre `#/documentos/{doc_id}?chunk={chunk_id}` con el fragmento resaltado y la página (DOC-28, `tests/e2e/test_web_viewer.py`) | — |
 | RF06 | Vista completa del documento y gestión del documento por el usuario | Cumple | Metadatos, fragmentos y descarga por API (DOC-04/07), protegidos por sesión y rol (DOC-25, `tests/test_auth.py`); visor web con metadatos, texto completo y PDF (DOC-28); edición y eliminación consistentes (DOC-30, `tests/test_document_admin.py`) | — |
-| RF07 | Carga e indexación de documentos (PDF, DOCX, TXT, OCR, Google Docs públicos) | Parcial | `POST /documents`, `POST /documents/import`, CLI `reindex`/`semantic-index`/`ocr`; carga, importación y listado desde la web con resultado real de extracción (DOC-27, `tests/e2e/test_web_documents.py`) | Panel de reindexación (DOC-31), Google Docs privados (DOC-37, OAuth) |
+| RF07 | Carga e indexación de documentos (PDF, DOCX, TXT, OCR, Google Docs públicos) | Parcial | `POST /documents`, `POST /documents/import`, CLI `reindex`/`semantic-index`/`ocr`; carga, importación y listado desde la web con resultado real de extracción (DOC-27, `tests/e2e/test_web_documents.py`); panel de índices y tareas con estado real (DOC-31, `tests/test_index_jobs.py`) | Google Docs privados (DOC-37, OAuth) |
 | RF08 | Comparación de la búsqueda semántica/híbrida con la línea base BM25 | Cumple (evaluación) | `docs/evaluacion.md`, `evaluation/results/miracl_es_dev.json` (648 consultas MIRACL-es dev, subconjunto de pasajes juzgados) | Comparación lado a lado con BM25 en la web (DOC-29); panel de métricas (DOC-36) |
 
 ## Requisitos no funcionales

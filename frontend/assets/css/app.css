@@ -301,3 +301,16 @@ textarea { font: inherit; color: inherit; background: var(--sheet); border: 1px 
 .confirm-dialog { border: 1px solid var(--rule); border-top: 4px solid var(--danger); border-radius: var(--radius-m); padding: 1.5rem; max-width: 32rem; color: var(--ink); }
 .confirm-dialog::backdrop { background: rgb(28 36 48 / 55%); }
 .confirm-dialog h2 { margin-top: 0; font-size: var(--step-1); }
+
+/* Panel de índices (DOC-31) */
+.collection h3 { margin-top: 0; }
+.job-actions { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: .6rem; }
+.job-actions li { display: grid; gap: .2rem; justify-items: start; }
+.jobs { display: grid; gap: .75rem; max-width: 48rem; }
+.job { background: var(--sheet); border: 1px solid var(--rule); border-left: 4px solid var(--stamp); border-radius: var(--radius-s); padding: .75rem 1rem; }
+.job-succeeded { border-left-color: var(--ok); }
+.job-failed { border-left-color: var(--danger); }
+.job-title { margin: 0 0 .4rem; }
+.job progress { width: 100%; height: .8rem; accent-color: var(--stamp); }
+.job-result, .job-failures { margin: .3rem 0 0; padding-left: 1.2rem; }
+.meta-grid .sub { display: block; font-size: var(--step--1); color: var(--muted); }

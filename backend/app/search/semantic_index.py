@@ -298,6 +298,15 @@ class SemanticIndexManager:
                 self._signatures[collection] = signature
             return index
 
+    def sync(self, collection: str) -> SyncReport:
+        """Sincroniza ahora (incremental), aunque la firma no haya cambiado (DOC-31)."""
+        with self._lock:
+            signature = self.repository.collection_signature(collection)
+            report = self._get(collection).sync(self.repository)
+            self._signatures[collection] = signature
+            self.last_reports[collection] = report
+            return report
+
     def forget(self, collection: str) -> None:
         """Olvida el índice en memoria; el próximo uso lo carga del disco."""
         with self._lock:
