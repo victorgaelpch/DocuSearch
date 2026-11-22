@@ -67,6 +67,70 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+  # Instalación limpia y demostración en Windows (DOC-34): ejecuta los scripts
+  # de PowerShell con Windows PowerShell 5.1, carga la demo, inicia el servidor
+  # en 127.0.0.1 y lo recorre por HTTP (login, carga, búsqueda BM25, web).
+  windows-install:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar con el script (Windows PowerShell 5.1)
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File scripts\windows\instalar.ps1
+      - name: Crear cuenta y cargar la demostración
+        shell: powershell
+        run: |
+          $pw = [guid]::NewGuid().ToString()
+          $pw | .\.venv\Scripts\python.exe -m backend.app.cli hash-password --stdin --env-file .env
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Set-Content -Path "$env:RUNNER_TEMP\pw.txt" -Value $pw -NoNewline
+          # Comprobación aislada: el hash guardado en .env corresponde a la contraseña
+          $check = @"
+          import os, pathlib, sys
+          sys.path.insert(0, '.')
+          from backend.app.config import load_env_file
+          from backend.app.auth.passwords import verify_password
+          load_env_file()
+          pw = pathlib.Path(os.environ['RUNNER_TEMP'], 'pw.txt').read_text(encoding='utf-8-sig')
+          assert verify_password(pw, os.environ['DOCUSEARCH_ADMIN_PASSWORD_HASH']), 'hash in .env does not match the password'
+          print('hash in .env verified')
+          "@
+          Set-Content -Path "$env:RUNNER_TEMP\check.py" -Value $check
+          .\.venv\Scripts\python.exe "$env:RUNNER_TEMP\check.py"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          .\.venv\Scripts\python.exe -m backend.app.cli demo
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          powershell -ExecutionPolicy Bypass -File scripts\windows\verificar.ps1
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Iniciar y recorrer el servidor
+        shell: powershell
+        run: |
+          $job = Start-Job -ScriptBlock { param($r) Set-Location $r; powershell -ExecutionPolicy Bypass -File scripts\windows\iniciar.ps1 -NoAbrir } -ArgumentList (Get-Location).Path
+          $ok = $false
+          for ($i = 0; $i -lt 60; $i++) { try { Invoke-RestMethod http://127.0.0.1:8000/health | Out-Null; $ok = $true; break } catch { Start-Sleep 2 } }
+          if (-not $ok) { Receive-Job $job; throw "el servidor no arrancó" }
+          $web = Invoke-WebRequest http://127.0.0.1:8000/ -UseBasicParsing
+          if ($web.Content -notmatch "DocuSearch") { throw "la página principal no se sirvió" }
+          $js = Invoke-WebRequest http://127.0.0.1:8000/assets/js/app.js -UseBasicParsing
+          if ($js.Headers["Content-Type"] -notmatch "javascript") { throw "app.js sin tipo JavaScript: $($js.Headers['Content-Type'])" }
+          # ReadAllText: en PowerShell 5.1, Get-Content añade propiedades que ConvertTo-Json serializa
+          $pw = [System.IO.File]::ReadAllText("$env:RUNNER_TEMP\pw.txt")
+          $s = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+          $login = Invoke-RestMethod -Method Post http://127.0.0.1:8000/auth/login -WebSession $s -ContentType "application/json" -Body (@{username="admin"; password=$pw} | ConvertTo-Json)
+          $docs = Invoke-RestMethod http://127.0.0.1:8000/documents -WebSession $s
+          if ($docs.total -ne 4) { throw "se esperaban 4 documentos de demostración, hay $($docs.total)" }
+          # "acuíferos subterráneos" ya codificado: el script del paso no depende de su codificación
+          $r = Invoke-RestMethod "http://127.0.0.1:8000/search?q=acu%C3%ADferos%20subterr%C3%A1neos" -WebSession $s
+          if ($r.results[0].original_filename -ne "ciclo-del-agua.pdf") { throw "BM25: resultado inesperado $($r.results[0].original_filename)" }
+          Write-Host "Windows: install, account, demo and BM25 search verified ($($r.took_ms) ms)"
+          Stop-Job $job; Remove-Job $job -Force
+
   # Pruebas con el modelo de embeddings real (DOC-17). Es opcional: no bloquea
   # el PR si falla (p. ej. por un corte de Hugging Face), pero su resultado se
   # ve en los checks. El modelo (~460 MB) se guarda en la caché de Actions.
