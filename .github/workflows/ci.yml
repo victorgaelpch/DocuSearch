@@ -31,15 +31,54 @@ jobs:
       - name: Run tests
         run: python -m pytest -q
 
+  # Pruebas de la web en un navegador real (DOC-33). Check obligatorio con
+  # nombre estable `web-e2e`: login, carga PDF/DOCX/TXT, visor, búsqueda,
+  # edición, eliminación, panel de índices, teclado, CSP y XSS. Usa un
+  # codificador de prueba para la híbrida (el modelo real va en semantic-model).
+  web-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DOCUSEARCH_TEST_BROWSER: "1"
+      DOCUSEARCH_E2E_ARTIFACTS: e2e-artifacts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Tesseract OCR
+        run: sudo apt-get update -q && sudo apt-get install -y -q tesseract-ocr tesseract-ocr-spa
+      - name: Install project, E2E tools and Chromium
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,model,e2e]"
+          python -m pip install "faiss-cpu>=1.8,<2"
+          python -m playwright install --with-deps chromium
+      - name: Run browser tests
+        run: python -m pytest -q tests/e2e -rs
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-e2e-evidencias
+          path: e2e-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
+
   # Pruebas con el modelo de embeddings real (DOC-17). Es opcional: no bloquea
   # el PR si falla (p. ej. por un corte de Hugging Face), pero su resultado se
   # ve en los checks. El modelo (~460 MB) se guarda en la caché de Actions.
+  # Desde DOC-33 incluye la búsqueda por paráfrasis desde el navegador.
   semantic-model:
     runs-on: ubuntu-latest
     continue-on-error: true
     timeout-minutes: 30
     env:
       DOCUSEARCH_TEST_SEMANTIC_MODEL: "1"
+      DOCUSEARCH_TEST_BROWSER: "1"
+      DOCUSEARCH_E2E_ARTIFACTS: e2e-artifacts
       HF_HOME: ${{ github.workspace }}/.hf-cache
     steps:
       - name: Checkout
@@ -57,6 +96,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
-          python -m pip install -e ".[dev,model,semantic]"
-      - name: Run real-model tests
+          python -m pip install -e ".[dev,model,semantic,e2e]"
+          python -m playwright install --with-deps chromium
+      - name: Run real-model tests (API y navegador)
         run: python -m pytest -q -m semantic_model -rs
