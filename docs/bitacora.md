@@ -936,3 +936,10 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   ejecución real es la del check `docker-local`. `tests/test_docker.py` (5)
   valida la configuración.
 - **Totales:** `python -m pytest -q` → `571 passed, 9 skipped`.
+- **GitGuardian (falso positivo):** el primer push de este PR incluía en
+  `ci.yml` el JSON de inicio de sesión de la prueba Docker
+  (`{"username": "admin", "password": pw}`, con `pw` aleatorio por ejecución)
+  y GitGuardian lo marcó como "Generic Password" (incidente 40855761). La
+  comprobación se trasladó a `scripts/ci/docker_smoke.py`. No hay credencial
+  real que revocar; el propietario debe marcar el incidente como falso
+  positivo.

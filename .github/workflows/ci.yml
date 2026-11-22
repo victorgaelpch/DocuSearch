@@ -165,29 +165,7 @@ jobs:
       - name: Solo 127.0.0.1 y recorrido HTTP
         run: |
           docker compose port docusearch 8000 | grep -q '^127.0.0.1:8000$'
-          python - <<'PY'
-          import json, os, pathlib, urllib.request, http.cookiejar
-          base = "http://127.0.0.1:8000"
-          jar = http.cookiejar.CookieJar()
-          opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-          pw = pathlib.Path(os.environ["RUNNER_TEMP"], "pw.txt").read_text().strip()
-          def call(method, path, data=None, headers=None):
-              req = urllib.request.Request(base + path, data=data, method=method, headers=headers or {})
-              with opener.open(req, timeout=60) as r:
-                  return json.loads(r.read() or b"null")
-          login = call("POST", "/auth/login", json.dumps({"username": "admin", "password": pw}).encode(), {"Content-Type": "application/json"})
-          csrf = login["csrf_token"]
-          boundary = "dsboundary"
-          text = "Los acuiferos subterraneos abastecen de agua potable a las ciudades.".encode()
-          body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"agua.txt\"\r\n"
-                  f"Content-Type: text/plain\r\n\r\n").encode() + text + f"\r\n--{boundary}--\r\n".encode()
-          call("POST", "/documents", body, {"Content-Type": f"multipart/form-data; boundary={boundary}", "X-CSRF-Token": csrf})
-          hits = call("GET", "/search?q=acuiferos")["results"]
-          assert hits and hits[0]["original_filename"] == "agua.txt", hits
-          ready = call("GET", "/health/ready")
-          assert ready["status"] == "ready" and ready["optional"]["ocr"] is True, ready
-          print("Docker: login, carga, búsqueda y preparación verificadas")
-          PY
+          python scripts/ci/docker_smoke.py flow
       - name: Persistencia tras reiniciar y recrear
         run: |
           docker compose restart
@@ -195,17 +173,7 @@ jobs:
           docker compose down
           docker compose up -d
           for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8000/health >/dev/null && break; sleep 2; done
-          python - <<'PY'
-          import json, os, pathlib, urllib.request, http.cookiejar
-          jar = http.cookiejar.CookieJar()
-          opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-          pw = pathlib.Path(os.environ["RUNNER_TEMP"], "pw.txt").read_text().strip()
-          req = urllib.request.Request("http://127.0.0.1:8000/auth/login", data=json.dumps({"username": "admin", "password": pw}).encode(), headers={"Content-Type": "application/json"}, method="POST")
-          opener.open(req, timeout=30)
-          docs = json.loads(opener.open("http://127.0.0.1:8000/documents", timeout=30).read())
-          assert docs["total"] == 1 and docs["items"][0]["original_filename"] == "agua.txt", docs
-          print("Docker: el documento persiste en el volumen tras recrear el contenedor")
-          PY
+          python scripts/ci/docker_smoke.py persist
           docker run --rm --entrypoint sh docusearch-local:1.1 -c 'test ! -e /data/metadata.db' && echo "la imagen no contiene datos"
       - name: Limpiar
         if: always()
