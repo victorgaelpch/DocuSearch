@@ -559,3 +559,31 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
 - **Pruebas:** `python -m pytest -q` → `442 passed, 8 skipped`; E2E → `19 passed`. Nuevas: `tests/test_document_viewer_api.py` (8); E2E del visor (5):
   fragmento pedido resaltado y navegación, XSS, PDF en la página, DOCX sin
   vista PDF, PDF escaneado sin OCR, documento inexistente.
+
+## DOC-29 — Buscador web: BM25, TF-IDF, semántica e híbrida
+
+- **Issue:** #49 · **Rama:** `feature/DOC-29-buscador-web`
+- **Cambios (solo frontend; reutiliza `GET /search` sin modificarlo):**
+  - Vista `#/buscar` con consulta en español, método (`bm25` por defecto,
+    `tfidf`, `semantic`, `hybrid`), `k` (10 por defecto, 1–100) y colección
+    (`Mis documentos` con sesión; `wikipedia_es` siempre). Parámetros en la
+    URL: una búsqueda se puede compartir o repetir con Atrás.
+  - Resultados con posición, título, fragmento, puntuación, archivo,
+    página y tiempo de consulta; el título abre el visor en
+    `#/documentos/{doc_id}?chunk={chunk_id}`.
+  - "Comparar con BM25": dos columnas con el mismo texto de consulta.
+  - "Cómo leer la puntuación": la escala de cada método y la advertencia de
+    que las puntuaciones de métodos distintos no son comparables.
+  - Estados: consulta vacía (validación propia accesible), sin resultados,
+    colección sin documentos indexados (consulta `/search/index`), 503 sin
+    el extra `semantic` (sugiere BM25), sesión requerida.
+  - Las palabras de la consulta se resaltan en el fragmento solo como ayuda
+    visual; el orden es el que devuelve el servidor.
+- **Fallo encontrado por E2E:** la validación nativa del navegador
+  (`required`) ocultaba el mensaje accesible de consulta vacía; el formulario
+  usa `novalidate` y valida en la vista.
+- **Pruebas:** `python -m pytest -q` → `443 passed, 8 skipped`; E2E →
+  `24 passed, 1 skipped` (la búsqueda por paráfrasis con el modelo real en
+  el navegador se omite sin `DOCUSEARCH_TEST_SEMANTIC_MODEL=1`; se activará
+  en CI en DOC-33). La paráfrasis con el modelo real ya se verifica por API
+  en el job `semantic-model`.

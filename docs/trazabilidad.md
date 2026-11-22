@@ -10,20 +10,20 @@
 Estados: **Cumple** (probado y reproducible), **Parcial** (existe pero falta
 una parte), **Pendiente** (no implementado), **Fuera de alcance**.
 
-Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-28.
+Se actualiza en cada Issue de la entrega v1.0. Última revisión: DOC-29.
 
 ## Requisitos funcionales
 
 | ID | Descripción (inferida) | Estado | Evidencia | Falta |
 | --- | --- | --- | --- | --- |
-| RF01 | Consultas en lenguaje natural en español | Parcial | `GET /search` (DOC-10), pipeline léxico spaCy `es_core_news_sm` (DOC-06), `tests/test_search_api.py` | Formulario web (DOC-29) |
+| RF01 | Consultas en lenguaje natural en español | Cumple | `GET /search` (DOC-10), pipeline léxico spaCy `es_core_news_sm` (DOC-06), buscador web `#/buscar` (DOC-29); `tests/test_search_api.py`, `tests/e2e/test_web_search.py` | — |
 | RF02 | La consulta se procesa con el mismo modelo/pipeline que los documentos | Cumple (API) | `SearchEngine` usa el mismo `LexicalPipeline` y el mismo `Encoder` (`paraphrase-multilingual-MiniLM-L12-v2`) para documentos y consulta; huella del codificador en `meta.json` (DOC-12/13) | — |
-| RF03 | Recuperación por similitud: FAISS con producto interno sobre vectores normalizados, BM25/TF-IDF léxicos e híbrida | Cumple (API) | `IndexFlatIP` (`docs/indice-semantico.md`), `tests/test_semantic_index.py`, `tests/test_hybrid_search.py` | Selector de método en la web (DOC-29) |
-| RF04 | Top-k configurable, 10 por defecto | Cumple (API) | `DEFAULT_TOP_K = 10` en `search/ranking.py`; `k` 1–100 en `/search` | Control en la web (DOC-29) |
-| RF05 | Cada resultado muestra título, fragmento, puntuación y origen (documento/página) | Parcial | `SearchHit` con `title`, `snippet`, `score`, `doc_id`, `chunk_id`, `page`; el visor abre `#/documentos/{doc_id}?chunk={chunk_id}` con el fragmento resaltado y la página (DOC-28, `tests/e2e/test_web_viewer.py`) | Lista de resultados en la web (DOC-29) |
+| RF03 | Recuperación por similitud: FAISS con producto interno sobre vectores normalizados, BM25/TF-IDF léxicos e híbrida | Cumple (API) | `IndexFlatIP` (`docs/indice-semantico.md`), `tests/test_semantic_index.py`, `tests/test_hybrid_search.py` | — (selector de método en la web, DOC-29) |
+| RF04 | Top-k configurable, 10 por defecto | Cumple | `DEFAULT_TOP_K = 10` en `search/ranking.py`; `k` 1–100 en `/search` y en la web (predeterminado 10, DOC-29) | — |
+| RF05 | Cada resultado muestra título, fragmento, puntuación y origen (documento/página) | Cumple | `SearchHit` con `title`, `snippet`, `score`, `doc_id`, `chunk_id`, `page`; el visor abre `#/documentos/{doc_id}?chunk={chunk_id}` con el fragmento resaltado y la página (DOC-28, `tests/e2e/test_web_viewer.py`) | — |
 | RF06 | Vista completa del documento y gestión del documento por el usuario | Parcial | Metadatos, fragmentos y descarga por API (DOC-04/07), protegidos por sesión y rol (DOC-25, `tests/test_auth.py`); visor web con metadatos, texto completo y PDF (DOC-28) | Edición/eliminación (DOC-30) |
 | RF07 | Carga e indexación de documentos (PDF, DOCX, TXT, OCR, Google Docs públicos) | Parcial | `POST /documents`, `POST /documents/import`, CLI `reindex`/`semantic-index`/`ocr`; carga, importación y listado desde la web con resultado real de extracción (DOC-27, `tests/e2e/test_web_documents.py`) | Panel de reindexación (DOC-31), Google Docs privados (DOC-37, OAuth) |
-| RF08 | Comparación de la búsqueda semántica/híbrida con la línea base BM25 | Cumple (evaluación) | `docs/evaluacion.md`, `evaluation/results/miracl_es_dev.json` (648 consultas MIRACL-es dev, subconjunto de pasajes juzgados) | Comparación desde la web (DOC-29, DOC-36) |
+| RF08 | Comparación de la búsqueda semántica/híbrida con la línea base BM25 | Cumple (evaluación) | `docs/evaluacion.md`, `evaluation/results/miracl_es_dev.json` (648 consultas MIRACL-es dev, subconjunto de pasajes juzgados) | Comparación lado a lado con BM25 en la web (DOC-29); panel de métricas (DOC-36) |
 
 ## Requisitos no funcionales
 
