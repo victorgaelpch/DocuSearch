@@ -177,6 +177,7 @@ mismo origen con los tipos MIME correctos, que no hay recursos externos ni
 | `tests/e2e/test_web_security.py` | Todas las vistas bajo la CSP sin violaciones, título malicioso como texto, CSRF real desde otro origen |
 | `tests/e2e/test_web_journey.py` | Recorrido completo PDF/DOCX/TXT → búsqueda BM25 e híbrida → fragmento de origen → edición → reindexación → eliminación → cierre de sesión |
 | `tests/e2e/test_web_keyboard.py` | Sesión, búsqueda y apertura del resultado solo con teclado; foco visible; diálogo con foco en Cancelar y Escape |
+| `tests/e2e/test_web_capturas.py` | Capturas de la demostración para la documentación (`docs/capturas/`, DOC-35) |
 
 Todos los datos son sintéticos (`tests/fixtures/`, `tests/synthetic.py`) y las
 contraseñas de prueba se generan al azar en cada ejecución.
@@ -196,3 +197,12 @@ protección de `main`. Se recomienda que el propietario la active en
 *Settings → Branches* exigiendo los checks bloqueantes de la tabla. Mientras
 tanto, el script de fusión usado en la entrega comprueba esos checks antes de
 cada merge.
+
+### Resultados de la entrega v1.0.0 (DOC-35)
+
+| Batería | Resultado |
+| --- | --- |
+| `python -m pytest -q` (Linux, Python 3.13, sin extras `semantic`/`eval`) | 524 aprobadas, 8 omitidas (modelo real, red, pyarrow) |
+| `tests/e2e` (Chrome del sistema) | 38 aprobadas, 1 omitida (paráfrasis con el modelo real) |
+| CI `semantic-model` | 5 pruebas con el modelo real, incluida la paráfrasis desde el navegador |
+| CI `windows-install` | Instalación limpia, cuenta, demostración y búsqueda BM25 por HTTP en Windows (798,7 ms en frío) |

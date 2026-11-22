@@ -1,6 +1,22 @@
-# Arquitectura inicial de DocuSearch AI
+# Arquitectura de DocuSearch AI
 
-## Objetivo de esta entrega
+## Estado en v1.0.0
+
+```text
+Navegador ── HTML/CSS/JS (frontend/, mismo origen)
+   │ cookie HttpOnly + X-CSRF-Token
+FastAPI ─ SecurityMiddleware (CSP, cabeceras, rechazo previo al cuerpo)
+   ├─ /auth       auth/ (scrypt, sesiones en memoria, roles)
+   ├─ /documents  documents/service → validation → readers (PyMuPDF, python-docx, Tesseract)
+   │              → nlp/chunking 200/30 → repository (SQLite) + storage (originales)
+   ├─ /search     search/engine → BM25 · TF-IDF · semantic_index (FAISS IP) · hybrid (RRF)
+   ├─ /admin      jobs.py (un trabajador) → rechunk, rebuild, sync FAISS, OCR
+   └─ /, /assets  web.py (interfaz)
+```
+
+Las secciones siguientes conservan la historia del diseño por Issue.
+
+## Objetivo de la primera entrega (DOC-01)
 
 Implementar la estructura modular y un endpoint de salud, sin mezclar responsabilidades ni simular funciones aún no desarrolladas.
 

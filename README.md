@@ -1,134 +1,117 @@
 # DocuSearch AI
 
-Buscador de documentos en español, diseñado para evolucionar hacia una plataforma de gestión y consulta documental con inteligencia artificial.
+Buscador de documentos en español. Carga archivos PDF, Word (DOCX) y de texto,
+extrae y fragmenta su contenido y lo busca por palabras clave (BM25, TF-IDF)
+o por significado (embeddings multilingües con FAISS, y búsqueda híbrida).
+Cada resultado lleva al fragmento y la página de origen. Funciona en una
+computadora personal, **sin GPU y sin servicios en la nube**.
 
-> **Estado:** estructura y endpoint de salud ([DOC-01](https://github.com/victorgaelpch/DocuSearch/issues/1)); modelos `Document`/`Chunk` y persistencia SQLite de metadatos ([DOC-02](https://github.com/victorgaelpch/DocuSearch/issues/2), ver `docs/modelo-datos.md`); extracción de texto de PDF digital, DOCX y TXT ([DOC-03](https://github.com/victorgaelpch/DocuSearch/issues/3), ver `docs/lectores.md`); API para cargar, listar, consultar y descargar documentos ([DOC-04](https://github.com/victorgaelpch/DocuSearch/issues/4), ver `docs/api.md`). Preprocesamiento léxico y semántico en español ([DOC-06](https://github.com/victorgaelpch/DocuSearch/issues/6), ver `docs/preprocesamiento.md`); fragmentación 200/30 con procedencia de página ([DOC-07](https://github.com/victorgaelpch/DocuSearch/issues/7), ver `docs/fragmentacion.md`); corpus experimental de Wikipedia en español con revisiones fijadas ([DOC-05](https://github.com/victorgaelpch/DocuSearch/issues/5), ver `docs/corpus.md`). Motor de búsqueda TF-IDF con caché de tokens ([DOC-08](https://github.com/victorgaelpch/DocuSearch/issues/8), ver `docs/busqueda.md`). BM25 como método por defecto y evaluación frente a TF-IDF con consultas anotadas ([DOC-09](https://github.com/victorgaelpch/DocuSearch/issues/9), ver `docs/evaluacion.md`). Endpoint `GET /search` y comando `reindex` ([DOC-10](https://github.com/victorgaelpch/DocuSearch/issues/10)). Suite de pruebas v0.1 de extremo a extremo y medición de latencia ([DOC-11](https://github.com/victorgaelpch/DocuSearch/issues/11), ver `docs/pruebas.md`). v0.2 en curso: servicio de embeddings multilingüe en CPU ([DOC-12](https://github.com/victorgaelpch/DocuSearch/issues/23), ver `docs/embeddings.md`). Índice FAISS persistente e incremental por colección ([DOC-13](https://github.com/victorgaelpch/DocuSearch/issues/24), ver `docs/indice-semantico.md`). Búsqueda semántica en `GET /search?method=semantic` ([DOC-14](https://github.com/victorgaelpch/DocuSearch/issues/25)). Búsqueda híbrida BM25 + semántica con Reciprocal Rank Fusion ([DOC-15](https://github.com/victorgaelpch/DocuSearch/issues/26), ver `docs/busqueda.md`). Evaluación v0.2 con consultas nuevas y prueba de significación ([DOC-16](https://github.com/victorgaelpch/DocuSearch/issues/27), ver `docs/evaluacion.md`): con 648 consultas anotadas por personas (MIRACL español), la híbrida supera a BM25 de forma significativa (nDCG@10 0,752 frente a 0,709) y es el método recomendado con el extra `semantic`; BM25 sigue por defecto porque no requiere dependencias opcionales. Pruebas de extremo a extremo y rendimiento de v0.2 ([DOC-17](https://github.com/victorgaelpch/DocuSearch/issues/28), ver `docs/pruebas.md`). OCR de PDF escaneados con Tesseract ([DOC-23](https://github.com/victorgaelpch/DocuSearch/issues/31), ver `docs/lectores.md`). Importación de Google Docs públicos por enlace ([DOC-22](https://github.com/victorgaelpch/DocuSearch/issues/30), ver `docs/api.md`).
+Proyecto académico (UAEM, 2026-B) · Licencia AGPL-3.0-or-later.
 
-**Entrega v1.0 (en curso):** contratos y trazabilidad en `docs/adr/0001-entrega-web-v1.md` y `docs/trazabilidad.md` ([DOC-24](https://github.com/victorgaelpch/DocuSearch/issues/44)). Autenticación local con roles Administrador/Usuario, sesión por cookie y CSRF ([DOC-25](https://github.com/victorgaelpch/DocuSearch/issues/45), ver `docs/autenticacion.md`). Interfaz web en http://127.0.0.1:8000/ servida por FastAPI, sin Node ni CDN ([DOC-26](https://github.com/victorgaelpch/DocuSearch/issues/46), ver `frontend/README.md`). Carga, importación, listado y filtros de documentos desde la web ([DOC-27](https://github.com/victorgaelpch/DocuSearch/issues/47)). Visor con texto extraído, fragmento resaltado, navegación por fragmentos y vista previa del PDF en su página ([DOC-28](https://github.com/victorgaelpch/DocuSearch/issues/48)). Buscador web con BM25, TF-IDF, semántica e híbrida, k=10 por defecto, comparación con BM25 y enlace al fragmento de origen ([DOC-29](https://github.com/victorgaelpch/DocuSearch/issues/49)). Edición de título/descripción/etiquetas y eliminación con confirmación que retira el documento de la búsqueda y purga sus datos de los índices ([DOC-30](https://github.com/victorgaelpch/DocuSearch/issues/50)). Panel de índices con tareas de reindexación, sincronización FAISS y OCR con estado real ([DOC-31](https://github.com/victorgaelpch/DocuSearch/issues/51)). Endurecimiento de seguridad: CSP, cabeceras, rechazo de mutaciones anónimas antes de leer el cuerpo y pruebas adversariales ([DOC-32](https://github.com/victorgaelpch/DocuSearch/issues/52), ver `docs/seguridad.md`). Pruebas E2E en navegador real como check obligatorio `web-e2e` en CI ([DOC-33](https://github.com/victorgaelpch/DocuSearch/issues/53), ver `docs/pruebas.md`). Instalación reproducible en Windows con scripts PowerShell, `.env` local, diagnóstico `cli doctor` y demostración sintética `cli demo`, verificada en un Windows limpio en CI ([DOC-34](https://github.com/victorgaelpch/DocuSearch/issues/54)). Aún no implementado en la web: edición/eliminación, panel de índices, Google Docs privados (OAuth) y RAG.
+## Estado: v1.0.0
 
-## Requisitos
+| Funciona | Detalle |
+| --- | --- |
+| Aplicación web en `http://127.0.0.1:8000/` | Inicio de sesión, documentos, visor, buscador, índices, ayuda; accesible y responsive |
+| Carga de documentos | PDF con texto, PDF escaneado (OCR con Tesseract en español), DOCX, TXT, Google Docs **públicos** |
+| Búsqueda | BM25 (por defecto), TF-IDF, semántica e híbrida (RRF); top-k = 10; título, fragmento, puntuación, página y origen |
+| Administración | Editar título y metadatos, eliminar (también de los índices), reindexar y OCR con estado real |
+| Seguridad | Cuentas locales Administrador/Usuario, sesión `HttpOnly`, CSRF, CSP, pruebas adversariales |
+| Calidad medida | MIRACL-es (648 consultas con juicios humanos): nDCG@10 híbrida **0,752** frente a BM25 **0,709** (p < 0,0001), en el subconjunto de pasajes juzgados ([informe](docs/informe-academico.md)) |
 
-- Python 3.10 o superior (recomendado: 3.11 o 3.12).
-- Git; GitHub CLI (`gh`) para automatizar el Pull Request.
-- No se requiere GPU.
+**No incluido en v1.0:** Google Docs privados (OAuth), respuestas generadas
+(RAG) y uso multiusuario. Es un **modo local monousuario**: no debe exponerse
+a una red sin HTTPS ([seguridad](docs/seguridad.md)).
 
-## Instalación (Windows PowerShell)
+![Resultados de búsqueda](docs/capturas/captura-04-resultados-bm25.png)
 
-Guía completa, modos con y sin OCR/semántica y solución de problemas en
-[`docs/instalacion-windows.md`](docs/instalacion-windows.md) (DOC-34). Resumen:
+## Inicio rápido (Windows)
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\windows\instalar.ps1          # -Semantico opcional
-powershell -ExecutionPolicy Bypass -File scripts\windows\configurar-cuenta.ps1
-.\.venv\Scripts\python.exe -m backend.app.cli demo                             # documentos de demostración
-powershell -ExecutionPolicy Bypass -File scripts\windows\iniciar.ps1            # abre http://127.0.0.1:8000/
-```
-
-Instalación manual:
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev,model]"   # model: es_core_news_sm 3.8.0 para lematizar
-python -m pip install -e ".[semantic]"    # opcional (v0.2): embeddings; instala PyTorch, ver docs/embeddings.md
-```
-
-Si solo tienes otra versión compatible de Python, reemplaza `py -3.11` por `python`.
-
-## Ejecutar backend
+Requiere Python 3.10–3.12. Guía completa y solución de problemas en
+[`docs/instalacion-windows.md`](docs/instalacion-windows.md).
 
 ```powershell
-python -m uvicorn backend.app.main:app --reload
+powershell -ExecutionPolicy Bypass -File scripts\windows\instalar.ps1           # -Semantico: búsqueda por significado (CPU)
+powershell -ExecutionPolicy Bypass -File scripts\windows\configurar-cuenta.ps1  # contraseña del Administrador
+.\.venv\Scripts\python.exe -m backend.app.cli demo                              # documentos de demostración
+powershell -ExecutionPolicy Bypass -File scripts\windows\iniciar.ps1           # abre http://127.0.0.1:8000/
 ```
 
-- Interfaz web: http://127.0.0.1:8000/ (requiere `DOCUSEARCH_ADMIN_PASSWORD_HASH`, ver `docs/autenticacion.md`)
-- Estado del servicio: http://127.0.0.1:8000/health
-- Búsqueda: `GET /search?q=...&method=bm25&k=10`; `method` admite `bm25`, `tfidf`, `semantic` y `hybrid` (ver ejemplos abajo y `docs/api.md`)
-- Documentos: `POST /documents`, `POST /documents/import` (Google Docs públicos), `GET /documents`, `GET /documents/{doc_id}`, `GET /documents/{doc_id}/download`, `GET /documents/{doc_id}/chunks` (ver `docs/api.md`)
-- Documentación automática: http://127.0.0.1:8000/docs
+### Linux / macOS o instalación manual
 
-## Ejemplo de uso
-
-```powershell
-# Cargar un documento
-curl.exe -F "file=@C:\ruta\informe.pdf" http://127.0.0.1:8000/documents
-# Buscar (BM25 por defecto; method=tfidf y k=1..100 opcionales)
-Invoke-RestMethod "http://127.0.0.1:8000/search?q=índice invertido&k=5"
-# Corpus experimental de Wikipedia (ver docs/corpus.md para importarlo)
-Invoke-RestMethod "http://127.0.0.1:8000/search?q=enfermedad transmitida por mosquitos&collection=wikipedia_es"
-# Reindexar tras cambiar DOCUSEARCH_CHUNK_SIZE / DOCUSEARCH_CHUNK_OVERLAP
-python -m backend.app.cli reindex
-# (opcional, extra semantic) Construir o sincronizar el índice semántico FAISS
-python -m backend.app.cli semantic-index
-# (opcional, requiere Tesseract) Reconocer los PDF escaneados pendientes
-python -m backend.app.cli ocr
+```bash
+python -m venv .venv && . .venv/bin/activate
+python -m pip install -e ".[model]"            # + ".[semantic]" para semántica e híbrida
+cp .env.example .env
+python -m backend.app.cli hash-password --env-file .env
+python -m backend.app.cli demo
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
-## Datos locales
+`python -m backend.app.cli doctor` revisa la instalación y dice qué falta.
 
-Por defecto se usa `data/` (no versionado): `originals/`, `metadata.db` e `indexes/`. Para otra ubicación:
+## Uso
 
-```powershell
-$env:DOCUSEARCH_DATA_DIR = "D:\docusearch-data"
-$env:DOCUSEARCH_MAX_UPLOAD_MB = "20"   # tamaño máximo de carga
-```
+- **Web:** [manual de usuario y de administrador](docs/manual.md).
+- **API:** http://127.0.0.1:8000/docs y [`docs/api.md`](docs/api.md).
+- **Terminal:** `python -m backend.app.cli --help` (`reindex`,
+  `semantic-index`, `ocr`, `evaluate`, `benchmark`, `miracl`, `doctor`, `demo`, …).
 
-Los documentos privados y las operaciones de administración requieren sesión (ver `docs/autenticacion.md`): configura `DOCUSEARCH_ADMIN_PASSWORD_HASH` con el hash que genera `python -m backend.app.cli hash-password`. No hay contraseña por defecto. Úsalo solo en `127.0.0.1`.
+## Documentación
+
+| Documento | Contenido |
+| --- | --- |
+| [`docs/manual.md`](docs/manual.md) | Manual de Usuario y Administrador |
+| [`docs/informe-academico.md`](docs/informe-academico.md) | Arquitectura, metodología, evaluación, rendimiento, limitaciones |
+| [`docs/trazabilidad.md`](docs/trazabilidad.md) | Requisitos RF01–RF08 / RNF01–RNF07 con evidencia, Issues y PR |
+| [`docs/guion-demostracion.md`](docs/guion-demostracion.md) | Guion de 8–12 minutos y lista de comprobación |
+| [`docs/instalacion-windows.md`](docs/instalacion-windows.md) | Instalación, modos, problemas frecuentes, plataformas verificadas |
+| [`docs/seguridad.md`](docs/seguridad.md) / [`docs/autenticacion.md`](docs/autenticacion.md) | Modelo de amenazas, cuentas y sesión |
+| [`docs/evaluacion.md`](docs/evaluacion.md) / [`docs/pruebas.md`](docs/pruebas.md) | Evaluación reproducible, pruebas y checks de CI |
+| [`docs/arquitectura.md`](docs/arquitectura.md), [`docs/adr/`](docs/adr/) | Diseño y decisiones |
+| [`docs/bitacora.md`](docs/bitacora.md), [`CHANGELOG.md`](CHANGELOG.md) | Registro por Issue y cambios por versión |
 
 ## Pruebas
 
 ```powershell
-python -m pytest -q                                   # 332 pruebas (4 omitidas: modelo real)
-python -m pytest -q --cov=backend --cov-report=term   # cobertura (97 % en local)
-python -m pytest -q tests/test_v01_end_to_end.py      # flujo completo v0.1
-# Pruebas en navegador real (extra e2e; ver docs/pruebas.md)
-python -m pip install -e ".[e2e]"; python -m playwright install chromium
-$env:DOCUSEARCH_TEST_BROWSER = "1"; python -m pytest -q tests/e2e
-python -m backend.app.cli evaluate                    # métricas sobre el corpus importado
-python -m backend.app.cli benchmark                   # latencia sobre el corpus importado
+python -m pip install -e ".[dev,model,e2e]"
+python -m pytest -q                                            # suite de Python
+python -m playwright install chromium
+$env:DOCUSEARCH_TEST_BROWSER = "1"; python -m pytest -q tests/e2e   # navegador real
 ```
 
-Detalle de la estrategia, resultados y fallos encontrados en `docs/pruebas.md`.
+Cada Pull Request ejecuta `tests (3.10/3.11/3.12)`, `web-e2e` (Chromium),
+`windows-install` (instalación limpia en Windows), `semantic-model` (modelo
+real) y GitGuardian ([detalle](docs/pruebas.md)).
 
 ## Módulos
 
 | Ruta | Responsabilidad |
 | --- | --- |
-| `backend/app/documents/` | Modelos, repositorio SQLite, almacén de originales (DOC-02) y lectores PDF/DOCX/TXT (DOC-03) |
-| `backend/app/nlp/` | Limpieza, pipelines léxico y semántico (DOC-06); fragmentación (DOC-07); embeddings (DOC-12) |
-| `backend/app/search/` | Corpus léxico, TF-IDF, BM25, ranking, motor y evaluación (DOC-08/09); índice FAISS (DOC-13) |
-| `evaluation/` | Consultas anotadas y resultados de evaluación versionados |
-| `backend/app/api/` | Endpoints de documentos (DOC-04), búsqueda (DOC-10) y sesión (DOC-25) |
-| `backend/app/auth/` | Contraseñas scrypt, sesiones, roles y CSRF (DOC-25) |
-| `backend/app/corpus/` | Corpus experimental de Wikipedia (DOC-05) |
-| `corpus/` | Configuración y manifiesto versionados del corpus |
-| `frontend/` | Interfaz web HTML/CSS/JS servida en `/` (DOC-26) |
-| `tests/` | Pruebas automatizadas |
-| `docs/` | Diseño y puesta en marcha |
-| `data/` | Archivos locales no versionados |
+| `backend/app/api/` | Endpoints: documentos, búsqueda, sesión, administración |
+| `backend/app/auth/` | Contraseñas scrypt, sesiones, roles, CSRF |
+| `backend/app/documents/` | Validación, lectores PDF/DOCX/TXT, OCR, almacén, SQLite |
+| `backend/app/nlp/` | Preprocesamiento, fragmentación, embeddings |
+| `backend/app/search/` | TF-IDF, BM25, FAISS, híbrida, evaluación, mantenimiento de índices |
+| `backend/app/jobs.py`, `security.py`, `web.py` | Tareas en segundo plano, cabeceras y filtros, servido de la web |
+| `frontend/` | Interfaz web (HTML, CSS, módulos JS sin dependencias) |
+| `scripts/windows/` | Instalar, configurar la cuenta, iniciar, verificar |
+| `demo/` | Documentos sintéticos y consultas de demostración |
+| `evaluation/` | Consultas y resultados de evaluación versionados |
+| `tests/` | Pruebas unitarias, de integración, de seguridad y E2E (`tests/e2e/`) |
 
-## Roadmap de la fase v0.1
+## Datos y privacidad
 
-1. Crear estructura y configuración del entorno — **DOC-01**.
-2. Definir `Document`, `Chunk` y metadatos — **DOC-02**.
-3. Incorporar lectura de PDF digital, DOCX y TXT — **DOC-03**.
-4. Añadir carga de documentos vía FastAPI — **DOC-04**.
-5. Procesamiento, fragmentación, TF-IDF/BM25, búsquedas y pruebas — **DOC-05 a DOC-11**.
-
-La etapa posterior incorporará embeddings multilingües y FAISS para búsqueda semántica. El sistema se diseñará para poder ejecutar los componentes principales sin GPU.
-
-## Seguridad y datos
-
-Modelo de amenazas, controles y riesgos de despliegue en `docs/seguridad.md`: el servidor está pensado para `127.0.0.1`; exponerlo en una red requiere HTTPS y los pasos descritos allí. No subas documentos personales, PDFs de usuarios, índices, bases de datos ni secretos al repositorio. `.gitignore` excluye los directorios de trabajo locales y los archivos `.env`. Revisa también `docs/arquitectura.md`.
+Los documentos, la base de datos y los índices se guardan en `data/` (o en
+`DOCUSEARCH_DATA_DIR`) y **no se versionan**. No suba documentos personales,
+índices, bases de datos ni `.env` al repositorio.
 
 ## Licencia
 
 DocuSearch AI se distribuye bajo la **GNU Affero General Public License v3.0
 o posterior** (`AGPL-3.0-or-later`); ver [`LICENSE`](LICENSE). Si ofreces el
 servicio modificado a otras personas a través de una red, la AGPL te obliga a
-poner a su disposición el código fuente de esa versión.
-
-Las licencias de las dependencias, modelos y datos de terceros se resumen en
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md), y el motivo de la elección
+poner a su disposición el código fuente de esa versión. Las licencias de
+dependencias, modelos y datos de terceros se resumen en
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) y el motivo de la elección
 en `docs/licencias.md`.
