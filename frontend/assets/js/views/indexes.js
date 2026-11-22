@@ -125,7 +125,9 @@ export default {
       for (const job of data.recent_jobs) if (job.status === "pending" || job.status === "running") tracked.add(job.job_id);
       clear(jobsArea).append(h("h2", { id: "jobs-title" }, "Tareas recientes"),
         data.recent_jobs.length ? h("div", { class: "jobs" }, data.recent_jobs.map(jobView)) : h("p", { class: "hint" }, "Todavía no se ha ejecutado ninguna tarea desde que se inició el servidor."));
-      const active = data.recent_jobs.some((j) => j.status === "pending" || j.status === "running");
+      // se sigue consultando mientras cualquier tarea o tarjeta indique trabajo en curso
+      const active = data.recent_jobs.some((j) => j.status === "pending" || j.status === "running")
+        || data.collections.some((c) => c.active_job);
       window.clearTimeout(timer);
       if (active) timer = window.setTimeout(refresh, 1000);
       else for (const job of data.recent_jobs) {

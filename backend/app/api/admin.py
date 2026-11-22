@@ -65,10 +65,18 @@ def indexes(
     stats = service.repository.collection_stats()
     names = sorted(set(stats) | {DEFAULT_COLLECTION}, key=lambda c: (c != DEFAULT_COLLECTION, c))
     semantic_ready = request.app.state.encoder_factory is not None or embeddings.semantic_available()
+    # Una sola instantánea de las tareas: la tarea activa de cada colección y la
+    # lista de recientes deben coincidir aunque una tarea termine durante la
+    # petición (antes la tarjeta podía quedar "ocupada" con la tarea terminada).
+    recent = jobs.recent(50)
+    active_by_collection: dict[str, dict[str, Any]] = {}
+    for job in reversed(recent):
+        if job["status"] in ("pending", "running"):
+            active_by_collection[job["collection"]] = job
     collections = []
     for name in names:
         counts = stats.get(name, {"documents": 0, "chunks": 0, "needs_ocr": 0})
-        info: dict[str, Any] = {"collection": name, **counts, "active_job": jobs.active(name)}
+        info: dict[str, Any] = {"collection": name, **counts, "active_job": active_by_collection.get(name)}
         if info["active_job"] is None:
             # versión léxica real (construye el índice si hacía falta)
             description = engine.describe(name)
@@ -86,7 +94,7 @@ def indexes(
         "semantic_available": semantic_ready,
         "embedding_model": {"name": embeddings.MODEL_NAME, "revision": embeddings.MODEL_REVISION},
         "concurrent_jobs": 1,
-        "recent_jobs": jobs.recent(10),
+        "recent_jobs": recent[:10],
     }
 
 

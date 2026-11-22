@@ -191,3 +191,20 @@ def test_rechunk_with_new_config_changes_version(settings: Settings, lexical_pip
     final = _wait(small, _start(small, "reindex").json()["job_id"])
     assert final["status"] == "succeeded" and final["result"]["chunking"]["chunk_size"] == 5
     assert final["result"]["index_version"] != before
+
+
+def test_panel_uses_one_consistent_job_snapshot(client, monkeypatch) -> None:
+    """La tarea activa de la tarjeta sale de la misma instantánea que la lista (DOC-31)."""
+    jobs = client.app.state.jobs if hasattr(client.app.state, "jobs") else None
+    if jobs is None:
+        client.get("/admin/indexes")
+        jobs = client.app.state.jobs
+    running = {"job_id": "a" * 32, "kind": "reindex", "collection": "user", "status": "running"}
+    finished = {**running, "status": "succeeded"}
+    calls = iter([[running], [finished]])
+    monkeypatch.setattr(jobs, "recent", lambda limit=20: next(calls, [finished]))
+    monkeypatch.setattr(jobs, "active", lambda collection: (_ for _ in ()).throw(AssertionError("no debe consultarse por separado")))
+    body = client.get("/admin/indexes").json()
+    card = body["collections"][0]
+    assert card["active_job"]["job_id"] == body["recent_jobs"][0]["job_id"]
+    assert card["active_job"]["status"] == body["recent_jobs"][0]["status"] == "running"
