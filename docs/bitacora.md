@@ -946,3 +946,41 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   `feature/DOC-41-docker-compose-limpio`) y se cerró el PR #80 sin fusionar.
   No hay credencial real que revocar; el propietario debe marcar el incidente
   como falso positivo.
+
+## Cierre de la sesión de entrega — estado y punto de reanudación
+
+**Estado de `main`:** CI completo en verde en cada merge (`tests`
+3.10–3.12, `web-e2e`, `windows-install`, `docker-local`, `semantic-model`,
+GitGuardian).
+
+| ID | Issue | PR | Estado |
+| --- | --- | --- | --- |
+| DOC-24 … DOC-35 (P0) | #44–#55 | #62–#74 (+ #64 y #75, correcciones) | Fusionados; Issues cerrados por el merge |
+| DOC-36 | #56 | #76 | Fusionado |
+| DOC-37 | #57 | — | **Bloqueado externo** (proyecto OAuth del propietario); Issue abierto con los pasos |
+| DOC-38 | #58 | #77 | Fusionado |
+| DOC-39 | #59 | #78 | Fusionado |
+| DOC-40 | #60 | #79 | Fusionado |
+| DOC-41 | #61 | #81 (#80 cerrado por un falso positivo en su historial) | Fusionado |
+
+**Pendiente del propietario (no se puede hacer desde la sesión automatizada):**
+
+1. Publicar `v1.0.0`: la sesión no puede crear releases ni subir etiquetas
+   (HTTP 403). Desde un clon local:
+   `git tag -a v1.0.0 c39ec3e -m "DocuSearch AI v1.0.0"` y
+   `git push origin v1.0.0`; después, crear la release con `CHANGELOG.md`.
+2. Marcar como falsos positivos en GitGuardian los incidentes 40852052,
+   40852053 y 40855761.
+3. Activar la protección de `main` exigiendo `tests (3.10)`, `tests (3.11)`,
+   `tests (3.12)`, `web-e2e`, `windows-install`, `docker-local` y GitGuardian
+   (la cuenta automatizada no es administradora).
+4. Borrar las ramas `feature/DOC-*` ya fusionadas (la sesión no puede
+   eliminar ramas: HTTP 403) o activar "Automatically delete head branches".
+5. Contrastar la redacción de RF01–RF08/RNF01–RNF07 con `documentacion.pdf`
+   (no estuvo disponible).
+6. Opcional: ejecutar `test_real_local_ollama` (`DOCUSEARCH_TEST_RAG=1`) en
+   un equipo con Ollama y probar la instalación en un Windows de escritorio.
+
+**Punto de reanudación:** el backlog v1.0/v1.1 está completo salvo DOC-37.
+Para retomarlo hacen falta credenciales OAuth entregadas por un canal seguro
+(ver el comentario del Issue #57).
