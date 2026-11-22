@@ -618,3 +618,26 @@ Registro por Issue de objetivo, cambios, decisiones, pruebas y resultados reales
   corpus, compensación ante fallo, original no borrable, índice corrupto.
   E2E (3): editar, eliminar con confirmación y cancelación, rol Usuario.
   Totales: `python -m pytest -q` → `460 passed, 8 skipped, 1 warning`; E2E → `27 passed, 1 skipped`.
+
+## DOC-31 — Panel de índices, progreso de tareas y reindexación administrable
+
+- **Issue:** #51 · **Rama:** `feature/DOC-31-panel-indices`
+- **Cambios:**
+  - `backend/app/jobs.py`: cola con un único trabajador (una tarea a la vez
+    para no saturar CPU/RAM), una tarea activa por colección (409), estados
+    `pending → running → succeeded|failed`, historial de pasos con el último
+    progreso medido. El progreso existe solo con cifra real (documentos
+    procesados en la refragmentación); los pasos sin medida quedan en `null`.
+  - `DocumentService.rechunk(progress=…)`; `SemanticIndexManager.sync`;
+    `DocumentRepository.collection_stats` y `chunk_id_set`.
+  - `backend/app/api/admin.py`: `GET /admin/indexes`, `POST
+    /admin/indexes/{c}/jobs` (202), `GET /admin/jobs[/{id}]`. El estado del
+    índice FAISS se lee de `meta.json` sin cargar el modelo.
+  - Web `#/indices` (solo Administrador): tarjeta por colección, botones de
+    tarea (los semánticos se desactivan sin el extra), seguimiento cada
+    segundo, barra determinada solo con cifra real, resultado y errores por
+    documento, respaldo por CLI.
+- **Fallos encontrados en la revisión visual:** "null" impreso por un
+  `append` nativo, estado semántico sin separación y "TFIDF".
+- **Pruebas:** `tests/test_index_jobs.py` (11) y E2E (3). Totales:
+  `python -m pytest -q` → `472 passed, 8 skipped`; E2E → `30 passed, 1 skipped`.

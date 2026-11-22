@@ -6,6 +6,7 @@ from collections.abc import Callable
 
 from fastapi import FastAPI
 
+from backend.app.api.admin import router as admin_router
 from backend.app.api.auth import router as auth_router
 from backend.app.api.documents import router as documents_router
 from backend.app.api.errors import ApiError, api_error_handler
@@ -36,6 +37,7 @@ def create_app(settings: Settings | None = None, *, encoder_factory: Callable | 
     application.include_router(auth_router)
     application.include_router(documents_router)
     application.include_router(search_router)
+    application.include_router(admin_router)
     mount_frontend(application)
     return application
 

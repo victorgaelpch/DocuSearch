@@ -136,6 +136,9 @@ class SearchEngine:
                 self._semantic = SemanticIndexManager(self.repository, self._encoder_factory(), self.indexes_dir)
             return self._semantic
 
+    def sync_semantic(self, collection: str = DEFAULT_COLLECTION) -> dict[str, Any]:
+        return self.semantic.sync(collection).as_dict()
+
     def rebuild_semantic(self, collection: str = DEFAULT_COLLECTION) -> dict[str, Any]:
         return self.semantic.rebuild(collection).as_dict()
 

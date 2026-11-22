@@ -223,3 +223,22 @@ formato inválido, `limit` fuera de rango) mantienen el formato estándar
 - No hay endpoint de borrado ni de reindexación (fuera del alcance de DOC-04).
 - El tipo de PDF se valida por cabecera; los PDF malformados se detectan al
   extraer (422 `corrupt_file`).
+
+
+## Índices y tareas (DOC-31, solo Administrador)
+
+| Método | Ruta | Descripción | Respuestas |
+| --- | --- | --- | --- |
+| `GET` | `/admin/indexes` | Por colección: documentos, fragmentos, pendientes de OCR, versión del índice léxico, estado del índice FAISS leído de `meta.json` (vectores, versión, pendientes, obsoletos) sin cargar el modelo, y tarea activa | 200, 401, 403 |
+| `POST` | `/admin/indexes/{colección}/jobs` | JSON `{"kind": "reindex" \| "semantic" \| "semantic_rebuild" \| "ocr"}` + CSRF. Responde **202** con la tarea en `pending`; nunca afirma éxito antes de terminar | 202, 401, 403, 404, 409 `job_running`, 422 |
+| `GET` | `/admin/jobs/{job_id}` | Estado real: `pending`, `running`, `succeeded`, `failed`; `step`, `progress` (`{done, total}` solo cuando hay cifra real; si no, `null`), `steps`, `result`, `error`, `duration_s` | 200, 401, 403, 404 |
+| `GET` | `/admin/jobs` | Últimas 50 tareas | 200, 401, 403 |
+
+- **Un trabajador**: las tareas se ejecutan de una en una (CPU/RAM de una
+  computadora personal). Una tarea pendiente o en curso por colección.
+- **Durante la tarea** las búsquedas siguen respondiendo: los índices léxicos
+  se construyen aparte y se sustituyen bajo un cerrojo; el FAISS se escribe a
+  un temporal y se renombra; las consultas semánticas esperan a que termine la
+  codificación en lugar de ver un índice a medias.
+- Las tareas viven en memoria: reiniciar el servidor las olvida. Respaldo por
+  CLI: `reindex`, `semantic-index`, `ocr`.
