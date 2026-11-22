@@ -11,6 +11,7 @@ from backend.app.api.documents import router as documents_router
 from backend.app.api.errors import ApiError, api_error_handler
 from backend.app.api.search import router as search_router
 from backend.app.config import Settings
+from backend.app.web import mount_frontend
 
 
 def create_app(settings: Settings | None = None, *, encoder_factory: Callable | None = None) -> FastAPI:
@@ -35,6 +36,7 @@ def create_app(settings: Settings | None = None, *, encoder_factory: Callable | 
     application.include_router(auth_router)
     application.include_router(documents_router)
     application.include_router(search_router)
+    mount_frontend(application)
     return application
 
 

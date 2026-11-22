@@ -144,3 +144,21 @@ creada) tardó 5,1 s; sin caché, la lematización completa tardó 38,3 s
 (DOC-08). La medición es del motor sin HTTP, en un único equipo. La prueba
 `test_latency_under_two_seconds_on_synthetic_corpus` la repite con datos
 sintéticos en cada ejecución de la suite.
+
+
+## Pruebas de la web en navegador real (DOC-26)
+
+`tests/e2e/` arranca un servidor uvicorn real en un puerto libre, con datos y
+cuentas temporales, y lo recorre con Playwright (Chromium). Se omiten salvo
+que se defina `DOCUSEARCH_TEST_BROWSER=1`.
+
+```powershell
+python -m pip install -e ".[dev,model,e2e]"
+python -m playwright install chromium          # o $env:DOCUSEARCH_E2E_CHANNEL = "chrome"
+$env:DOCUSEARCH_TEST_BROWSER = "1"
+python -m pytest -q tests/e2e                  # capturas en e2e-artifacts/
+```
+
+`tests/test_web.py` comprueba sin navegador que la interfaz se sirve en el
+mismo origen con los tipos MIME correctos, que no hay recursos externos ni
+`innerHTML`, y la estructura accesible de `index.html`.

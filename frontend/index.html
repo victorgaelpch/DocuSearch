@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DocuSearch: buscador de documentos en español">
+  <title>DocuSearch</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <script type="module" src="/assets/js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div class="shell">
+    <header class="masthead">
+      <a class="brand" href="#/" aria-label="DocuSearch, inicio">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="5" y="4" width="18" height="24" rx="2"/>
+          <path d="M9 10h10M9 14h10M9 18h6"/>
+          <rect class="brand-hl" x="8" y="12.5" width="12" height="3" rx="1"/>
+        </svg>
+        <span>DocuSearch</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
+      <nav id="nav" class="nav" aria-label="Secciones">
+        <ul id="nav-list"></ul>
+      </nav>
+      <div class="session" id="session" aria-live="polite"></div>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <noscript>
+        <p class="notice notice-error">DocuSearch necesita JavaScript para la interfaz web. La API sigue disponible en <a href="/docs">/docs</a>.</p>
+      </noscript>
+    </main>
+    <footer class="footer">
+      <p>DocuSearch AI, software libre bajo AGPL-3.0-or-later. <a href="/docs">Documentación de la API</a></p>
+    </footer>
+  </div>
+  <div id="status" class="visually-hidden" role="status" aria-live="polite"></div>
+</body>
+</html>
